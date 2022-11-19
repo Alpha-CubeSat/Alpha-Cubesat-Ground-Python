@@ -1,0 +1,13 @@
+{:lein   true
+
+ :nrepl {:port 8777}
+
+ :dev-http        {8000
+                   {:root "resources/public"
+                    :proxy-url "http://localhost:3000"}}
+
+ :builds {:app {:target          :browser
+                :output-dir      "resources/public/js/compiled"
+                :asset-path      "/js/compiled"
+                :modules         {:app {:init-fn control-frontend.core/init
+                                        :preloads [devtools.preload]}}}}}
