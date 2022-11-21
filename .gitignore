@@ -21,3 +21,4 @@ package-lock.json
 .shadow-cljs/
 /.clj-kondo/
 /.lsp/
+*.pyc
