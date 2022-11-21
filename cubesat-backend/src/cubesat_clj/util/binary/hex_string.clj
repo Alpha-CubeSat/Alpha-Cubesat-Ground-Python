@@ -27,7 +27,6 @@
                 (fn [[x y]] (unchecked-byte (Integer/parseInt (str x y) 16)))
                 (partition 2 hex-str))))
 
-
 (defn bytes-to-b64
   [bytes]
   (.encodeToString (Base64/getEncoder) bytes))
