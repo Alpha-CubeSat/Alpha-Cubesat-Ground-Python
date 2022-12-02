@@ -1,14 +1,12 @@
 import datetime
-import python.config as cfg
 #import elasticsearch
+
 # Makes a connection to an Elasticsearch database based on 
 # configured host, port, and options"
 def get_connection():
-    config = cfg.get_config()
-    
+    pass
 
-
-#Returns the input name"
+# Returns the input name
 def literal_index_strategy(name):
     return name
 
@@ -19,8 +17,6 @@ def daily_index_strategy(name):
     time = str(today.year) + '.' + str(today.month) + '.' + str(today.day)
     return name + '-' + time
 
-print(daily_index_strategy('1'))
-
 # Indexes the supplied document into elasticsearch, using the
 # naming strategy to create indices using the given index name.
 
@@ -30,3 +26,4 @@ print(daily_index_strategy('1'))
 # use separate indices. This is now the approach recommended by Elastic.
 def index(index_base_name, naming_strategy, content):
     #es.indices.create(index=index_base_name, mappings=mappings)
+    pass

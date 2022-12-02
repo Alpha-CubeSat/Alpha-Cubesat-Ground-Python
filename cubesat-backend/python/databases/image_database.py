@@ -5,7 +5,7 @@ def try_save_image(image_sn, total_fragment_number):
     pass
 
 def get_img_display_info():
-    pass
+    return {}
 
 def get_recent_images(n):
     pass

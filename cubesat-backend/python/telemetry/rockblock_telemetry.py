@@ -5,11 +5,29 @@ import pem
 
 import config
 import databases.elasticsearch as es
-import util.binary.byte_buffer as buffer
 import util.binary.hex_string as hex
 
 
-# s/defschema RockblockReport ??????
+def get_cubesat_message_binary(rockblock_report: dict) -> bytearray:
+    """
+    Converts the hex encoded data sent by the cubesat into a python byte array
+    :param rockblock_report: raw data report from rockblock API
+    :return: byte array representation of the rockblock report's "data" attribute
+    """
+    return hex.hex_str_to_bytes(rockblock_report['data'])
+
+def save_rockblock_report(data: dict):
+    """
+    Saves a rockblock report to elasticsearch. Combines latitude and longitude into a single field. \n
+    :param data: raw data report from rockblock API
+    """
+    data['location'] = {
+        'lat': data['iridium_latitude'],
+        'lon': data['iridium_longitude']
+    }
+    es.index(config.rockblock_db_index, es.daily_index_strategy, data)
+
+# http web server related stuff ---------------------------------------------------------
 
 # "Public key provided for JWT verification by rockblock web services documentation"
 def rockblock_web_pk():
@@ -24,21 +42,6 @@ def verify_rockblock_request(rockblock_report):
         unsigned_data['JWT'] = jwt_data # ????
     except:
         traceback.print_exc()
-
-# "Gets the string encoded binary data sent by the cubesat as a java nio ByteBuffer"
-def get_cubesat_message_binary(rockblock_report):
-    return buffer.from_byte_array(hex.hex_str_to_bytes(rockblock_report['data']))
-
-#   "Saves a rockblock report to elasticsearch. Gets latitude and longitude
-#    data and makes a single field out of them"
-def save_rockblock_report(data):
-    location = {
-        'lat': data['iridium_latitude'],
-        'lon': data['iridium_longitude']
-    }
-    data['location'] = location
-    index = config.rockblock_db_index
-    es.index(index, es.daily_index_strategy, data)
 
 #   "Convert Rockblock's nonstandard date format to YYYY-MM-DDThh:mm:ssZ.
 #   Rockblock uses YY-MM-DD HH:mm:ss as the date format, despite their documentation claiming to use a more standard
