@@ -1,12 +1,14 @@
 import datetime
-import python.config as cfg
-#import elasticsearch
+import config as cfg
+from elasticsearch import Elasticsearch
+
 # Makes a connection to an Elasticsearch database based on 
 # configured host, port, and options"
 def get_connection():
     config = cfg.get_config()
-    
-
+    auth = config['database']['elasticsearch']['conn-config']['basic-auth']
+    es = Elasticsearch('https://localhost:9200', basic_auth=auth, ca_certs = 'http_ca.crt')
+    return es
 
 #Returns the input name"
 def literal_index_strategy(name):
@@ -19,8 +21,6 @@ def daily_index_strategy(name):
     time = str(today.year) + '.' + str(today.month) + '.' + str(today.day)
     return name + '-' + time
 
-print(daily_index_strategy('1'))
-
 # Indexes the supplied document into elasticsearch, using the
 # naming strategy to create indices using the given index name.
 
@@ -28,5 +28,6 @@ print(daily_index_strategy('1'))
 # So by default we give everything the '_doc' type for an easy transition
 # to new Elasticsearch versions. Then, to differentiate different data,
 # use separate indices. This is now the approach recommended by Elastic.
-def index(index_base_name, naming_strategy, content):
-    #es.indices.create(index=index_base_name, mappings=mappings)
+def indexdoc(index_base_name, content):
+    es = get_connection()
+    es.index(index = index_base_name, body = content)
