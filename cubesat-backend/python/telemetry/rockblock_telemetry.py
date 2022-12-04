@@ -4,7 +4,7 @@ import jwt
 import pem
 
 import config
-import databases.elasticsearch as es
+import databases.elastic_search as es
 import util.binary.hex_string as hex
 
 

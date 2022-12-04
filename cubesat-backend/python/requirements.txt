@@ -1,3 +1,4 @@
 pem
 pyjwt
 binary-reader
+elasticsearch
