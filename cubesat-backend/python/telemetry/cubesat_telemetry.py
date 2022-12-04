@@ -9,7 +9,7 @@ import util.binary.hex_string as hex
 from util.binary.binary_parser import BinaryParser
 
 
-class Opcodes(Enum):
+class Opcodes(int, Enum):
     """Packet Opcodes for cubesat (see Alpha documentation for specification)"""
 
     normal_report = 99

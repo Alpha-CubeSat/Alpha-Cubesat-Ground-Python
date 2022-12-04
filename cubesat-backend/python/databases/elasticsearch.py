@@ -5,9 +5,10 @@ from elasticsearch import Elasticsearch
 # Makes a connection to an Elasticsearch database based on 
 # configured host, port, and options"
 def get_connection():
-    config = cfg.get_config()
-    auth = config['database']['elasticsearch']['conn-config']['basic-auth']
-    es = Elasticsearch('https://localhost:9200', basic_auth=auth, ca_certs = 'http_ca.crt')
+    # config = cfg.get_config()
+    # auth = config['database']['elasticsearch']['conn-config']['basic-auth']
+    # es = Elasticsearch('https://localhost:9200', basic_auth=auth, ca_certs = 'http_ca.crt')
+    es = Elasticsearch('http://localhost:9200')
     return es
 
 #Returns the input name"
@@ -28,6 +29,7 @@ def daily_index_strategy(name):
 # So by default we give everything the '_doc' type for an easy transition
 # to new Elasticsearch versions. Then, to differentiate different data,
 # use separate indices. This is now the approach recommended by Elastic.
-def indexdoc(index_base_name, content):
+def index(index_base_name, naming_strategy, content):
     es = get_connection()
-    es.index(index = index_base_name, body = content)
+    es.index(index = literal_index_strategy(index_base_name), body = content)
+    

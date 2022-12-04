@@ -1,10 +1,10 @@
 from util.binary.binary_parser import BinaryTypes
 
-rockblock_db_index = ''
-cubesat_db_index = ''
-cycle_db_index = ''
-deploy_db_index = ''
-image_db_index = ''
+rockblock_db_index = 'rockblock'
+cubesat_db_index = 'cubesat'
+cycle_db_index = 'cycle'
+deploy_db_index = 'deploy'
+image_db_index = 'image'
 
 normal_report_structure = [
     ('is_photoresistor_covered', BinaryTypes.uint8),
@@ -45,5 +45,3 @@ normal_report_structure = [
     ('camera_on', BinaryTypes.uint8)
 ]
 
-def elasticsearch_endpoint(config):
-    pass
