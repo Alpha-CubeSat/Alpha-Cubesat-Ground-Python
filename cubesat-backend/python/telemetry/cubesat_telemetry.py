@@ -2,7 +2,7 @@ import traceback
 from enum import Enum
 
 import config
-import databases.elasticsearch as es
+import databases.elastic_search as es
 import databases.image_database as img
 import telemetry.rockblock_telemetry as rb
 import util.binary.hex_string as hex

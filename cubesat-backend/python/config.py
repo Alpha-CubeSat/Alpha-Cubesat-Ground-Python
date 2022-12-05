@@ -1,10 +1,10 @@
 from util.binary.binary_parser import BinaryTypes
 
-rockblock_db_index = 'rockblock'
-cubesat_db_index = 'cubesat'
-cycle_db_index = 'cycle'
-deploy_db_index = 'deploy'
-image_db_index = 'image'
+rockblock_db_index = 'rockblock_data'
+cubesat_db_index = 'cubesat_normal_report'
+cycle_db_index = 'imu_cycle_report'
+deploy_db_index = 'cubesat_deploy_report'
+image_db_index = 'image_fragment_info'
 
 normal_report_structure = [
     ('is_photoresistor_covered', BinaryTypes.uint8),
