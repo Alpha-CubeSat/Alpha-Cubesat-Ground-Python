@@ -45,3 +45,7 @@ normal_report_structure = [
     ('camera_on', BinaryTypes.uint8)
 ]
 
+def get_config():
+    pass
+def image_root_dir():
+    pass
