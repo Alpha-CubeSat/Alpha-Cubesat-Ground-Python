@@ -15,7 +15,7 @@ def generate_missing_fragments(frag_list):
     img_display_info['highest_fragment'] = max_frag
     for x in range(max_frag):
         missing_frags = img_display_info['missing_fragments']
-        missing_fra
+        #missing_fra
         
     if img_display_info['missing_fragments'] == '':
         img_display_info['missing_fragments'] = None
