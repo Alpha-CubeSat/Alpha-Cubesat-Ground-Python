@@ -1,13 +1,17 @@
-import time
 import os
 import util.binary.hex_string as hex
 import databases.image_database as img
+import os
+
+import databases.image_database as img
+import util.binary.hex_string as hex
+
 
 def get_image_data(image_file):
     with open(image_file, "rb") as image:
         f = image.read()
         b = bytearray(f)
-        b64 = hex.bytes_to_64(b)
+        b64 = hex.bytes_to_b64(b)
     date = os.path.getmtime(image_file)
     name = os.path.basename(image_file)
     return {'name': name, 'date': date, 'base64': b64}
