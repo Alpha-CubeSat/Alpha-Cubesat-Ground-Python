@@ -2,3 +2,4 @@ pem
 pyjwt
 binary-reader
 elasticsearch
+flask

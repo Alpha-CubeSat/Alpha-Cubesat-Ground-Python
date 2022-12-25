@@ -6,6 +6,8 @@ cycle_db_index = 'imu_cycle_report'
 deploy_db_index = 'cubesat_deploy_report'
 image_db_index = 'image_fragment_info'
 
+image_root_dir = 'cubesat_images'
+
 normal_report_structure = [
     ('is_photoresistor_covered', BinaryTypes.uint8),
     ('is_door_button_pressed', BinaryTypes.uint8),
@@ -44,8 +46,3 @@ normal_report_structure = [
     ('take_photo', BinaryTypes.uint8),
     ('camera_on', BinaryTypes.uint8)
 ]
-
-def get_config():
-    pass
-def image_root_dir():
-    pass
