@@ -7,6 +7,7 @@ deploy_db_index = 'cubesat_deploy_report'
 image_db_index = 'image_fragment_info'
 
 image_root_dir = 'cubesat_images'
+users_db = 'users.db'
 
 normal_report_structure = [
     ('is_photoresistor_covered', BinaryTypes.uint8),
