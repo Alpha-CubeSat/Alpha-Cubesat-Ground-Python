@@ -3,3 +3,5 @@ pyjwt
 binary-reader
 elasticsearch
 flask
+python-dotenv
+Flask-HTTPAuth

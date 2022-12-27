@@ -1,4 +1,14 @@
+import os
+
+from dotenv import load_dotenv
+
 from util.binary.binary_parser import BinaryTypes
+
+load_dotenv()
+basedir = os.path.abspath(os.path.dirname(__file__))
+
+class Config:
+    pass
 
 rockblock_db_index = 'rockblock_data'
 cubesat_db_index = 'cubesat_normal_report'
