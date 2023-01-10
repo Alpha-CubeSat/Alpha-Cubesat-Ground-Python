@@ -1,0 +1,2 @@
+FLASK_APP=cubesat_backend.py
+FLASK_DEBUG=1

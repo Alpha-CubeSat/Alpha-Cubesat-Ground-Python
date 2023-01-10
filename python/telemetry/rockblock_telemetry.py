@@ -1,5 +1,3 @@
-import traceback
-
 import jwt
 import pem
 
@@ -33,19 +31,14 @@ def save_rockblock_report(data: dict):
 def rockblock_web_pk():
     return pem.parse_file('cert.pem')
 
-# "Uses jwt to verify data sent by rockblock web services. Returns a copy of the data if valid,
-#   nil if invalid/corrupt"
-def verify_rockblock_request(rockblock_report):
-    try:
-        jwt_data = rockblock_report['JWT']
-        unsigned_data = jwt.decode(jwt_data, rockblock_web_pk(), algorithms=['rs256'])
-        unsigned_data['JWT'] = jwt_data # ????
-    except:
-        traceback.print_exc()
+# "Uses jwt to verify data sent by rockblock web services."
+# Throws exception if invalid???
+def verify_rockblock_request(jwt_data):
+    jwt.decode(jwt_data, rockblock_web_pk(), algorithms=['rs256'])
 
 #   "Convert Rockblock's nonstandard date format to YYYY-MM-DDThh:mm:ssZ.
 #   Rockblock uses YY-MM-DD HH:mm:ss as the date format, despite their documentation claiming to use a more standard
 #   format: YYYY-MM-DDThh:mm:ssZ. Conversion is done by appending '20' to the start of the date string,
 #   which means this fix may not work after the year 2100."
-def fix_rb_datetime(dt):
-    return f"20{dt.replace(' ', 'T')}Z"
+def fix_rockbock_datetime(datetime):
+    return f"20{datetime.replace(' ', 'T')}Z"

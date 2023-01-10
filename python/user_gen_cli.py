@@ -99,6 +99,7 @@ while True:
     elif option == '5':
         reset_table(db)
     elif option == '6':
+        db.close()
         print('Exiting')
         break
     else:

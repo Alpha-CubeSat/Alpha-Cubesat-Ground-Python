@@ -8,7 +8,10 @@ load_dotenv()
 basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config:
-    pass
+    # API documentation
+    APIFAIRY_TITLE = 'Alpha CubeSat Ground Station API'
+    APIFAIRY_VERSION = '1.0'
+    APIFAIRY_UI = os.environ.get('DOCS_UI', 'elements')
 
 rockblock_db_index = 'rockblock_data'
 cubesat_db_index = 'cubesat_normal_report'
@@ -17,7 +20,7 @@ deploy_db_index = 'cubesat_deploy_report'
 image_db_index = 'image_fragment_info'
 
 image_root_dir = 'cubesat_images'
-users_db = 'users.db'
+users_db = os.path.join(basedir, 'users.db')
 
 normal_report_structure = [
     ('is_photoresistor_covered', BinaryTypes.uint8),

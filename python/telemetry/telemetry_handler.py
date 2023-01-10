@@ -1,6 +1,5 @@
 import telemetry.cubesat_telemetry as cs
 import telemetry.rockblock_telemetry as rb
-# :require [ring.util.http-response :as http]
 
 def handle_cubesat_data(rockblock_report: dict):
     """
@@ -36,25 +35,19 @@ def handle_report(rockblock_report: dict):
         handle_cubesat_data(rockblock_report)
     # (http/ok)
 
-
+"""
 # http web server related stuff ---------------------------------------------------------
 
 # Middleware that verifies the JWT sent in a rockblock report, and extracts the data.
 # Does not use data sent in report, but instead that which is decoded from the provided JWT since it is an exact copy.
-def verify_rockblock_data_mw(handler):
-    def internal(request):
-        verified_data = rb.verify_rockblock_request(request['body-params'])
-        request['body-params'] = verified_data
-        if handler(request):
-            pass
-            # (http/unauthorized)
-    return internal
+def verify_rockblock_data_mw(request):
+    try:
+        rb.verify_rockblock_request(request['JWT'])
+    except:
+        pass
+        # (http/unauthorized)
 
 # Middleware that fixes the date format in data from rockblock web services.
-def fix_rockblock_date_mw(handler):
-    def internal(request):
-        time = request['body-params']['transmit_time']
-        formatted_time = rb.fix_rb_datetime(time)
-        request['body-params']['transmit_time'] = formatted_time
-        handler(request)
-    return internal
+def fix_rockblock_date_mw(request):
+    request['transmit_time'] = rb.fix_rockbock_datetime(request['transmit_time'])
+"""
