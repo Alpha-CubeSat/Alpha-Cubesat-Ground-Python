@@ -22,11 +22,11 @@ class ImageCountSchema(ma.Schema):
     count = ma.Int(load_default=1)
 
 class ImageNameSchema(ma.Schema):
-    name = ma.Str(required=True)
+    images = ma.List(ma.Str())
 
 class ImageDataSchema(ma.Schema):
     name = ma.Str(required=True)
-    date = ma.DateTime(required=True)
+    timestamp = ma.Str(required=True)
     base64 = ma.Str(required=True)
 
 class CommandSchema(ma.Schema):

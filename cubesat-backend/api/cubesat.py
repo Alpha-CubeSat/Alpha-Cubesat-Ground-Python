@@ -13,14 +13,14 @@ cubesat = Blueprint('cubesat', __name__)
 @cubesat.get('/img/recent')
 @authenticate(token_auth)
 @arguments(ImageCountSchema)
-@response(ImageNameSchema(many=True))
+@response(ImageNameSchema)
 @other_responses({401: 'Invalid access token'})
-def get_recent_images(count):
+def get_recent_images(args):
     """
     Get Recent Images
     Returns a list of names of recently received ttl files
     """
-    return img.get_recent_image_names(count)
+    return {'images': img.get_recent_image_names(args['count'])}
 
 @cubesat.get('/img/<name>')
 @authenticate(token_auth)

@@ -19,7 +19,7 @@ cycle_db_index = 'imu_cycle_report'
 deploy_db_index = 'cubesat_deploy_report'
 image_db_index = 'image_fragment_info'
 
-image_root_dir = 'cubesat_images'
+image_root_dir = os.path.join(basedir, 'cubesat_images')
 users_db = os.path.join(basedir, 'users.db')
 
 normal_report_structure = [
