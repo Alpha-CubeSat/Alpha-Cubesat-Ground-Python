@@ -1,6 +1,6 @@
 import os
 
-import databases.image_database as img
+import databases.image_database as img_db
 import util.binary.hex_string as hex
 
 
@@ -14,21 +14,13 @@ def get_image_data(image_file):
     return {'name': name, 'date': date, 'base64': b64}
 
 def get_image_at(idx):
-    return get_image_data(img.get_recent_images(idx + 1)[idx])
+    return get_image_data(img_db.get_recent_images(idx + 1)[idx])
 
 def get_image_by_name(name):
-    return get_image_data(img.get_image_by_name(name))
+    return get_image_data(img_db.get_image_by_name(name))
 
 def get_recent_image_names(n):
     names = []
     for x in range(n):
-        names.append(get_image_data(img.get_image_by_name(x)))
+        names.append(get_image_data(img_db.get_recent_images(x)))
     return names
-
-def handle_get_image_list(count):
-    #http/ok (img.get_recent_image_names(count))
-    pass
-
-def handle_image_request(name):
-    #http/ok (img.get_image_by_name(name))
-    pass

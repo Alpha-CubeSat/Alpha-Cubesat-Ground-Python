@@ -31,7 +31,7 @@ class ImageDataSchema(ma.Schema):
 
 class CommandSchema(ma.Schema):
     type = ma.Str(required=True) # enum?
-    fields = ma.Dict(keys=ma.Str(), values=ma.Str()) # dict types?
+    fields = ma.Dict(keys=ma.Str(), values=ma.Str())
 
 class CommandResponseSchema(ma.Schema):
     status = ma.Str(required=True)
