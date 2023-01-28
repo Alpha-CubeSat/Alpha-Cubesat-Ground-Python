@@ -4,7 +4,8 @@
             [cubesat-clj.util.binary.hex-string :as bin]
             [ring.util.http-response :as http]
             [schema.core :as s])
-  (:import (org.apache.commons.io IOUtils)))
+  (:import (java.util Date)
+           (org.apache.commons.io IOUtils)))
 
 
 (s/defschema ImageData
