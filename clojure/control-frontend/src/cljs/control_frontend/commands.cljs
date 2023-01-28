@@ -1,6 +1,7 @@
 (ns control-frontend.commands
-  (:require-macros [control-frontend.command-macros :refer [defcategory defcommand]])
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [re-com.core :as ui])
+  (:require-macros [control-frontend.command-macros :refer [defcommand defcategory]]))
 
 (defcommand mission-mode-init
   "Mode: Initialization"

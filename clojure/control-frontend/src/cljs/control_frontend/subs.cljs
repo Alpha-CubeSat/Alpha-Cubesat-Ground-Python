@@ -1,5 +1,6 @@
 (ns control-frontend.subs
   (:require
+    [control-frontend.commands :as commands]
     [re-frame.core :as re-frame]))
 
 (re-frame/reg-sub

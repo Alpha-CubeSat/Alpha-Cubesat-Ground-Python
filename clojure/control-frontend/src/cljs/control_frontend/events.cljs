@@ -5,6 +5,7 @@
     [control-frontend.db :as db]
     [control-frontend.util.http :refer [token]]
     [day8.re-frame.http-fx]
+    [goog.crypt.base64 :as b64]
     [re-frame.core :as re-frame]))
 
 (re-frame/reg-event-db

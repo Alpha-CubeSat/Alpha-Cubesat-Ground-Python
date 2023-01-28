@@ -1,9 +1,11 @@
 (ns control-frontend.views
   (:require
-    [control-frontend.commands :as commands]
-    [re-com.core :as ui]
     [re-frame.core :as re-frame]
-    [reagent.core :as reagent]))
+    [re-com.core :as ui]
+    [control-frontend.subs :as subs]
+    [control-frontend.commands :as commands]
+    [reagent.core :as reagent]
+    [ajax.core :as http]))
 
 ;; <editor-fold desc="common">
 (defn widget-card [{:keys [title content]}]

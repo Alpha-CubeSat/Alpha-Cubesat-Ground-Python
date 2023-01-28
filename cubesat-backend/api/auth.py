@@ -85,7 +85,3 @@ def delete_token():
     revoke_token(token_auth.current_user())
     get_db().commit()
     return '', 204
-
-# @auth.post('/login')
-# def login():
-#     return 'Login not configured yet.', 503

@@ -1,3 +1,5 @@
+import os
+
 import jwt
 import pem
 
@@ -25,20 +27,19 @@ def save_rockblock_report(data: dict):
     }
     es.index(config.rockblock_db_index, es.daily_index_strategy, data)
 
-# http web server related stuff ---------------------------------------------------------
+# Public key provided for JWT verification by rockblock web services documentation
+rockblock_web_pk = pem.parse_file(os.path.join(config.basedir, 'cert.pem'))
 
-# "Public key provided for JWT verification by rockblock web services documentation"
-def rockblock_web_pk():
-    return pem.parse_file('cert.pem')
-
-# "Uses jwt to verify data sent by rockblock web services."
-# Throws exception if invalid???
+# Uses JWT to verify data sent by rockblock web services, throws exception if JWT is invalid
 def verify_rockblock_request(jwt_data):
-    jwt.decode(jwt_data, rockblock_web_pk(), algorithms=['rs256'])
+    jwt.decode(jwt_data, rockblock_web_pk, algorithms=['rs256'])
 
-#   "Convert Rockblock's nonstandard date format to YYYY-MM-DDThh:mm:ssZ.
-#   Rockblock uses YY-MM-DD HH:mm:ss as the date format, despite their documentation claiming to use a more standard
-#   format: YYYY-MM-DDThh:mm:ssZ. Conversion is done by appending '20' to the start of the date string,
-#   which means this fix may not work after the year 2100."
+# Convert Rockblock's nonstandard date format to YYYY-MM-DDThh:mm:ssZ.
+# Rockblock uses YY-MM-DD HH:mm:ss as the date format, despite their documentation claiming to use a more standard
+# format: YYYY-MM-DDThh:mm:ssZ. Conversion is done by appending "20" to the start of the date string,
+# which means this fix may not work after the year 2100.
 def fix_rockbock_datetime(datetime):
-    return f"20{datetime.replace(' ', 'T')}Z"
+    print('raw dt:', datetime)
+    fixed = f"20{datetime.replace(' ', 'T')}Z"
+    print('fixed dt:', datetime)
+    return fixed
