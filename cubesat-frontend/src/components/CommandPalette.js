@@ -1,3 +1,3 @@
-export default function CommandPalette() {
+export default function CommandPalette({ onCommandSelect }) {
 
 }

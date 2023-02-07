@@ -1,50 +1,60 @@
-mission_mode_init = {
-    name: "Mode: Initialization",
+export const mission_mode_init = {
+	name: "mission_mode_init",
+    title: "Mode: Initialization",
     description: "Sends command [mission::mode_initialization]"
 }
 
-mission_mode_low_power = {
-    name: "Mode: Low Power",
+export const mission_mode_low_power = {
+	name: "mission_mode_low_power",
+    title: "Mode: Low Power",
     description: "Sends command [mission::mode_low_power]"
 }
 
-mission_mode_deployment = {
-    name: "Mode: Deployment",
+export const mission_mode_deployment = {
+	name: "mission_mode_deployment",
+    title: "Mode: Deployment",
     description: "Sends command [mission::mode_deployment]"
 }
 
-mission_mode_safe = {
-    name: "Mode: Safe",
+export const mission_mode_safe = {
+	name: "mission_mode_safe",
+    title: "Mode: Safe",
     description: "Sends command [mission::mode_safe]"
 }
 
-mission_mode_standby = {
-    name: "Mode: Standby",
+export const mission_mode_standby = {
+	name: "mission_mode_standby",
+    title: "Mode: Standby",
     description: "Sends command [mission::mode_standby]"
 }
 
-burnwire_arm_true = {
-    name: "Arm: True",
+export const burnwire_arm_true = {
+	name: "burnwire_arm_true",
+    title: "Arm: True",
     description: "Sends command [burnwire::arm_true]"
 }
 
-burnwire_arm_false = {
-    name: "Arm: False",
+export const burnwire_arm_false = {
+	name: "burnwire_arm_false",
+    title: "Arm: False",
     description: "Sends command [burnwire::arm_false]"
 }
 
-burnwire_fire_true = {
-    name: "Fire: True",
+export const burnwire_fire_true = {
+	name: "burnwire_fire_true",
+    title: "Fire: True",
     description: "Sends command [burnwire::fire_true]"
 }
 
-burnwire_fire_false = {
-    name: "Fire: False",
+export const burnwire_fire_false = {
+	name: "burnwire_fire_false",
+    title: "Fire: False",
     description: "Sends command [burnwire::fire_false]"
 }
 
-burnwire_burn_time = {
-    name: "Burn Time",
+export const burnwire_burn_time = {
+	name: "burnwire_burn_time",
+    title: "Burn Time",
     description: "Sends command [burnwire::burn_time] with the specified seconds",
     fields: [
         {
@@ -53,8 +63,9 @@ burnwire_burn_time = {
     ]
 }
 
-burnwire_arm_time = {
-    name: "Arm Time",
+export const burnwire_arm_time = {
+	name: "burnwire_arm_time",
+    title: "Arm Time",
     description: "Sends command [burnwire::arm_time] with the specified seconds",
     fields: [
         {
@@ -63,8 +74,9 @@ burnwire_arm_time = {
     ]
 }
 
-rockblock_downlink_period = {
-    name: "Downlink Period",
+export const rockblock_downlink_period = {
+	name: "rockblock_downlink_period",
+    title: "Downlink Period",
     description: "Sends command [rockblock::downlink_period] with the specified seconds",
     fields: [
         {
@@ -73,8 +85,9 @@ rockblock_downlink_period = {
     ]
 }
 
-request_img_fragment = {
-    name: "Request Image Fragment",
+export const request_img_fragment = {
+	name: "request_img_fragment",
+    title: "Request Image Fragment",
     description: "Requests the specified image fragment from the specified camera",
     fields: [
         {
@@ -86,162 +99,194 @@ request_img_fragment = {
     ]
 }
 
-take_photo_true = {
-    name: "Take Photo: True",
+export const take_photo_true = {
+	name: "take_photo_true",
+    title: "Take Photo: True",
     description: "Sends command [camera::take_photo_true]"
 }
 
-take_photo_false = {
-    name: "Take Photo: False",
+export const take_photo_false = {
+	name: "take_photo_false",
+    title: "Take Photo: False",
     description: "Sends command [camera::take_photo_false]"
 }
 
-temperature_mode_active = {
-    name: "Mode: Active",
+export const temperature_mode_active = {
+	name: "temperature_mode_active",
+    title: "Mode: Active",
     description: "Sends command [temperature::mode_active]"
 }
 
-temperature_mode_inactive = {
-    name: "Mode: Inactive",
+export const temperature_mode_inactive = {
+	name: "temperature_mode_inactive",
+    title: "Mode: Inactive",
     description: "Sends command [temperature::mode_inactive]"
 }
 
-acs_mode_full = {
-    name: "Mode: Full",
+export const acs_mode_full = {
+	name: "acs_mode_full",
+    title: "Mode: Full",
     description: "Sends command [acs::mode_full]"
 }
 
-acs_mode_simple = {
-    name: "Mode: Simple",
+export const acs_mode_simple = {
+	name: "acs_mode_simple",
+    title: "Mode: Simple",
     description: "Sends command [acs::mode_simple]"
 }
 
-acs_mode_off = {
-    name: "Mode: Off",
+export const acs_mode_off = {
+	name: "acs_mode_off",
+    title: "Mode: Off",
     description: "Sends command [acs::mode_off]"
 }
 
-acs_mag_x = {
-    name: "Mag: X",
+export const acs_mag_x = {
+	name: "acs_mag_x",
+    title: "Mag: X",
     description: "Sends command [acs::mag_x]"
 }
 
-acs_mag_y = {
-    name: "Mag: Y",
+export const acs_mag_y = {
+	name: "acs_mag_y",
+    title: "Mag: Y",
     description: "Sends command [acs::mag_y]"
 }
 
-acs_mag_z = {
-    name: "Mag: Z",
+export const acs_mag_z = {
+	name: "acs_mag_z",
+    title: "Mag: Z",
     description: "Sends command [acs::mag_z]"
 }
 
-camera_turn_on = {
-    name: "Turn On",
+export const camera_turn_on = {
+	name: "camera_turn_on",
+    title: "Turn On",
     description: "Sends command [camera::turn_on]"
 }
 
-camera_turn_off = {
-    name: "Turn Off",
+export const camera_turn_off = {
+	name: "camera_turn_off",
+    title: "Turn Off",
     description: "Sends command [camera::turn_off]"
 }
 
-fault_mode_active = {
-    name: "Fault Mode: Active",
+export const fault_mode_active = {
+	name: "fault_mode_active",
+    title: "Fault Mode: Active",
     description: "Sends command [fault::mode_active]"
 }
 
-fault_mode_inactive = {
-    name: "Fault Mode: Inactive",
+export const fault_mode_inactive = {
+	name: "fault_mode_inactive",
+    title: "Fault Mode: Inactive",
     description: "Sends command [fault::mode_inactive]"
 }
 
-fault_check_mag_x_true = {
-    name: "Check Mag X: True",
+export const fault_check_mag_x_true = {
+	name: "fault_check_mag_x_true",
+    title: "Check Mag X: True",
     description: "Sends command [fault::check_mag_x_true]"
 }
 
-fault_check_mag_x_false = {
-    name: "Check Mag X: False",
+export const fault_check_mag_x_false = {
+	name: "fault_check_mag_x_false",
+    title: "Check Mag X: False",
     description: "Sends command [fault::check_mag_x_false]"
 }
 
-fault_check_mag_y_true = {
-    name: "Check Mag Y: True",
+export const fault_check_mag_y_true = {
+	name: "fault_check_mag_y_true",
+    title: "Check Mag Y: True",
     description: "Sends command [fault::check_mag_y_true]"
 }
 
-fault_check_mag_y_false = {
-    name: "Check Mag Y: False",
+export const fault_check_mag_y_false = {
+	name: "fault_check_mag_y_false",
+    title: "Check Mag Y: False",
     description: "Sends command [fault::check_mag_y_false]"
 }
 
-fault_check_mag_z_true = {
-    name: "Check Mag Z: True",
+export const fault_check_mag_z_true = {
+	name: "fault_check_mag_z_true",
+    title: "Check Mag Z: True",
     description: "Sends command [fault::check_mag_z_true]"
 }
 
-fault_check_mag_z_false = {
-    name: "Check Mag Z: False",
+export const fault_check_mag_z_false = {
+	name: "fault_check_mag_z_false",
+    title: "Check Mag Z: False",
     description: "Sends command [fault::check_mag_z_false]"
 }
 
-fault_check_gyro_x_true = {
-    name: "Check Gyro X: True",
+export const fault_check_gyro_x_true = {
+	name: "fault_check_gyro_x_true",
+    title: "Check Gyro X: True",
     description: "Sends command [fault::check_gyro_x_true]"
 }
 
-fault_check_gyro_x_false = {
-    name: "Check Gyro X: False",
+export const fault_check_gyro_x_false = {
+	name: "fault_check_gyro_x_false",
+    title: "Check Gyro X: False",
     description: "Sends command [fault::check_gyro_x_false]"
 }
 
-fault_check_gyro_y_true = {
-    name: "Check Gyro Y: True",
+export const fault_check_gyro_y_true = {
+	name: "fault_check_gyro_y_true",
+    title: "Check Gyro Y: True",
     description: "Sends command [fault::check_gyro_y_true]"
 }
 
-fault_check_gyro_y_false = {
-    name: "Check Gyro Y: False",
+export const fault_check_gyro_y_false = {
+	name: "fault_check_gyro_y_false",
+    title: "Check Gyro Y: False",
     description: "Sends command [fault::check_gyro_y_false]"
 }
 
-fault_check_gyro_z_true = {
-    name: "Check Gyro Z: True",
+export const fault_check_gyro_z_true = {
+	name: "fault_check_gyro_z_true",
+    title: "Check Gyro Z: True",
     description: "Sends command [fault::check_gyro_z_true]"
 }
 
-fault_check_gyro_z_false = {
-    name: "Check Gyro Z: False",
+export const fault_check_gyro_z_false = {
+	name: "fault_check_gyro_z_false",
+    title: "Check Gyro Z: False",
     description: "Sends command [fault::check_gyro_z_false]"
 }
 
-fault_check_temp_c_true = {
-    name: "Check Temp: True",
+export const fault_check_temp_c_true = {
+	name: "fault_check_temp_c_true",
+    title: "Check Temp: True",
     description: "Sends command [fault::check_temp_c_true]"
 }
 
-fault_check_temp_c_false = {
-    name: "Check Temp: False",
+export const fault_check_temp_c_false = {
+	name: "fault_check_temp_c_false",
+    title: "Check Temp: False",
     description: "Sends command [fault::check_temp_c_false]"
 }
 
-fault_check_solar_true = {
-    name: "Check Solar Curr: True",
+export const fault_check_solar_true = {
+	name: "fault_check_solar_true",
+    title: "Check Solar Curr: True",
     description: "Sends command [fault::check_solar_current_true]"
 }
 
-fault_check_solar_false = {
-    name: "Check Solar Curr: False",
+export const fault_check_solar_false = {
+	name: "fault_check_solar_false",
+    title: "Check Solar Curr: False",
     description: "Sends command [fault::check_solar_current_false]"
 }
 
-fault_check_voltage_true = {
-    name: "Check Voltage: True",
+export const fault_check_voltage_true = {
+	name: "fault_check_voltage_true",
+    title: "Check Voltage: True",
     description: "Sends command [fault::check_voltage_true]"
 }
 
-fault_check_voltage_false = {
-    name: "Check Voltage: False",
+export const fault_check_voltage_false = {
+	name: "fault_check_voltage_false",
+    title: "Check Voltage: False",
     description: "Sends command [fault::check_voltage_false]"
 }

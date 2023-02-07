@@ -2,9 +2,9 @@ import {Card} from "react-bootstrap";
 
 export default function WidgetCard({ title, children }) {
     return (
-        <Card className='mb-3 p-0'>
+        <Card className='p-0 h-100'>
             <Card.Header className='bg-dark bg-opacity-75 text-light'>{title}</Card.Header>
-            <Card.Body>
+            <Card.Body className='overflow-auto'>
                 {children}
             </Card.Body>
         </Card>
