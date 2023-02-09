@@ -2,14 +2,24 @@ import {Button, Col, Container, Row} from "react-bootstrap";
 import {createRef, useRef, useState} from "react";
 import InputField from "./InputField";
 import Form from "react-bootstrap/Form";
+import {useDashboard} from "../contexts/DashboardProvider";
 
-export default function CommandViewer ({ command }) {
+// Command Viewer
+// Shows the title and description for a selected command.
+// Allows user to enter in command arguments (if they exist) and send commands.
+export default function CommandViewer() {
+
+    // declare shared variables
+    const { selectedCommand : command, commandLog, setCommandLog } = useDashboard();
+
+    // check if a command is selected
+    const commandSelected = Object.keys(command).length !== 0
 
     // store form errors and input field references
     const [formErrors, setFormErrors] = useState({});
     const fieldRefs = useRef([]);
 
-    // fill references list with empty references
+    // fill input references list with empty references
     const numFields = command.fields ? command.fields.length : 0;
     if (fieldRefs.current.length !== numFields) {
         fieldRefs.current = Array(numFields).fill()
@@ -19,7 +29,7 @@ export default function CommandViewer ({ command }) {
     const onSubmit = async (ev) => {
         ev.preventDefault();
 
-        // validate form inputs
+        // validate form inputs and return if fields are invalid
         let errors = {};
         let fieldsBody = {};
         for (let field of fieldRefs.current) {
@@ -30,23 +40,30 @@ export default function CommandViewer ({ command }) {
             }
         }
         setFormErrors(errors);
+        if (Object.keys(errors).length > 0) return;
 
         // API request to send command
-        console.log({
+        let response = { // mock api response
             name: command.name,
-            fields: fieldsBody
-        })
+            fields: fieldsBody,
+            submitted: new Date().toLocaleString(),
+            status: 'success',
+            message: 'command successfully transmitted'
+        }
+
+        // update command log with API response
+        setCommandLog([response, ...commandLog])
     }
 
     return (
         <>
-            <h3>{command.title}</h3>
+            <h3>{commandSelected ? command.title : 'No Command Selected'}</h3>
             <hr />
             <Container fluid className="p-0">
                 <Row>
                     <Col sm='8'>
                         <h5>Description</h5>
-                        <p>{command.description}</p>
+                        <p>{commandSelected ? command.description : 'Select a command.'}</p>
                     </Col>
                     {/* Command Input Fields + Submission */}
                     <Col sm='4'>
@@ -57,7 +74,7 @@ export default function CommandViewer ({ command }) {
                                             label={field.title} type='number'
                                             error={formErrors['field'+i]} fieldRef={fieldRefs.current[i]} />)
                             }
-                            <Button variant='success' type='submit'>Send Command</Button>
+                            <Button variant='success' type='submit' disabled={!commandSelected}>Send Command</Button>
                         </Form>
                     </Col>
                 </Row>
