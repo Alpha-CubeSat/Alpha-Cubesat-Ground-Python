@@ -1,3 +1,4 @@
+#TODO: Import requirements
 
 rockblock_endpoint = 'https://core.rock7.com/rockblock/MT'
 uplink_opcodes =  {
@@ -7,30 +8,36 @@ uplink_opcodes =  {
     'request_img_fragment': '0600'
 }
 
-"""Flips a hexadecimal sequence of 4 bytes so that it is ready to submitted as
-a command argument.
+"""Pads hex_string with with '0's at the beginning until it is length n,
+then flips it so that it is in the format of a command argument.
+
 Example:
+pad_hex_string()
 '00000154' (or 00 00 01 54) -> '54010000' (or 54 01 00 00)"""
-def flip_bytes(hex_string):
-    pass
+def pad_hex_string(hex_string, n):
+    while len(hex_string) < n:
+        hex_string += "0"
 
-"Pads a hex string with with '0's at the beginning until it is length 8."
-def pad_hex_string(s):
-    pass
-
-"Translates decimal number into a hexidecimal string."
-def hexify_arg(s):
-    pass
+    new_hex_string = ""
+    for i in range(len(hex_string) - 2, -1, -2):
+        new_hex_string += hex_string[i]
+    return new_hex_string
+"""Translates decimal number n into an all uppercase hexidecimal string without '0x' header."""
+def hexify_arg(n):
+    return (hex(n)[2:]).upper()
 
 """A helper function that returns the string representation for a single
-argument operation
+argument operation.
+The operation is a dictionary with the form {'opcode': <opcode>, 'arg1': <arg1>}
+The <opcode> value must be a string key in the uplink_opcodes dictionary.
 Example:
-(parse-single-arg {:type :burnwire-burn-time :example 3} :example)
-returns the string '03000300000000000000' ('0300' + '03000000' + '00000000')"""
-def parse_single_arg(operation, key):
-    pass
+operation = {'opcode': 'burnwire_burn_time', 'arg1': 3}
+parse_single_arg(operation) returns the string '03000300000000000000' 
+or ('0300' + '03000000' + '00000000')."""
+def parse_single_arg(operation):
+    return operation['opcode'] + operation['arg1']
 
-def parse_double_arg(operation, ley1, key2):
+def parse_double_arg(operation, key1, key2):
     pass
 
 """Takes a Command and translates it to a string representation as
