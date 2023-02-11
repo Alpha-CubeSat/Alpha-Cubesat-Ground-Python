@@ -24,3 +24,4 @@ package-lock.json
 *.pyc
 *.env
 */venv
+yarn.lock
