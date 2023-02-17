@@ -4,7 +4,7 @@ import ImageViewer from "../components/ImageViewer";
 import CommandLog from "../components/CommandLog";
 import WidgetCard from "../components/WidgetCard";
 import DashboardProvider from "../contexts/DashboardProvider";
-import CommandViewer from "../components/CommandViewer";
+import CommandSelector from "../components/CommandSelector";
 
 // Main CubeSat Control Dashboard
 // Contains widgets for command building, command creation, image viewing, and a command history log.
@@ -25,7 +25,7 @@ export default function Dashboard() {
             <Row className="h-50 pt-2">
               <WidgetCard
                 title="Command Selector"
-                children={<CommandViewer />}
+                children={<CommandSelector />}
               />
             </Row>
             <Row className="h-50 pt-3 pb-2">
