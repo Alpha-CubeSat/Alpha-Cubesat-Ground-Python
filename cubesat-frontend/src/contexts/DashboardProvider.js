@@ -1,48 +1,68 @@
-import {createContext, useContext, useState} from "react";
+import { createContext, useContext, useState } from "react";
+import { burnwire_arm_time } from "../components/Commands";
 
 const DashboardContext = createContext();
 
 // Dashboard Context Provider
 // Contains variables shared across different widgets to make access/updating easier.
 export default function DashboardProvider({ children }) {
+  // notify command viewer when user selects command
+  const [selectedCommand, setSelectedCommand] = useState(burnwire_arm_time);
 
-    // notify command viewer when user selects command
-    const [selectedCommand, setSelectedCommand] = useState({});
+  // current list of commands to send
+  const [commandStack, setCommandStack] = useState([]);
 
-    // ***grab prev command history from api on initial render
+  // ***grab prev command history from api on initial render
 
-    // notify command log of API response when user sends command
-    const [commandLog, setCommandLog] = useState([
-        {
-            name: 'mission_mode_low_power',
-            fields: [],
-            submitted: new Date().toLocaleString(),
-            status: 'success',
-            message: 'command successfully transmitted'
-        },
-        {
-            name: 'burnwire_burn_time',
-            fields: [],
-            submitted: new Date().toLocaleString(),
-            status: 'failure',
-            message: 'connection timed out'
-        },
-        {
-            name: 'take_photo_true',
-            fields: [],
-            submitted: new Date().toLocaleString(),
-            status: 'failure',
-            message: 'connection timed out'
-        }
-    ]);
+  // notify command log of API response when user sends command
+  const [commandLog, setCommandLog] = useState([
+    {
+      id: 0,
+      name: "mission_mode_low_power",
+      fields: [],
+      submitted: new Date().toLocaleString(),
+      status: "success",
+      message: "command successfully transmitted",
+    },
+    {
+      id: 1,
+      name: "burnwire_burn_time",
+      fields: [],
+      submitted: new Date().toLocaleString(),
+      status: "failure",
+      message: "connection timed out",
+    },
+    {
+      id: 2,
+      name: "take_photo_true",
+      fields: [],
+      submitted: new Date().toLocaleString(),
+      status: "failure",
+      message: "connection timed out",
+    },
+  ]);
 
-    return (
-        <DashboardContext.Provider value={{selectedCommand, setSelectedCommand, commandLog, setCommandLog}}>
-            {children}
-        </DashboardContext.Provider>
-    );
+  // ensure lists have unique keys
+  const [count, setCount] = useState(0);
+
+  return (
+    <DashboardContext.Provider
+      value={{
+        selectedCommand,
+        setSelectedCommand,
+        commandLog,
+        setCommandLog,
+        commandStack,
+        setCommandStack,
+        count,
+        setCount,
+      }}
+    >
+      {children}
+    </DashboardContext.Provider>
+  );
 }
 
 export function useDashboard() {
-    return useContext(DashboardContext);
+  return useContext(DashboardContext);
 }

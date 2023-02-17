@@ -1,57 +1,43 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
+/*!* Command dropdowns *!*/
+/*.dropdown {*/
+/*  position: relative;*/
+/*}*/
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
+/*.button{*/
+/*  width: 100px;*/
+/*}*/
 
-/* Command dropdowns */
-.dropdown {
-  position: relative;
-}
+/*.menu {*/
+/*  position: absolute;*/
 
-.button{
-  width: 100px;
-}
+/*  list-style-type: none;*/
+/*  margin: 5px 0;*/
+/*  padding: 0;*/
 
-.menu {
-  position: absolute;
+/*  border: 1px solid grey;*/
+/*  width: 100px;*/
+/*}*/
 
-  list-style-type: none;
-  margin: 5px 0;
-  padding: 0;
+/*.menu > li {*/
+/*  margin: 0;*/
 
-  border: 1px solid grey;
-  width: 100px;
-}
+/*  background-color: white;*/
+/*}*/
 
-.menu > li {
-  margin: 0;
+/*.menu > li:hover {*/
+/*  background-color: lightgray;*/
+/*}*/
 
-  background-color: white;
-}
+/*.menu > li > button {*/
+/*  width: 100%;*/
+/*  height: 100%;*/
+/*  text-align: left;*/
 
-.menu > li:hover {
-  background-color: lightgray;
-}
-
-.menu > li > button {
-  width: 100%;
-  height: 100%;
-  text-align: left;
-
-  background: none;
-  color: inherit;
-  border: none;
-  padding: 5px;
-  margin: 0;
-  font: inherit;
-  cursor: pointer;
-}
+/*  background: none;*/
+/*  color: inherit;*/
+/*  border: none;*/
+/*  padding: 5px;*/
+/*  margin: 0;*/
+/*  font: inherit;*/
+/*  cursor: pointer;*/
+/*}*/

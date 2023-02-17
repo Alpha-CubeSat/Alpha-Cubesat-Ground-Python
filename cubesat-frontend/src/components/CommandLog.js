@@ -6,30 +6,34 @@ import {useDashboard} from "../contexts/DashboardProvider";
 // Shows a log of all previously sent commands to the CubeSat with each command's status, name,
 // submission time, and API response message.
 export default function CommandLog() {
+  const { commandLog } = useDashboard();
 
-    const { commandLog } = useDashboard();
-
-    return (
-        <Table hover>
-            <thead>
-                <tr className='table-secondary'>
-                    <th>Status</th>
-                    <th>Command</th>
-                    <th>Submitted</th>
-                    <th>Message</th>
-                </tr>
-            </thead>
-            <tbody>
-                {commandLog.map(entry =>
-                    <tr key={Math.random()}>
-                        <td>{entry.status === 'success' ? <BsCheckCircleFill color='green'/>
-                            : <BsXCircleFill color='red'/>}</td>
-                        <td>{entry.name}</td>
-                        <td>{entry.submitted}</td>
-                        <td>{entry.message}</td>
-                    </tr>
-                )}
-            </tbody>
-        </Table>
-    );
+  return (
+    <Table hover>
+      <thead>
+        <tr className="table-secondary">
+          <th>Status</th>
+          <th>Command</th>
+          <th>Submitted</th>
+          <th>Message</th>
+        </tr>
+      </thead>
+      <tbody>
+        {commandLog.map((entry) => (
+          <tr key={entry.id}>
+            <td>
+              {entry.status === "success" ? (
+                <BsCheckCircleFill color="green" />
+              ) : (
+                <BsXCircleFill color="red" />
+              )}
+            </td>
+            <td>{entry.name}</td>
+            <td>{entry.submitted}</td>
+            <td>{entry.message}</td>
+          </tr>
+        ))}
+      </tbody>
+    </Table>
+  );
 }
