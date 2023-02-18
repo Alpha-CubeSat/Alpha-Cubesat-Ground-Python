@@ -45,3 +45,15 @@ def uplink_command(command):
     """
     # control.handle_command(command)
     return 'API not configured yet.', 503
+
+@cubesat.get('/command')
+@authenticate(token_auth)
+# @body(CommandSchema)
+# @response(CommandResponseSchema)
+@other_responses({401: 'Invalid access token'})
+def get_command_history(command):
+    """
+    Get Command History
+    Get all previously sent commands to the CubeSat
+    """
+    return 'API not configured yet.', 503
