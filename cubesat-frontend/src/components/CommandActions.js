@@ -1,7 +1,7 @@
-import {useDashboard} from "../contexts/DashboardProvider";
-import {Button} from "react-bootstrap";
+import { useDashboard } from "../contexts/DashboardProvider";
+import { Button } from "react-bootstrap";
 import ConfirmModal from "./ConfirmModal";
-import {useState} from "react";
+import { useState } from "react";
 
 // Command Actions (component of CommandBuilder)
 // Allows user to send commands and clear current commands.
@@ -19,6 +19,22 @@ export default function CommandActions() {
   const clearCommands = () => setCommandStack([]);
 
   const sendCommands = (async) => {
+    let api_response = [];
+    for (let command of commandStack) {
+      let error = Math.random() > 0.75;
+      api_response.push({
+        id: command.id,
+        name: command.name,
+        fields: command.fields,
+        submitted: new Date().toLocaleString(),
+        status: !error ? "success" : "failure",
+        message: !error
+          ? "command successfully transmitted"
+          : "connection timed out",
+      });
+    }
+    setCommandLog([...api_response.reverse(), ...commandLog]);
+
     // clear commands
     setCommandStack([]);
   };

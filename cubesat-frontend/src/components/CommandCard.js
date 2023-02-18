@@ -1,11 +1,16 @@
-import {Accordion} from "react-bootstrap";
-import {useRef} from "react";
-import {useDrag, useDrop} from "react-dnd";
+import { Accordion, Button } from "react-bootstrap";
+import { useRef } from "react";
+import { useDrag, useDrop } from "react-dnd";
 
 // Command Card (component of CommandList)
 // Shows the title and arguments of a created command.
 // Includes drag and drop support to allow easy reordering + deletion
-export default function CommandCard({ index, command, moveCommand }) {
+export default function CommandCard({
+  index,
+  command,
+  moveCommand,
+  deleteCommand,
+}) {
   // serves as unique ID for drag/drop
   const ref = useRef(null);
 
@@ -52,8 +57,18 @@ export default function CommandCard({ index, command, moveCommand }) {
       <Accordion.Item eventKey="0">
         <Accordion.Header>{index + 1 + ". " + command.title}</Accordion.Header>
         <Accordion.Body>
-          {/* Display all command fields */}
-          {Object.entries(command.fields).map(([k, v]) => k + ": " + v)}
+          <>
+            {/* Display all command fields */}
+            {Object.entries(command.fields).map(([k, v]) => k + ": " + v)}
+            <Button
+              onClick={() => deleteCommand(index)}
+              variant="link"
+              size="sm"
+              className="ps-0"
+            >
+              Delete Command
+            </Button>
+          </>
         </Accordion.Body>
       </Accordion.Item>
     </Accordion>

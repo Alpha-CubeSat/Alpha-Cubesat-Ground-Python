@@ -1,6 +1,6 @@
-import {Table} from "react-bootstrap";
-import {BsCheckCircleFill, BsXCircleFill} from "react-icons/bs";
-import {useDashboard} from "../contexts/DashboardProvider";
+import { Table } from "react-bootstrap";
+import { useDashboard } from "../contexts/DashboardProvider";
+import LogRow from "./LogRow";
 
 // Command History Log
 // Shows a log of all previously sent commands to the CubeSat with each command's status, name,
@@ -20,18 +20,7 @@ export default function CommandLog() {
       </thead>
       <tbody>
         {commandLog.map((entry) => (
-          <tr key={entry.id}>
-            <td>
-              {entry.status === "success" ? (
-                <BsCheckCircleFill color="green" />
-              ) : (
-                <BsXCircleFill color="red" />
-              )}
-            </td>
-            <td>{entry.name}</td>
-            <td>{entry.submitted}</td>
-            <td>{entry.message}</td>
-          </tr>
+          <LogRow key={entry.id} entry={entry} />
         ))}
       </tbody>
     </Table>

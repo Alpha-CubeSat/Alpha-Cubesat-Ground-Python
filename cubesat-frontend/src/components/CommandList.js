@@ -1,7 +1,7 @@
-import {useDashboard} from "../contexts/DashboardProvider";
+import { useDashboard } from "../contexts/DashboardProvider";
 import CommandCard from "./CommandCard";
-import {DndProvider} from "react-dnd";
-import {HTML5Backend} from "react-dnd-html5-backend";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 import update from "immutability-helper";
 
 // Command List (component of CommandBuilder)
@@ -23,6 +23,14 @@ export default function CommandList() {
     );
   };
 
+  // callback function to delete a command from the stack
+  const deleteCommand = (index) => {
+    setCommandStack([
+      ...commandStack.slice(0, index),
+      ...commandStack.slice(index + 1),
+    ]);
+  };
+
   return (
     <>
       {commandStack.length === 0 && <p>No commands</p>}
@@ -33,6 +41,7 @@ export default function CommandList() {
             index={i}
             command={cmd}
             moveCommand={moveCommand}
+            deleteCommand={deleteCommand}
           />
         ))}
       </DndProvider>

@@ -1,9 +1,9 @@
-import {Button, Col, Container, Row} from "react-bootstrap";
-import {createRef, useRef, useState} from "react";
+import { Button, Col, Container, Row } from "react-bootstrap";
+import { createRef, useRef, useState } from "react";
 import InputField from "./InputField";
 import Form from "react-bootstrap/Form";
-import {useDashboard} from "../contexts/DashboardProvider";
-import {burnwire_arm_time, rockblock_downlink_period} from "./Commands";
+import { useDashboard } from "../contexts/DashboardProvider";
+import { burnwire_arm_true, rockblock_downlink_period } from "./Commands";
 
 // Command Viewer
 // Shows the title and description for a selected command.
@@ -63,7 +63,7 @@ export default function CommandViewer() {
     // for testing
     if (command !== rockblock_downlink_period)
       setSelectedCommand(rockblock_downlink_period);
-    else setSelectedCommand(burnwire_arm_time);
+    else setSelectedCommand(burnwire_arm_true);
   };
 
   return (
