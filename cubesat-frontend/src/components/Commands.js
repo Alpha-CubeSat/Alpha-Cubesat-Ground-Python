@@ -290,3 +290,87 @@ export const fault_check_voltage_false = {
     title: "Check Voltage: False",
     description: "Sends command [fault::check_voltage_false]"
 }
+export const test = {
+    Mission: {arg: [1,2,3,4]}
+}
+export const selectArguments = {
+    
+    Mission : {arg: ["Mode: Initialization", "Mode: Low Power", "Mode: Deployment", "Mode: Standby", "Mode: Safe"],
+            desc: [
+                mission_mode_init.description,
+                mission_mode_low_power.description,
+                mission_mode_deployment.description,
+                mission_mode_standby.description,
+                mission_mode_safe.description
+            ]       
+            },
+    Burnwire : {arg: ["Arm: True","Arm: False", "Fire: True", "Fire: False", "Burn Time", "Arm Time"],
+            desc: [
+                burnwire_arm_true.description,
+                burnwire_arm_false.description,
+                burnwire_fire_true.description,
+                burnwire_fire_false.description,
+                burnwire_burn_time.description,
+                burnwire_arm_time.description
+            ]        
+            },
+    Rockblock : {arg: ["Downlink Period"],
+            desc: [
+                rockblock_downlink_period.description
+            ]   
+            },
+    Camera : {arg: ["Request Image Fragment", "Take Photo: True", "Take Photo: False", "Turn On", "Turn Off"],
+            desc: [
+                request_img_fragment.description,
+                take_photo_true.description,
+                take_photo_false.description,
+                camera_turn_on.description,
+                camera_turn_off.description
+            ]
+            },
+    Temperature : {arg: ["Mode: Active", "Mode: Inactive"],
+            desc: [
+                temperature_mode_active.description,
+                temperature_mode_inactive.description
+            ]
+            },
+    ACS: {arg: ["Mode: Full", "Mode: Simple", "Mode: Off", "Mag: X", "Mag: Y", "Mag: Z"],
+            desc: [
+                acs_mode_full.description,
+                acs_mode_simple.description,
+                acs_mode_off.description,
+                acs_mag_x.description,
+                acs_mag_y.description,
+                acs_mag_z.description
+            ]},
+    Faults : {arg: ["Fault Mode: Active","Fault Mode: Inactive", "Check Mag X: True", "Check Mag X: False", "Check Mag Y: True", "Check Mag Y: False",
+                   "Check Mag Z: True", "Check Mag Z: False", "Check Gyro X: True", "Check Gyro X: False", "Check Gyro Z: True", "Check Gyro Z: False", "Check Temp: True",
+                   "Check Temp: False", "Check Solar Curr: True", "Check Solar Curr: False", "Check Voltage: True", "Check Voltage: False"],
+            desc: [
+                fault_mode_active.description,
+                fault_mode_inactive.description,
+                fault_check_mag_x_true.description,
+                fault_check_mag_x_false.description,
+                fault_check_mag_y_true.description,
+                fault_check_mag_y_false.description,
+                fault_check_mag_z_true.description,
+                fault_check_mag_z_false.description,
+                fault_check_gyro_x_true.description,
+                fault_check_gyro_x_false.description,
+                fault_check_gyro_y_true.description,
+                fault_check_gyro_y_false.description,
+                fault_check_gyro_z_true.description,
+                fault_check_gyro_z_false.description,
+                fault_check_temp_c_true.description,
+                fault_check_temp_c_false.description,
+                fault_check_solar_true.description,
+                fault_check_solar_false.description,
+                fault_check_voltage_true.description,
+                fault_check_voltage_false.description
+            ]
+            },
+
+
+}
+
+
