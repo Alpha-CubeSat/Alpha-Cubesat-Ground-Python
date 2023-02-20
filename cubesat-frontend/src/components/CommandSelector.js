@@ -1,8 +1,7 @@
-import { useState, useRef } from "react";
+import { useState } from "react";
 import Dropdown from 'react-bootstrap/Dropdown';
 import { Container, Row, Col, Button, Form} from 'react-bootstrap';
-import {useDashboard} from "../contexts/DashboardProvider";
-import {selectArguments, test} from "./Commands"
+import {selectArguments } from "./Commands"
 
 export default function CommandSelector() {
 
@@ -60,29 +59,30 @@ export default function CommandSelector() {
     else {
       setIsSecInput(false)
     }
-
   }
 
+  //Updates fieldArg to whatever is in the input field
   function handleInputChange(event) {
     setFieldArg(event.target.value);
   }
 
+  //Handles submit button press
   function handleSubmit(event) {
-    alert(fieldArg)
+    alert("Input Field: " + fieldArg + " Opcode: " + selectedOpCode + " FirstArg: " + firstArg)
     event.preventDefault();
     //Do something with firstArg, selectedOpCode, and fieldArg. Send to Command Builder and Command List?
-    console.log('Submitted value:', fieldArg);
   }
  
-
   return (
-
       <Container>
+        {/* //Command Title and Description */}
         <Row>
           <h1 style={{ fontSize: '2rem' }}>{title !== "No Command Selected"? title : "No Command Selected"}</h1>
           <h2 style={{ fontSize: '1rem' }}>{desc} </h2>
           <hr/>
         </Row>
+
+        {/*Opcode dropdown selection*/}
         <Row>
           <Col className = 'flex col-sm-3'>
             <span style={{ fontWeight: 'bold' }}>Select Opcode</span>
@@ -99,13 +99,14 @@ export default function CommandSelector() {
               </Dropdown.Menu>
             </Dropdown>
           </Col>
+                  
+          {/*First argument dropdown selection*/}
           <Col className = 'flex col-sm-3'>
           <span style={{ fontWeight: 'bold' }}>First Argument</span>
             <Dropdown>
               <Dropdown.Toggle variant="success" id="dropdown-basic">
                 {firstArg}
               </Dropdown.Toggle>
-        
               <Dropdown.Menu>
                 {firstArgList.map((option, index) => (
                   <Dropdown.Item key={index} onClick={handleFirstArgSelection(option)}>
@@ -116,13 +117,15 @@ export default function CommandSelector() {
             </Dropdown>
           </Col>
         </Row>
+
+        {/*Renders input field if required-- 
+        renders submit button if first arg and opcode have been selected*/}
         <Row className='mt-3'>
-          <span style={{ fontWeight: 'bold' }}>Fields</span>
           <Col className = 'col-sm-6'>
                 <Form onSubmit={handleSubmit}>
                 {isSecInput ? (
                   <Form.Group controlId="formBasicEmail">
-                    <Form.Label>{fieldName}</Form.Label>
+                    <span style={{ fontWeight: 'bold' }}>{fieldName}</span>
                         <Form.Control
                           type="text"
                           placeholder="Enter argument"
