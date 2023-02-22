@@ -4,40 +4,29 @@ import { Container, Row, Col, Button, Form} from 'react-bootstrap';
 import {selectArguments } from "./Commands"
 
 export default function CommandSelector() {
-
-/* 
-* Dictionary of fields that require input fields. Value is the number of fields needed
-*/
-  var requiresField = {
-    'Burn Time' : 1,
-    'Arm Time' : 1,
-    'Downlink Period' : 1,
-    'Request Image Fragment' : 2
-  }
   
   var opcodeList = ["Mission", "Burnwire","Rockblock", "Camera", "Temperature", "ACS", "Faults"]
 
   //Selected argument values
   const [selectedOpCode, setSelectedOpCode] = useState("Select Opcode")
   const [firstArg, setFirstArg] = useState("None")
-  const [fieldArg, setFieldArg] = useState("")
+  const [fieldArg, setFieldArg] = useState([])
 
   //Handles conditional rendering
   const [firstArgList, setFirstArgList] = useState([])
-  const [isSecInput, setIsSecInput] = useState(false)      //checks if an input field is required
-  const [fieldName, setFieldName] = useState("None")
+  const [listInput, setListInput] = useState([])
 
   //for command title and command description
   const [title, setTitle] = useState("No command selected")
   const [desc, setDesc] = useState("Select a command")
 
+  //Resets command arguments and selects OpCode
   const handleOpCodeSelection = (opcode) => () => {
-
     console.log(fieldArg)
     setSelectedOpCode(opcode)
     setFirstArgList(selectArguments[opcode].arg)
     setFirstArg("None")
-    setIsSecInput(false)
+    setListInput([])
     setTitle("No command selected")
     setDesc("Select a command")
   }
@@ -47,26 +36,25 @@ export default function CommandSelector() {
    */
   const handleFirstArgSelection = (arg1) => () => {
     setFirstArg(arg1)
-    setFieldName(arg1)
     setTitle(selectedOpCode + " " + arg1)
     setDesc("Select a command")
     setDesc(selectArguments[selectedOpCode].desc[(selectArguments[selectedOpCode].arg).indexOf(arg1)])
-    
-    //Handles if 2nd argument is an input field
-    if (arg1 in requiresField) {        
-      setIsSecInput(true)
-    }
-    else {
-      setIsSecInput(false)
+
+    //If arg1 exists as a key in selectArguments[selectedOpCode], the command requires an input field
+    if (arg1 in selectArguments[selectedOpCode]) {
+      console.log("THIS RAN")
+      setListInput(selectArguments[selectedOpCode][arg1])
     }
   }
 
   //Updates fieldArg to whatever is in the input field
-  function handleInputChange(event) {
-    setFieldArg(event.target.value);
+  const handleInputChange = (event, index) => {
+    const updatedField = fieldArg
+    updatedField[index] = (event.target.value)
+    setFieldArg(updatedField)
   }
 
-  //Handles submit button press
+  //Handles submit button press. 
   function handleSubmit(event) {
     alert("Input Field: " + fieldArg + " Opcode: " + selectedOpCode + " FirstArg: " + firstArg)
     event.preventDefault();
@@ -121,19 +109,21 @@ export default function CommandSelector() {
         {/*Renders input field if required-- 
         renders submit button if first arg and opcode have been selected*/}
         <Row className='mt-3'>
-          <Col className = 'col-sm-6'>
+          <Col className = 'col-sm-8'>
                 <Form onSubmit={handleSubmit}>
-                {isSecInput ? (
-                  <Form.Group controlId="formBasicEmail">
-                    <span style={{ fontWeight: 'bold' }}>{fieldName}</span>
-                        <Form.Control
-                          type="text"
-                          placeholder="Enter argument"
-                          value={fieldArg}
-                          onChange={handleInputChange}
-                        />
-                   </Form.Group>
-                ) : null}
+                {listInput !== [] ? (
+                  listInput.map((option,index) => (
+                    <Form.Group controlId={index}>
+                      <span style={{ fontWeight: 'bold' }}>{option}</span>
+                          <Form.Control
+                            style={{ fontSize: '20px', height: '50px' }}
+                            type="text"
+                            placeholder="Enter argument"
+                            value={fieldArg[index]}
+                            onChange = {(e) => handleInputChange(e, index)}
+                          />
+                    </Form.Group>
+                ))) : null}
                 {fieldArg !== 0 && firstArg !== "None" ? 
                 (<Button style ={{position: 'absolute', width: '100px', bottom: 20, left: 25}} variant="primary" type="submit">
                   Submit

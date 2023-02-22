@@ -290,12 +290,11 @@ export const fault_check_voltage_false = {
     title: "Check Voltage: False",
     description: "Sends command [fault::check_voltage_false]"
 }
-export const test = {
-    Mission: {arg: [1,2,3,4]}
-}
+
 export const selectArguments = {
     
-    Mission : {arg: ["Mode: Initialization", "Mode: Low Power", "Mode: Deployment", "Mode: Standby", "Mode: Safe"],
+    Mission : {
+            arg: ["Mode: Initialization", "Mode: Low Power", "Mode: Deployment", "Mode: Standby", "Mode: Safe"],
             desc: [
                 mission_mode_init.description,
                 mission_mode_low_power.description,
@@ -304,7 +303,8 @@ export const selectArguments = {
                 mission_mode_safe.description
             ]       
             },
-    Burnwire : {arg: ["Arm: True","Arm: False", "Fire: True", "Fire: False", "Burn Time", "Arm Time"],
+    Burnwire : {
+            arg: ["Arm: True","Arm: False", "Fire: True", "Fire: False", "Burn Time", "Arm Time"],
             desc: [
                 burnwire_arm_true.description,
                 burnwire_arm_false.description,
@@ -312,12 +312,15 @@ export const selectArguments = {
                 burnwire_fire_false.description,
                 burnwire_burn_time.description,
                 burnwire_arm_time.description
-            ]        
+            ],
+            "Burn Time" : ["Burn Time"],
+            "Arm Time" : ["Arm Time"]
             },
     Rockblock : {arg: ["Downlink Period"],
             desc: [
                 rockblock_downlink_period.description
-            ]   
+            ],
+            "Downlink Period": ["Downlink Period"]   
             },
     Camera : {arg: ["Request Image Fragment", "Take Photo: True", "Take Photo: False", "Turn On", "Turn Off"],
             desc: [
@@ -326,7 +329,8 @@ export const selectArguments = {
                 take_photo_false.description,
                 camera_turn_on.description,
                 camera_turn_off.description
-            ]
+            ],
+            "Request Image Fragment" : ["Request Image Fragment", "Camera Serial Number"] 
             },
     Temperature : {arg: ["Mode: Active", "Mode: Inactive"],
             desc: [
