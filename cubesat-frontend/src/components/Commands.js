@@ -291,6 +291,8 @@ export const fault_check_voltage_false = {
     description: "Sends command [fault::check_voltage_false]"
 }
 
+export const opcodeList = ["Mission", "Burnwire","Rockblock", "Camera", "Temperature", "ACS", "Faults"]
+
 export const selectArguments = {
     
     Mission : {

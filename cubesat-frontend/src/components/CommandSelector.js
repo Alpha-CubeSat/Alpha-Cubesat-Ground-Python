@@ -1,11 +1,13 @@
 import { useState } from "react";
 import Dropdown from 'react-bootstrap/Dropdown';
 import { Container, Row, Col, Button, Form} from 'react-bootstrap';
-import {selectArguments } from "./Commands"
+import {selectArguments, opcodeList } from "./Commands"
+import { useDashboard } from "../contexts/DashboardProvider";
+
 
 export default function CommandSelector() {
   
-  var opcodeList = ["Mission", "Burnwire","Rockblock", "Camera", "Temperature", "ACS", "Faults"]
+  const { commandStack, setCommandStack, count, setCount } = useDashboard();
 
   //Selected argument values
   const [selectedOpCode, setSelectedOpCode] = useState("Select Opcode")
@@ -22,7 +24,6 @@ export default function CommandSelector() {
 
   //Resets command arguments and selects OpCode
   const handleOpCodeSelection = (opcode) => () => {
-    console.log(fieldArg)
     setSelectedOpCode(opcode)
     setFirstArgList(selectArguments[opcode].arg)
     setFirstArg("None")
@@ -42,7 +43,6 @@ export default function CommandSelector() {
 
     //If arg1 exists as a key in selectArguments[selectedOpCode], the command requires an input field
     if (arg1 in selectArguments[selectedOpCode]) {
-      console.log("THIS RAN")
       setListInput(selectArguments[selectedOpCode][arg1])
     }
   }
@@ -56,9 +56,19 @@ export default function CommandSelector() {
 
   //Handles submit button press. 
   function handleSubmit(event) {
-    alert("Input Field: " + fieldArg + " Opcode: " + selectedOpCode + " FirstArg: " + firstArg)
     event.preventDefault();
-    //Do something with firstArg, selectedOpCode, and fieldArg. Send to Command Builder and Command List?
+    let new_command = { // substitute variable names as appropriate
+      id: count,
+      name: selectedOpCode,
+      title: firstArg,
+      fields: fieldArg,
+    };
+  setCommandStack([...commandStack, new_command]);
+  setCount(count + 1);
+  setSelectedOpCode("Select Opcode")
+  setFirstArg("None")
+  setFieldArg([])
+  setListInput([])
   }
  
   return (
