@@ -25,7 +25,6 @@ export default function ImageViewer() {
 
   const handleImageSelection = async (file) => {
     const response = await api.get("/cubesat/img/" + file);
-    console.log(response.body);
     if (response.ok) {
       setImageData(response.body);
     }
@@ -58,7 +57,7 @@ export default function ImageViewer() {
       </Col>
       {/* Renders image if an image is selected */}
       <Col>
-        {imageData !== undefined ? (
+        {imageData !== undefined && (
           <Image
             src={`data:image/jpg;base64,${imageData["base64"]}`}
             alt={imageData["name"]}
@@ -69,7 +68,7 @@ export default function ImageViewer() {
             fluid
             rounded
           />
-        ) : null}
+        )}
       </Col>
     </Row>
   );

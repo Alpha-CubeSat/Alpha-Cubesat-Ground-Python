@@ -2,6 +2,7 @@ import { useDashboard } from "../contexts/DashboardProvider";
 import { Button } from "react-bootstrap";
 import ConfirmModal from "./ConfirmModal";
 import { useState } from "react";
+import { useApi } from "../contexts/ApiProvider";
 
 // Command Actions (component of CommandBuilder)
 // Allows user to send commands and clear current commands.
@@ -9,6 +10,7 @@ import { useState } from "react";
 export default function CommandActions() {
   const { commandStack, setCommandStack, commandLog, setCommandLog } =
     useDashboard();
+  const api = useApi();
 
   // confirmation dialog states
   const [sendShow, setSendShow] = useState(false);
@@ -18,22 +20,21 @@ export default function CommandActions() {
 
   const clearCommands = () => setCommandStack([]);
 
-  const sendCommands = (async) => {
-    let api_response = [];
+  const sendCommands = async () => {
+    // build api request to send commands
+    let request_body = [];
     for (let command of commandStack) {
-      let error = Math.random() > 0.75;
-      api_response.push({
-        id: command.id,
-        name: command.name,
-        fields: command.fields,
-        submitted: new Date().toLocaleString(),
-        status: !error ? "success" : "failure",
-        message: !error
-          ? "command successfully transmitted"
-          : "connection timed out",
+      request_body.push({
+        operation: command.name, // temporary for testing
+        args: command.fields,
       });
     }
-    setCommandLog([...api_response.reverse(), ...commandLog]);
+
+    const response = await api.post("/cubesat/command", request_body);
+    console.log(response.body);
+
+    // update command log
+    setCommandLog([response.body, ...commandLog]);
 
     // clear commands
     setCommandStack([]);
@@ -41,6 +42,7 @@ export default function CommandActions() {
 
   return (
     <>
+      {/* Clear commands button + confirmation dialog */}
       <Button
         variant="danger"
         disabled={!commandsStacked}
@@ -60,6 +62,8 @@ export default function CommandActions() {
         setShow={setClearShow}
         onConfirm={clearCommands}
       />
+
+      {/* Send commands button + confirmation dialog */}
       <Button
         variant="success"
         disabled={!commandsStacked}

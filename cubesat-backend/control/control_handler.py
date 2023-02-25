@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 
 "Stores the result of uplinking a command into the command text file logs."
 def log_command(command):
@@ -10,8 +11,8 @@ def log_command(command):
 
     time = str(currentHour) + ":" + str(currentMinute)
     date = str(currentMonth) + "/" + str(currentDay) + "/" + str(currentYear)
-    writeContent = "\n" + command + ", " + time + ", " + date
-    filename = "commands_" + currentYear + ".txt"
+    writeContent = f"{date},{time},{json.dumps(command)}\n"
+    filename = f"commands_{currentYear}.txt"
     file = open(filename, 'a')
     file.write(writeContent)
     file.close()

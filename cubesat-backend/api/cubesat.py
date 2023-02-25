@@ -1,3 +1,5 @@
+import time
+
 from apifairy import response, authenticate, arguments, body, other_responses
 from flask import Blueprint
 
@@ -35,7 +37,7 @@ def get_image(name: 'Name of the image'):
 
 @cubesat.post('/command')
 @authenticate(token_auth)
-@body(CommandSchema)
+@body(CommandSchema(many=True))
 @response(CommandResponseSchema)
 @other_responses({401: 'Invalid access token'})
 def uplink_command(command):
@@ -43,8 +45,17 @@ def uplink_command(command):
     Uplink Command
     Process a command to be sent to cubesat
     """
+    print(command)
     control.handle_command(command)
-    return 'API not configured yet.', 503
+
+    # for basic integration testing only
+    return {
+        'status': 'success',
+        'timestamp': time.time() * 1000,
+        'commands': command,
+        'error_code': '',
+        'error_message': ''
+    }
 
 @cubesat.get('/command')
 @authenticate(token_auth)

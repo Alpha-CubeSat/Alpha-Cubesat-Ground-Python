@@ -17,28 +17,24 @@ export default function DashboardProvider({ children }) {
   // notify command log of API response when user sends command
   const [commandLog, setCommandLog] = useState([
     {
-      id: -3,
-      name: "mission_mode_low_power",
-      fields: [],
-      submitted: new Date().toLocaleString(),
       status: "success",
-      message: "command successfully transmitted",
-    },
-    {
-      id: -2,
-      name: "burnwire_burn_time",
-      fields: [],
-      submitted: new Date().toLocaleString(),
-      status: "failure",
-      message: "connection timed out",
-    },
-    {
-      id: -1,
-      name: "take_photo_true",
-      fields: [],
-      submitted: new Date().toLocaleString(),
-      status: "failure",
-      message: "connection timed out",
+      timestamp: "1677363088399.2676",
+      commands: [
+        {
+          operation: "Mission Mode: Low Power",
+          args: [],
+        },
+        {
+          operation: "Burnwire Burn Time",
+          args: ["343333333333"],
+        },
+        {
+          operation: "Camera Take Photo: True",
+          args: [],
+        },
+      ],
+      error_code: "",
+      error_message: "",
     },
   ]);
 

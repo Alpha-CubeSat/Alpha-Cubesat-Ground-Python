@@ -60,10 +60,10 @@ export default function CommandSelector() {
   function handleSubmit(event) {
     event.preventDefault();
     let new_command = {
-      // substitute variable names as appropriate
       id: count,
-      name: firstArg,
-      title: selectedOpCode,
+      name: title,
+      opcode: selectedOpCode,
+      firstArg: firstArg,
       fields: fieldArg,
     };
     setCommandStack([...commandStack, new_command]);

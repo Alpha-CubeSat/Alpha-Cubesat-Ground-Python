@@ -13,13 +13,14 @@ export default function CommandLog() {
       <thead>
         <tr className="table-secondary">
           <th>Status</th>
-          <th>Command</th>
+          <th>Command(s)</th>
           <th>Submitted</th>
           <th>Message</th>
         </tr>
       </thead>
       <tbody>
         {commandLog.map((entry) => (
+          // TODO: fix row ids
           <LogRow key={entry.id} entry={entry} />
         ))}
       </tbody>

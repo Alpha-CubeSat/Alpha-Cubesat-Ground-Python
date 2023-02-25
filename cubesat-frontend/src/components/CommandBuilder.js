@@ -1,4 +1,4 @@
-import {Container} from "react-bootstrap";
+import { Container } from "react-bootstrap";
 import CommandList from "./CommandList";
 import CommandActions from "./CommandActions";
 
@@ -12,9 +12,11 @@ export default function CommandBuilder() {
       <Container className="p-0 h-100 d-flex flex-column">
         <h5>New Command</h5>
         <hr />
+        {/* Current list of commands to send to cubesat */}
         <Container className="p-0 flex-fill overflow-auto">
           <CommandList />
         </Container>
+        {/* Clear and send command buttons */}
         <Container className="p-0 justify-content-end">
           <hr />
           <CommandActions />
