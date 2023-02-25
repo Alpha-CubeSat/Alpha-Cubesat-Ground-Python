@@ -1,11 +1,13 @@
 from apifairy import APIFairy
 from flask import Flask, redirect, url_for
+from flask_cors import CORS
 from flask_marshmallow import Marshmallow
 
 from config import Config
 
 ma = Marshmallow()
 apifairy = APIFairy()
+cors = CORS()
 
 def create_app():
     app = Flask(__name__)
@@ -13,6 +15,7 @@ def create_app():
 
     ma.init_app(app)
     apifairy.init_app(app)
+    cors.init_app(app)
 
     from api.auth import auth
     app.register_blueprint(auth, url_prefix='/api/auth')

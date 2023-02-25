@@ -19,7 +19,7 @@ class RockblockReportSchema(ma.Schema):
     data = ma.Str(required=True)
 
 class ImageCountSchema(ma.Schema):
-    count = ma.Int(load_default=1)
+    count = ma.Int(load_default=5)
 
 class ImageNameSchema(ma.Schema):
     images = ma.List(ma.Str())

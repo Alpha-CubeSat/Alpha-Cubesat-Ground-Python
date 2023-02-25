@@ -8,9 +8,7 @@ export default class ApiClient {
 
   async request(options) {
     let query = new URLSearchParams(options.query || {}).toString();
-    if (query !== "") {
-      query = "?" + query;
-    }
+    if (query !== "") query = "?" + query;
 
     let response;
     try {
@@ -18,6 +16,7 @@ export default class ApiClient {
         method: options.method,
         headers: {
           "Content-Type": "application/json",
+          Authorization: "Bearer testToken",
           ...options.headers,
         },
         body: options.body ? JSON.stringify(options.body) : null,

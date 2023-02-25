@@ -55,7 +55,7 @@ export default function CommandCard({
       style={{ opacity: isDragging ? 0 : 1 }}
     >
       <Accordion.Item eventKey="0">
-        <Accordion.Header>{index + 1 + ". " + command.title}</Accordion.Header>
+        <Accordion.Header>{index + 1 + ". " + command.name}</Accordion.Header>
         <Accordion.Body>
           <>
             {/* Display all command fields */}
