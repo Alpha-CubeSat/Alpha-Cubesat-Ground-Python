@@ -6,7 +6,7 @@ from api.auth import token_auth
 from api.schemas import ImageNameSchema, ImageCountSchema, ImageDataSchema, CommandSchema, \
     CommandResponseSchema
 
-# import control.control_handler as control
+import control.control_handler as control
 
 cubesat = Blueprint('cubesat', __name__)
 
@@ -43,7 +43,7 @@ def uplink_command(command):
     Uplink Command
     Process a command to be sent to cubesat
     """
-    # control.handle_command(command)
+    control.handle_command(command)
     return 'API not configured yet.', 503
 
 @cubesat.get('/command')
