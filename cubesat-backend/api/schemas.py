@@ -30,14 +30,15 @@ class ImageDataSchema(ma.Schema):
     base64 = ma.Str(required=True)
 
 class CommandSchema(ma.Schema):
-    type = ma.Str(required=True) # enum?
-    fields = ma.Dict(keys=ma.Str(), values=ma.Str())
+    operation = ma.Str(required=True)
+    args = ma.List(ma.Str())
 
 class CommandResponseSchema(ma.Schema):
     status = ma.Str(required=True)
-    id = ma.Int()
-    error_code = ma.Int()
-    description = ma.Str()
+    timestamp = ma.Str(required=True)
+    commands = ma.Nested(CommandSchema(many=True), required=True)
+    error_code = ma.Str()
+    error_message = ma.Str()
 
 class TokenResponseSchema(ma.Schema):
     access_token = ma.Str(required=True)
