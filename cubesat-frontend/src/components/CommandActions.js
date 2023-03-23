@@ -30,11 +30,12 @@ export default function CommandActions() {
       });
     }
 
+    // show spinner while commands are being sent?
     const response = await api.post("/cubesat/command", request_body);
-    console.log(response.body);
+    console.log(response.data);
 
     // update command log
-    setCommandLog([response.body, ...commandLog]);
+    setCommandLog([response.data, ...commandLog]);
 
     // clear commands
     setCommandStack([]);

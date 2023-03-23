@@ -15,8 +15,8 @@ export default function ImageViewer() {
     (async () => {
       // fetches last 5 images by default
       const response = await api.get("/cubesat/img/recent");
-      if (response.ok) {
-        setImageList(response.body["images"]);
+      if (response.status === 200) {
+        setImageList(response.data["images"]);
       } else {
         setImageList([]);
       }
@@ -25,8 +25,8 @@ export default function ImageViewer() {
 
   const handleImageSelection = async (file) => {
     const response = await api.get("/cubesat/img/" + file);
-    if (response.ok) {
-      setImageData(response.body);
+    if (response.status === 200) {
+      setImageData(response.data);
     }
   };
 
