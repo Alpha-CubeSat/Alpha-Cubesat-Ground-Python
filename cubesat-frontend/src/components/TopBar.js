@@ -1,8 +1,10 @@
 import { Container, Navbar, NavDropdown } from "react-bootstrap";
 import alpha from "../AlphaPatch.png";
-import AdminEditUsers from "../pages/AdminEditUsers";
+import AdminUserManage from "../pages/AdminUserManage";
 import { useState } from "react";
 
+// Top Bar
+// Shows info such as alpha logo + name, dropdown for logging out and managing users (admin only)
 export default function TopBar() {
   const [editShow, setEditShow] = useState(false);
 
@@ -24,7 +26,7 @@ export default function TopBar() {
           </NavDropdown>
         </Container>
       </Navbar>
-      <AdminEditUsers show={editShow} setShow={setEditShow} />
+      <AdminUserManage show={editShow} setShow={setEditShow} />
     </>
   );
 }

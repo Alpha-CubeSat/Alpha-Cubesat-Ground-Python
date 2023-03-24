@@ -30,7 +30,7 @@ export default function CommandActions() {
       });
     }
 
-    // show spinner while commands are being sent?
+    // TODO: show spinner while commands are being sent
     const response = await api.post("/cubesat/command", request_body);
     console.log(response.data);
 

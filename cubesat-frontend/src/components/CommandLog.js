@@ -19,9 +19,8 @@ export default function CommandLog() {
         </tr>
       </thead>
       <tbody>
-        {commandLog.map((entry) => (
-          // TODO: fix row ids
-          <LogRow key={entry.id} entry={entry} />
+        {commandLog.map((entry, i) => (
+          <LogRow key={i} entry={entry} />
         ))}
       </tbody>
     </Table>

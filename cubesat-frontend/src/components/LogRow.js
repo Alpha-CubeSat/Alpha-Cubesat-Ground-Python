@@ -19,9 +19,10 @@ export default function LogRow({ entry }) {
       </td>
       <td>
         <>
-          {entry.commands.map((command) => (
-            //  TODO: find better way to seperate commands + show command arguments
+          {entry.commands.map((command, i) => (
+            // TODO: find better way to seperate commands + show command arguments
             <p
+              key={i}
               title={Object.entries(command.args).map(([k, v]) => k + ": " + v)}
             >
               {command.operation}
