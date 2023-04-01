@@ -30,8 +30,10 @@ class ImageDataSchema(ma.Schema):
     base64 = ma.Str(required=True)
 
 class CommandSchema(ma.Schema):
-    operation = ma.Str(required=True)
-    args = ma.List(ma.Str())
+    opcode = ma.Str(required=True)
+    namespace = ma.Str()
+    field = ma.Str()
+    value = ma.Raw()
 
 class CommandResponseSchema(ma.Schema):
     status = ma.Str(required=True)

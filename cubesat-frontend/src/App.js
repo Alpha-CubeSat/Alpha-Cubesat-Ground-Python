@@ -12,7 +12,7 @@ export default function App() {
       <ToastContainer />
       <ApiProvider>
         <DashboardProvider>
-          <Container fluid className="p-0 d-flex flex-column vh-100">
+          <Container fluid className="vh-100 p-0">
             <TopBar />
             <Dashboard />
           </Container>

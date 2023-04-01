@@ -10,7 +10,7 @@ export default function TopBar() {
 
   return (
     <>
-      <Navbar style={{ backgroundColor: "#595c5f" }} className="p-1">
+      <Navbar style={{ backgroundColor: "#595c5f" }} className="header p-1">
         <Container fluid>
           <Navbar.Brand>
             <img src={alpha} width="30" height="30" alt="Alpha Logo" />

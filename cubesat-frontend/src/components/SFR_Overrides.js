@@ -1,27 +1,38 @@
-export const stabilization = {
+// Flight Software SFR Fields
+// see https://github.com/Alpha-CubeSat/oop-flight-code/blob/main/src/sfr.cpp for more info
+
+export const Types = Object.freeze({
+  Minute: "Minute",
+  Hour: "Hour",
+  Int: "Int",
+  Float: "Float",
+  Bool: "Bool",
+});
+
+const stabilization = {
   // OP Codes 1100
-  max_time: "uint32_t",
+  max_time: { type: Types.Minute },
 };
 
-export const boot = {
+const boot = {
   // OP Codes 1200
-  max_time: "uint32_t",
+  max_time: { type: Types.Hour },
 };
 
-export const simple = {
+const simple = {
   // OP Codes 1300
-  max_time: "uint32_t",
+  max_time: { type: Types.Minute },
 };
 
-export const point = {
+const point = {
   // OP Codes 1400
-  max_time: "uint32_t",
+  max_time: { type: Types.Minute },
 };
 
-export const detumble = {
+const detumble = {
   // OP Codes 1500
-  start_time: "uint32_t",
-  max_time: "uint32_t",
+  start_time: { type: Types.Int },
+  max_time: { type: Types.Hour },
 
   min_stable_gyro_z: "uint8_t",
   max_stable_gyro_x: "uint8_t",
@@ -31,159 +42,181 @@ export const detumble = {
   min_unstable_gyro_y: "uint8_t",
 };
 
-export const aliveSignal = {
+const aliveSignal = {
   // OP Codes 1600
-  max_downlink_hard_faults: "uint16_t",
-  downlinked: "bool",
-  max_time: "uint32_t",
-  num_hard_faults: "uint16_t",
+  max_downlink_hard_faults: { type: Types.Int },
+  downlinked: { type: Types.Bool },
+  max_time: { type: Types.Hour },
+  num_hard_faults: { type: Types.Int },
 };
 
-export const photoresistor = {
+const photoresistor = {
   // OP Codes 1700
-  covered: "bool",
+  covered: { type: Types.Bool },
 };
 
-export const mission = {
+const mission = {
   // OP Codes 1800
-  acs_transmit_cycle_time: "uint32_t",
+  acs_transmit_cycle_time: { type: Types.Minute },
 
-  time_deployed: "uint32_t",
-  deployed: "bool",
-  already_deployed: "bool",
-  possible_uncovered: "bool",
+  time_deployed: { type: Types.Int },
+  deployed: { type: Types.Bool },
+  already_deployed: { type: Types.Bool },
+  possible_uncovered: { type: Types.Bool },
 };
 
-export const burnwire = {
+const burnwire = {
   // OP Codes 1900
-  attempts: "uint16_t",
-  start_time: "uint32_t",
-  burn_time: "uint32_t",
-  armed_time: "uint32_t",
+  attempts: { type: Types.Int },
+  start_time: { type: Types.Int },
+  burn_time: { type: Types.Int },
+  armed_time: { type: Types.Int },
   mode: "uint16_t",
-  attempts_limit: "uint16_t",
-  mandatory_attempts_limit: "uint16_t",
-  delay_time: "uint32_t",
+  attempts_limit: { type: Types.Int },
+  mandatory_attempts_limit: { type: Types.Int },
+  delay_time: { type: Types.Int },
 };
 
-export const camera = {
+const camera = {
   // OP Codes 2000
-  photo_taken_sd_failed: "bool",
-  take_photo: "bool",
-  turn_on: "bool",
-  turn_off: "bool",
-  powered: "bool",
+  photo_taken_sd_failed: { type: Types.Bool },
+  take_photo: { type: Types.Bool },
+  turn_on: { type: Types.Bool },
+  turn_off: { type: Types.Bool },
+  powered: { type: Types.Bool },
 
   // Initialization
-  start_progress: "uint8_t",
-  step_time: "uint32_t",
-  init_start_time: "uint32_t",
-  init_timeout: "uint32_t",
-  begin_delay: "uint32_t",
-  resolution_set_delay: "uint32_t",
-  resolution_get_delay: "uint32_t",
+  start_progress: { type: Types.Int },
+  step_time: { type: Types.Int },
+  init_start_time: { type: Types.Int },
+  init_timeout: { type: Types.Int },
+  begin_delay: { type: Types.Int },
+  resolution_set_delay: { type: Types.Int },
+  resolution_get_delay: { type: Types.Int },
 
   init_mode: "uint16_t",
   mode: "uint16_t",
 
-  images_written: "uint32_t",
-  fragments_written: "uint32_t",
+  images_written: { type: Types.Int },
+  fragments_written: { type: Types.Int },
 
   set_res: "uint32_t",
 
-  failed_times: "uint16_t",
-  failed_limit: "uint16_t",
+  failed_times: { type: Types.Int },
+  failed_limit: { type: Types.Int },
 
-  fragment_number_requested: "uint32_t",
-  serial_requested: "uint8_t",
+  fragment_number_requested: { type: Types.Int },
+  serial_requested: { type: Types.Int },
 };
 
-export const rockblock = {
+const rockblock = {
   // OP Codes 2100
-  ready_status: "bool",
+  ready_status: { type: Types.Bool },
 
-  last_downlink: "uint32_t",
-  downlink_period: "uint32_t",
+  last_downlink: { type: Types.Int },
+  downlink_period: { type: Types.Int },
 
-  waiting_message: "bool",
+  waiting_message: { type: Types.Bool },
 
-  max_commands_count: "uint8_t",
+  max_commands_count: { type: Types.Int },
 
-  imu_max_fragments: "uint16_t",
+  imu_max_fragments: { type: Types.Int },
+  imu_downlink_start_time: { type: Types.Int },
+  imu_downlink_remain_time: { type: Types.Int },
+  imu_first_start: { type: Types.Bool },
+  imu_downlink_on: { type: Types.Bool },
 
-  imudownlink_start_time: "uint32_t",
-  imudownlink_remain_time: "uint32_t",
-  imu_first_start: "bool",
-  imu_downlink_on: "bool",
-
-  flush_status: "bool",
-  waiting_command: "bool",
-  conseq_reads: "uint32_t",
-  timeout: "uint32_t",
-  start_time: "uint32_t",
-  start_time_check_signal: "uint32_t",
-  max_check_signal_time: "uint32_t",
-  sleep_mode: "bool",
+  flush_status: { type: Types.Bool },
+  waiting_command: { type: Types.Bool },
+  conseq_reads: { type: Types.Int },
+  timeout: { type: Types.Minute },
+  start_time: { type: Types.Int },
+  start_time_check_signal: { type: Types.Int },
+  max_check_signal_time: { type: Types.Minute },
+  sleep_mode: { type: Types.Bool },
 
   downlink_report_type: "uint16_t",
   mode: "uint16_t",
 };
 
-export const imu = {
+const imu = {
   // OP Codes 2200
   mode: "uint16_t",
 
   init_mode: "uint16_t",
 
-  max_fragments: "uint32_t",
+  max_fragments: { type: Types.Int },
 
-  sample_gyro: "bool",
+  sample_gyro: { type: Types.Bool },
 
-  turn_on: "bool",
-  turn_off: "bool",
-  powered: "bool",
+  turn_on: { type: Types.Bool },
+  turn_off: { type: Types.Bool },
+  powered: { type: Types.Bool },
 
-  failed_times: "uint16_t",
-  failed_limit: "uint16_t",
+  failed_times: { type: Types.Int },
+  failed_limit: { type: Types.Int },
 };
 
-export const temperature = {
+const temperature = {
   // OP Codes 2300
-  in_sun: "bool",
+  in_sun: { type: Types.Bool },
 };
 
-export const current = {
+const current = {
   // OP Codes 2400
-  in_sun: "bool",
+  in_sun: { type: Types.Bool },
 };
 
-export const acs = {
+const acs = {
   // OP Codes 2500
-  max_no_communication: "uint32_t",
+  max_no_communication: { type: Types.Int },
 
-  on_time: "uint32_t",
-  off: "bool",
+  on_time: { type: Types.Minute },
+  off: { type: Types.Bool },
 
   mag: "uint16_t",
 };
 
-export const battery = {
+const battery = {
   // OP Codes 2600
   acceptable_battery: "uint32_t",
   min_battery: "uint32_t",
 };
 
-export const button = {
+const button = {
   // OP Codes 2700
-  pressed: "bool",
+  pressed: { type: Types.Bool },
 };
 
-export const eeprom = {
+const eeprom = {
   // OP Codes 2800
-  boot_counter: "uint8_t",
-  wait_time_write_step_time: "uint32_t",
-  allotted_time: "uint32_t",
-  allotted_time_passed: "bool",
-  sfr_write_step_time: "uint32_t",
-  sfr_address_age: "uint32_t",
+  boot_counter: { type: Types.Int },
+  wait_time_write_step_time: { type: Types.Int },
+  allotted_time: { type: Types.Int },
+  allotted_time_passed: { type: Types.Bool },
+  sfr_write_step_time: { type: Types.Int },
+  sfr_address_age: { type: Types.Int },
+  storage_full: { type: Types.Bool },
 };
+
+const namespaces = {
+  stabilization: stabilization,
+  boot: boot,
+  simple: simple,
+  point: point,
+  detumble: detumble,
+  aliveSignal: aliveSignal,
+  photoresistor: photoresistor,
+  mission: mission,
+  burnwire: burnwire,
+  camera: camera,
+  rockblock: rockblock,
+  imu: imu,
+  temperature: temperature,
+  current: current,
+  acs: acs,
+  battery: battery,
+  button: button,
+  eeprom: eeprom,
+};
+export default namespaces;

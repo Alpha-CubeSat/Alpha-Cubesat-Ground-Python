@@ -23,11 +23,9 @@ export default function CommandActions() {
   const sendCommands = async () => {
     // build api request to send commands
     let request_body = [];
-    for (let command of commandStack) {
-      request_body.push({
-        operation: command.name, // temporary for testing
-        args: command.fields,
-      });
+    // remove id field from properties
+    for (let { id: omitted, ...rest } of commandStack) {
+      request_body.push(rest);
     }
 
     // TODO: show spinner while commands are being sent

@@ -10,9 +10,9 @@ import CommandViewer from "../components/CommandViewer";
 // Contains widgets for command building, command creation, image viewing, and a command history log.
 export default function Dashboard() {
   return (
-    <Container fluid className="overflow-hidden flex-fill">
+    <Container fluid className="overflow-hidden">
       <Row className="gx-5 px-2 h-100">
-        <Col sm="2">
+        <Col className="dash_height" sm="2">
           <Row className="h-100 py-2">
             <WidgetCard title="Command Builder" children={<CommandBuilder />} />
           </Row>
