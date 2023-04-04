@@ -11,17 +11,17 @@ export const Types = Object.freeze({
 
 const stabilization = {
   // OP Codes 1100
-  max_time: { type: Types.Minute },
+  max_time: { type: Types.Minute, min: 0, max: 300 },
 };
 
 const boot = {
   // OP Codes 1200
-  max_time: { type: Types.Hour },
+  max_time: { type: Types.Hour, min: 0, max: 5 }, // 10UL for min?
 };
 
 const simple = {
   // OP Codes 1300
-  max_time: { type: Types.Minute },
+  max_time: { type: Types.Minute, min: 0, max: 300 }, // 10UL for min?
 };
 
 const point = {
@@ -34,12 +34,12 @@ const detumble = {
   start_time: { type: Types.Int },
   max_time: { type: Types.Hour },
 
-  min_stable_gyro_z: "uint8_t",
-  max_stable_gyro_x: "uint8_t",
-  max_stable_gyro_y: "uint8_t",
+  min_stable_gyro_z: { type: Types.Float, min: 0, max: 2 },
+  max_stable_gyro_x: { type: Types.Float, min: 0, max: 1 },
+  max_stable_gyro_y: { type: Types.Float, min: 0, max: 1 },
 
-  min_unstable_gyro_x: "uint8_t",
-  min_unstable_gyro_y: "uint8_t",
+  min_unstable_gyro_x: { type: Types.Float, min: 0, max: 1 },
+  min_unstable_gyro_y: { type: Types.Float, min: 0, max: 1 },
 };
 
 const aliveSignal = {
@@ -71,7 +71,7 @@ const burnwire = {
   start_time: { type: Types.Int },
   burn_time: { type: Types.Int },
   armed_time: { type: Types.Int },
-  mode: "uint16_t",
+  mode: { type: Types.Int, min: 0, max: 2 },
   attempts_limit: { type: Types.Int },
   mandatory_attempts_limit: { type: Types.Int },
   delay_time: { type: Types.Int },
@@ -94,13 +94,13 @@ const camera = {
   resolution_set_delay: { type: Types.Int },
   resolution_get_delay: { type: Types.Int },
 
-  init_mode: "uint16_t",
-  mode: "uint16_t",
+  init_mode: { type: Types.Int, min: 0, max: 3 },
+  mode: { type: Types.Int, min: 0, max: 2 },
 
   images_written: { type: Types.Int },
   fragments_written: { type: Types.Int },
 
-  set_res: "uint32_t",
+  set_res: "uint32_t", // Adafruit_VC0706.h: VC0706_160x120 ?
 
   failed_times: { type: Types.Int },
   failed_limit: { type: Types.Int },
@@ -119,10 +119,10 @@ const rockblock = {
   waiting_message: { type: Types.Bool },
 
   max_commands_count: { type: Types.Int },
-
   imu_max_fragments: { type: Types.Int },
+
   imu_downlink_start_time: { type: Types.Int },
-  imu_downlink_remain_time: { type: Types.Int },
+  imu_downlink_remain_time: { type: Types.Minute },
   imu_first_start: { type: Types.Bool },
   imu_downlink_on: { type: Types.Bool },
 
@@ -135,15 +135,14 @@ const rockblock = {
   max_check_signal_time: { type: Types.Minute },
   sleep_mode: { type: Types.Bool },
 
-  downlink_report_type: "uint16_t",
-  mode: "uint16_t",
+  downlink_report_type: { type: Types.Int, min: 0, max: 2 },
+  mode: { type: Types.Int, min: 0, max: 22 },
 };
 
 const imu = {
   // OP Codes 2200
-  mode: "uint16_t",
-
-  init_mode: "uint16_t",
+  mode: { type: Types.Int, min: 0, max: 2 },
+  init_mode: { type: Types.Int, min: 0, max: 3 },
 
   max_fragments: { type: Types.Int },
 
@@ -174,13 +173,13 @@ const acs = {
   on_time: { type: Types.Minute },
   off: { type: Types.Bool },
 
-  mag: "uint16_t",
+  mag: { type: Types.Int, min: 0, max: 2 },
 };
 
 const battery = {
   // OP Codes 2600
-  acceptable_battery: "uint32_t",
-  min_battery: "uint32_t",
+  acceptable_battery: { type: Types.Float },
+  min_battery: { type: Types.Float },
 };
 
 const button = {
@@ -194,6 +193,7 @@ const eeprom = {
   wait_time_write_step_time: { type: Types.Int },
   allotted_time: { type: Types.Int },
   allotted_time_passed: { type: Types.Bool },
+
   sfr_write_step_time: { type: Types.Int },
   sfr_address_age: { type: Types.Int },
   storage_full: { type: Types.Bool },

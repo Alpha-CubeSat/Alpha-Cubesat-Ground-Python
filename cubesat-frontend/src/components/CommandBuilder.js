@@ -13,7 +13,7 @@ export default function CommandBuilder() {
         <h5>New Command</h5>
         <hr />
         {/* Current list of commands to send to cubesat */}
-        <Container className="p-0 flex-fill overflow-auto">
+        <Container className="p-0 flex-fill overflow-auto scrollbar-small">
           <CommandList />
         </Container>
         {/* Clear and send command buttons */}

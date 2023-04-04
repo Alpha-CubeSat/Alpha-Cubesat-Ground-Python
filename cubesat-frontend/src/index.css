@@ -9,3 +9,13 @@
 .dash_height {
     height: calc(100vh - var(--headerHeight) ) !important;
 }
+
+.scrollbar-small::-webkit-scrollbar {
+    width: 5px;
+    background-color: #F5F5F5;
+}
+
+.scrollbar-small::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    background-color: #c1c1c1;
+}
