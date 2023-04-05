@@ -26,6 +26,7 @@ export default function CommandSelector() {
   const [namespaceList, setNamespaceList] = useState([]);
   const [fieldList, setFieldList] = useState([]);
   const namespaceRef = useRef();
+  const fieldRef = useRef();
 
   // Input field data and form error
   const [fieldData, setFieldData] = useState({});
@@ -48,9 +49,10 @@ export default function CommandSelector() {
     setField("None");
     setFieldData({});
     setInputError();
-
     setTitle(opcode !== OpCodes.SFR_Override ? opcode : "No command selected");
     setDesc("Select a command");
+    namespaceRef.current.clear();
+    fieldRef.current.clear();
   };
 
   // Updates dropdown menus based on selected SFR namespace
@@ -66,6 +68,7 @@ export default function CommandSelector() {
     setInputError();
     setTitle("No command selected");
     setDesc("Select a command");
+    fieldRef.current.clear();
   };
 
   // Updates input field based on selected SFR field
@@ -141,6 +144,8 @@ export default function CommandSelector() {
     setInputError();
     setTitle("No command selected");
     setDesc("Select a command");
+    fieldRef.current.clear();
+    namespaceRef.current.clear();
   }
 
   return (
@@ -175,17 +180,20 @@ export default function CommandSelector() {
         {/* Namespace dropdown selection*/}
         <Col className="justify-content-mid" md={4}>
           <span style={{ fontWeight: "bold" }}>Namespace</span>
+          <Form>
           <Typeahead
             id="searchable-dropdown"
             labelKey="namespace"
             options={namespaceList}
             disabled={selectedOpCode !== OpCodes.SFR_Override}
             placeholder="namespace..."
+            ref={namespaceRef}
             onChange={(selected) => handleNamespaceSelect(selected)}
             onInputChange={(selected) => handleNamespaceSelect(selected)}
             renderMenuItemChildren={(option, { text }) => <>{option}</>}
             // instanceRef={namespaceRef}
           />
+          </Form>
         </Col>
 
         {/* SFR field dropdown selection*/}
@@ -195,6 +203,7 @@ export default function CommandSelector() {
             id="second-searchable-dropdown"
             labelKey="field"
             options={fieldList}
+            ref={fieldRef}
             disabled={
               selectedOpCode !== OpCodes.SFR_Override ||
               !(selectedNamespace in namespaces)
