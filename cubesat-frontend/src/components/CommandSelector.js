@@ -4,6 +4,7 @@ import { Container, Row, Col, Button, Form } from "react-bootstrap";
 import { useDashboard } from "../contexts/DashboardProvider";
 import namespaces, { Types } from "./SFR_Overrides";
 import InputField from "./InputField";
+import { Typeahead } from 'react-bootstrap-typeahead';
 
 // Allowed opcodes
 export const OpCodes = Object.freeze({
@@ -24,6 +25,8 @@ export default function CommandSelector() {
   // Dropdown item lists for namespaces and fields
   const [namespaceList, setNamespaceList] = useState([]);
   const [fieldList, setFieldList] = useState([]);
+  const [fieldInput, setFieldInput] = useState();
+  const typeaheadRef = useRef(); 
 
   // Input field data and form error
   const [fieldData, setFieldData] = useState({});
@@ -45,6 +48,7 @@ export default function CommandSelector() {
     setNamespace("None");
     setField("None");
     setFieldData({});
+    setFieldInput(undefined)
     setInputError();
 
     setTitle(opcode !== OpCodes.SFR_Override ? opcode : "No command selected");
@@ -52,10 +56,15 @@ export default function CommandSelector() {
   };
 
   // Updates dropdown menus based on selected SFR namespace
-  const handleNamespaceSelect = (namespace) => () => {
+  const handleNamespaceSelect = (namespace) => {
     setNamespace(namespace);
-    setFieldList(Object.keys(namespaces[namespace]));
-
+    if (namespace in namespaces) {
+      console.log("hello")
+      setFieldList(Object.keys(namespaces[namespace]))    
+    }
+    else {
+      setFieldList([])
+    }
     setField("None");
     setFieldData({});
     setInputError();
@@ -64,13 +73,15 @@ export default function CommandSelector() {
   };
 
   // Updates input field based on selected SFR field
-  const handleFieldSelect = (field) => () => {
-    setField(field);
-    setFieldData(namespaces[selectedNamespace][field]);
-    setInputError();
+  const handleFieldSelect = (field) => {
+    if (field in namespaces[selectedNamespace]) {
+      setField(field);
+      setFieldData(namespaces[selectedNamespace][field]);
+      setInputError();
 
-    setTitle("sfr::" + selectedNamespace + "::" + field);
-    // setDesc();
+      setTitle("sfr::" + selectedNamespace + "::" + field);
+      // setDesc();
+    }
   };
 
   // Validates input field before adding command to the command builder
@@ -166,64 +177,59 @@ export default function CommandSelector() {
         </Col>
 
         {/* Namespace dropdown selection*/}
-        <Col>
+        <Col classname="justify-content-mid" md={4}>
           <span style={{ fontWeight: "bold" }}>Namespace</span>
-          <Dropdown disabled>
-            <Dropdown.Toggle
-              variant="success"
-              id="dropdown-basic"
-              disabled={namespaceList.length === 0}
-            >
-              {selectedNamespace}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              {namespaceList.map((option, index) => (
-                <Dropdown.Item
-                  key={index}
-                  onClick={handleNamespaceSelect(option)}
-                >
-                  {option}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
+          {selectedOpCode === "SFR_Override" ? (          
+          <Typeahead
+            id="searchable-dropdown"
+            labelKey="namespace"
+            options={namespaceList}
+            disabled={selectedOpCode !== "SFR_Override"}
+            placeholder="namespace..."
+            onChange={(selected) => handleNamespaceSelect(selected)}
+            onInputChange={(selected => handleNamespaceSelect(selected))}
+            renderMenuItemChildren={(option, { text }) => (
+              <>
+                {option}
+              </>
+      )}
+    />) : null}
         </Col>
 
         {/* SFR field dropdown selection*/}
         <Col>
           <span style={{ fontWeight: "bold" }}>Field</span>
-          <Dropdown>
-            <Dropdown.Toggle
-              variant="success"
-              id="dropdown-basic"
-              disabled={fieldList.length === 0}
-            >
-              {selectedField}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              {fieldList.map((option, index) => (
-                <Dropdown.Item key={index} onClick={handleFieldSelect(option)}>
-                  {option}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
-        </Col>
-      </Row>
+          {selectedNamespace in namespaces ? (          
+          <Typeahead
+          id="second-searchable-dropdown"
+          labelKey="field"
+          options={fieldList}
+          disabled={selectedOpCode !== "SFR_Override"}
+          placeholder="field..."
+          onChange={(select) => handleFieldSelect(select)}
+          onInputChange={(select) => handleFieldSelect(select)}
+          renderMenuItemChildren={(option, { text }) => (
+            <>
+              {option}
+            </>
+        )}
+        />) : null}
 
       {/* SFR field input */}
-      <Row className="mt-3">
-        <Col className="col-sm-5">
+      <Row className="mt-3 mb-3">
+        <Col className="justify-content-end" md={14}>
           <Form onSubmit={handleSubmit} noValidate>
+          <span className = "mb-3" style={{ position: 'absolute', top: '220px',fontWeight: "bold"}}>Field Argument</span>
+
             {fieldData.type && fieldData.type !== Types.Bool && (
               <InputField
                 name="sfr_override"
                 type="number"
-                label={
+                className = "mt-4"
+                placeholder={
                   (fieldData.type === Types.Minute && "Min") ||
                   (fieldData.type === Types.Hour && "Hr")
                 }
-                placeholder="Enter value"
                 error={inputError}
                 fieldRef={fieldInputRef}
               />
@@ -231,6 +237,7 @@ export default function CommandSelector() {
             {fieldData.type === Types.Bool && (
               <>
                 <Form.Check
+                  className = "mt-3"
                   name="sfr_override"
                   label="true"
                   type="radio"
@@ -239,6 +246,7 @@ export default function CommandSelector() {
                   ref={fieldInputRef}
                 />
                 <Form.Check
+                  className = "mt-3"
                   name="sfr_override"
                   label="false"
                   type="radio"
@@ -248,6 +256,7 @@ export default function CommandSelector() {
             )}
             {/* Submit disabled if no opcode selected or SFR override selected but no namespace or field selected */}
             <Button
+              style={{ position: 'absolute', left:'30px', bottom: '30px'}}
               variant="primary"
               type="submit"
               disabled={
@@ -260,6 +269,8 @@ export default function CommandSelector() {
               + Command
             </Button>
           </Form>
+          </Col>
+         </Row>
         </Col>
       </Row>
     </Container>
