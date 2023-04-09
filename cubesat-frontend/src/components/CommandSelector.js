@@ -14,6 +14,13 @@ export const OpCodes = Object.freeze({
   Fire: "Fire",
 });
 
+export const opcodeDesc = {
+  SFR_Override: "Override the selected SFR field with the provided value.",
+  Deploy : "Move the CubeSat into the Deployment phase.",
+  Arm : "Move the CubeSat into the Armed phase.",
+  Fire : "Move the CubeSat into the In Sun phase."
+}
+
 export default function CommandSelector() {
   const { commandStack, setCommandStack, count, setCount } = useDashboard();
 
@@ -50,7 +57,7 @@ export default function CommandSelector() {
     setFieldData({});
     setInputError();
     setTitle(opcode !== OpCodes.SFR_Override ? opcode : "No command selected");
-    setDesc("Select a command");
+    setDesc(opcodeDesc[opcode]);
     namespaceRef.current.clear();
     fieldRef.current.clear();
   };
@@ -67,7 +74,6 @@ export default function CommandSelector() {
     setFieldData({});
     setInputError();
     setTitle("No command selected");
-    setDesc("Select a command");
     fieldRef.current.clear();
   };
 
