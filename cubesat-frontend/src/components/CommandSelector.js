@@ -16,11 +16,16 @@ export const OpCodes = Object.freeze({
 
 export const opcodeDesc = {
   SFR_Override: "Override the selected SFR field with the provided value.",
-  Deploy : "Move the CubeSat into the Deployment phase.",
-  Arm : "Move the CubeSat into the Armed phase.",
-  Fire : "Move the CubeSat into the In Sun phase."
-}
+  Deploy: "Move the CubeSat into the Deployment phase.",
+  Arm: "Move the CubeSat into the Armed phase.",
+  Fire: "Move the CubeSat into the In Sun phase.",
+};
 
+// Command Selector
+// Has dropdown menus for user to build a command to be sent to the CubeSat
+// Dropdowns for SFR namespace and field are searchable to improve usability
+// Supports multiple types command arguments (ints, floats, booleans, time) and min/max checking
+// Shows the title and description for a selected command
 export default function CommandSelector() {
   const { commandStack, setCommandStack, count, setCount } = useDashboard();
 
@@ -118,9 +123,9 @@ export default function CommandSelector() {
         !float_check.test(input_value)
       ) {
         error = "Not a valid float.";
-      } else if (fieldData.min !== undefined && input_value <= fieldData.min) {
+      } else if (fieldData.min !== undefined && input_value < fieldData.min) {
         error = "Minimum value is " + fieldData.min;
-      } else if (fieldData.max !== undefined && input_value >= fieldData.max) {
+      } else if (fieldData.max !== undefined && input_value > fieldData.max) {
         error = "Maximum value is " + fieldData.max;
       }
       setInputError(error);
@@ -132,8 +137,8 @@ export default function CommandSelector() {
       id: count,
       opcode: selectedOpCode,
       ...(selectedOpCode === OpCodes.SFR_Override && {
-        namespace: selectedNamespace,
-        field: selectedField,
+        namespace: selectedNamespace + "",
+        field: selectedField + "",
         value: input_value,
       }),
     };
@@ -187,18 +192,17 @@ export default function CommandSelector() {
         <Col className="justify-content-mid" md={4}>
           <span style={{ fontWeight: "bold" }}>Namespace</span>
           <Form>
-          <Typeahead
-            id="searchable-dropdown"
-            labelKey="namespace"
-            options={namespaceList}
-            disabled={selectedOpCode !== OpCodes.SFR_Override}
-            placeholder="namespace..."
-            ref={namespaceRef}
-            onChange={(selected) => handleNamespaceSelect(selected)}
-            onInputChange={(selected) => handleNamespaceSelect(selected)}
-            renderMenuItemChildren={(option, { text }) => <>{option}</>}
-            // instanceRef={namespaceRef}
-          />
+            <Typeahead
+              id="searchable-dropdown"
+              labelKey="namespace"
+              options={namespaceList}
+              disabled={selectedOpCode !== OpCodes.SFR_Override}
+              placeholder="namespace..."
+              ref={namespaceRef}
+              onChange={(selected) => handleNamespaceSelect(selected)}
+              onInputChange={(selected) => handleNamespaceSelect(selected)}
+              renderMenuItemChildren={(option, { text }) => <>{option}</>}
+            />
           </Form>
         </Col>
 
@@ -246,7 +250,7 @@ export default function CommandSelector() {
                         ? "Minutes"
                         : fieldData.type === Types.Hour
                         ? "Hours"
-                        : ""
+                        : "Value"
                     }
                     error={inputError}
                     fieldRef={fieldInputRef}

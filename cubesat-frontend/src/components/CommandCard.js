@@ -59,9 +59,14 @@ export default function CommandCard({
         <Accordion.Header>{index + 1 + ". " + command.opcode}</Accordion.Header>
         <Accordion.Body>
           <>
-            {/* Display all command fields */}
+            {/* Display command fields */}
             {command.opcode === OpCodes.SFR_Override &&
-              command.namespace + "::" + command.field + " = " + command.value}
+              command.namespace +
+                "::" +
+                command.field +
+                " = " +
+                command.value +
+                "\n"}
             <Button
               onClick={() => deleteCommand(index)}
               variant="link"

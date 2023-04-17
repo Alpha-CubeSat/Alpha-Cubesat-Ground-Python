@@ -1,14 +1,10 @@
 import { createContext, useContext, useState } from "react";
-import { burnwire_arm_time } from "../components/Commands";
 
 const DashboardContext = createContext();
 
 // Dashboard Context Provider
 // Contains variables shared across different widgets to make access/updating easier.
 export default function DashboardProvider({ children }) {
-  // notify command viewer when user selects command
-  const [selectedCommand, setSelectedCommand] = useState(burnwire_arm_time);
-
   // current list of commands to send
   const [commandStack, setCommandStack] = useState([]);
 
@@ -21,16 +17,19 @@ export default function DashboardProvider({ children }) {
       timestamp: "1677363088399.2676",
       commands: [
         {
-          operation: "Mission Mode: Low Power",
-          args: [],
+          opcode: "SFR_Override",
+          namespace: "camera",
+          field: "turn_on",
+          value: "true",
         },
         {
-          operation: "Burnwire Burn Time",
-          args: ["343333333333"],
+          opcode: "SFR_Override",
+          namespace: "burnwire",
+          field: "burn_time",
+          value: "10000",
         },
         {
-          operation: "Camera Take Photo: True",
-          args: [],
+          opcode: "Deploy",
         },
       ],
       error_code: "",
@@ -44,8 +43,6 @@ export default function DashboardProvider({ children }) {
   return (
     <DashboardContext.Provider
       value={{
-        selectedCommand,
-        setSelectedCommand,
         commandLog,
         setCommandLog,
         commandStack,

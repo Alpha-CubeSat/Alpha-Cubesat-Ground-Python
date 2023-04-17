@@ -53,7 +53,6 @@ def uplink_command(command):
         'status': 'success',
         'timestamp': time.time() * 1000,
         'commands': command,
-        'error_code': '',
         'error_message': ''
     }
 

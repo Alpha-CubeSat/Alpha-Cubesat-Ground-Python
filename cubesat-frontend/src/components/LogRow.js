@@ -1,4 +1,5 @@
 import { BsCheckCircleFill, BsXCircleFill } from "react-icons/bs";
+import { OpCodes } from "./CommandSelector";
 // import { useState } from "react";
 // import { Button, Collapse } from "react-bootstrap";
 
@@ -23,9 +24,12 @@ export default function LogRow({ entry }) {
             // TODO: find better way to seperate commands + show command arguments
             <p
               key={i}
-              title={Object.entries(command.args).map(([k, v]) => k + ": " + v)}
+              title={
+                command.opcode === OpCodes.SFR_Override &&
+                command.namespace + "::" + command.field + " = " + command.value
+              }
             >
-              {command.operation}
+              {command.opcode}
             </p>
           ))}
           {/*  Button to view command fields if they exist */}

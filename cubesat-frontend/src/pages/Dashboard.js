@@ -4,7 +4,6 @@ import ImageViewer from "../components/ImageViewer";
 import CommandLog from "../components/CommandLog";
 import WidgetCard from "../components/WidgetCard";
 import CommandSelector from "../components/CommandSelector";
-import CommandViewer from "../components/CommandViewer";
 
 // Main CubeSat Control Dashboard
 // Contains widgets for command building, command creation, image viewing, and a command history log.
