@@ -1,8 +1,5 @@
 from api.app import ma
 
-class SimpleStringSchema(ma.Schema):
-    response = ma.Str(required=True)
-
 class RockblockReportSchema(ma.Schema):
     device_type = ma.Str()
     iss = ma.Str()

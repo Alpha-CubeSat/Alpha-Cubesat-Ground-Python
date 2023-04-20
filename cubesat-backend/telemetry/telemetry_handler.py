@@ -30,7 +30,7 @@ def handle_report(rockblock_report: dict):
             cs.process_save_deploy_data(result)
         elif operation == cs.Opcodes.camera_report:
             cs.process_save_camera_data(result)
-        else: # error_report
+        else:  # error_report
             print('Error Report')
     else:
         print('Rockblock report has no "data" attribute')

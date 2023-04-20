@@ -17,12 +17,14 @@ class Opcodes(int, Enum):
     empty_packet = 0
     error = -1
 
-# list of different fragment numbers received
+
+# list of all imu fragment numbers received
 fragment_list = []
-# keeps track of various stats regarding the imu received imu fragments
+# keeps track of various stats regarding the received imu fragments
 imu_display_info = {'latest_fragment': 0,
                     'missing_fragments': [],
                     'highest_fragment': 0}
+
 
 def map_range(x, in_min, in_max, out_min, out_max):
     """
@@ -38,12 +40,14 @@ def map_range(x, in_min, in_max, out_min, out_max):
     """
     return out_min + (((out_max - out_min) / (in_max - in_min)) * (x - in_min))
 
+
 def save_cubesat_data(data: dict):
     """
     Saves a cubesat report to elasticsearch \n
     :param data: fully processed normal report
     """
     es.index(config.cubesat_db_index, es.daily_index_strategy, data)
+
 
 def generate_missing_fragments(frag_list: list):
     """
@@ -59,6 +63,7 @@ def generate_missing_fragments(frag_list: list):
         if frag_list.count(x) == 0:
             imu_display_info['missing_fragments'].append(x)
 
+
 def separate_cycles(fragment_number: int, fragment_data: str):
     """
     Decodes imu cycles to retrieve the x, y, and z gyro values for each and saves them to elasticsearch \n
@@ -66,9 +71,9 @@ def separate_cycles(fragment_number: int, fragment_data: str):
     :param fragment_data: hex string containing the packet's imu cycle data
     """
     for x in range(0, len(fragment_data), 6):
-        x_gyro = int(fragment_data[x:x+2], 16)
-        y_gyro = int(fragment_data[x+2:x+4], 16)
-        z_gyro = int(fragment_data[x+4:x+6], 16)
+        x_gyro = int(fragment_data[x:x + 2], 16)
+        y_gyro = int(fragment_data[x + 2:x + 4], 16)
+        z_gyro = int(fragment_data[x + 4:x + 6], 16)
         # every full fragment has 22 cycles, new cycle occurs every six digits in the hex string
         cycle_count = fragment_number * 22 + x / 6
 
@@ -83,6 +88,7 @@ def separate_cycles(fragment_number: int, fragment_data: str):
         # Saves a cycle report to elasticsearch
         es.index(config.cycle_db_index, es.daily_index_strategy, report_data)
 
+
 def process_save_deploy_data(data: dict):
     """
     Generates missing imu fragments, processes imu cycles, and saves imu fragment
@@ -96,6 +102,7 @@ def process_save_deploy_data(data: dict):
     separate_cycles(data['fragment_number'], data['fragment_data'])
     es.index(config.deploy_db_index, es.daily_index_strategy,
              {**report_metadata(data), **imu_display_info})
+
 
 def process_save_camera_data(data: dict):
     """
@@ -120,7 +127,8 @@ def computer_normal_report_values(data: dict) -> dict:
     """
     fixed_data = {
         'burnwire_burn_time': map_range(float(data['burnwire_burn_time']), 0, 255, 0, 60000),
-        'burnwire_armed_timeout_limit': map_range(float(data['burnwire_armed_timeout_limit']), 0, 255, 0, 86400000),
+        'burnwire_armed_timeout_limit': map_range(float(data['burnwire_armed_timeout_limit']), 0,
+                                                  255, 0, 86400000),
         'burnwire_attempts': map_range(float(data['burnwire_attempts']), 0, 255, 0, 10),
         'downlink_period': map_range(float(data['downlink_period']), 0, 255, 1000, 172800000),
         'x_mag': map_range(float(data['x_mag']), 0, 255, -180, 180),
@@ -136,6 +144,7 @@ def computer_normal_report_values(data: dict) -> dict:
     data.update(fixed_data)
     return data
 
+
 def read_imu_hex_fragment(data: str) -> dict:
     """
     Separates the fragment's id number and data and returns them in a dictionary, where
@@ -149,6 +158,7 @@ def read_imu_hex_fragment(data: str) -> dict:
         'fragment_number': int(data[0:2], 16),
         'fragment_data': data[2:]
     }
+
 
 def read_img_hex_fragment(data: str) -> dict:
     """
@@ -192,6 +202,7 @@ def read_img_hex_fragment(data: str) -> dict:
         'fragment_data': fragment_data
     }
 
+
 def report_metadata(rockblock_report: dict) -> dict:
     """
     Returns rockblock metadata such as imei and transmit time from a rockblock report as a dictionary.
@@ -203,6 +214,7 @@ def report_metadata(rockblock_report: dict) -> dict:
         'imei': rockblock_report['imei'],
         'transmit_time': rockblock_report['transmit_time']
     }
+
 
 def error_data(rockblock_report: dict, error_msg: str) -> dict:
     """
@@ -217,6 +229,7 @@ def error_data(rockblock_report: dict, error_msg: str) -> dict:
         'error': error_msg,
         'raw_data': rockblock_report['data']
     }
+
 
 def read_cubesat_data(rockblock_report: dict) -> dict:
     """
@@ -248,10 +261,11 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
     else:
         try:
             if opcode == Opcodes.normal_report:
-                result = computer_normal_report_values(parser.read_structure(config.normal_report_structure))
+                result = computer_normal_report_values(
+                    parser.read_structure(config.normal_report_structure))
             elif opcode == Opcodes.imu_report:
                 result = read_imu_hex_fragment(data)
-            else: # opcode == camera_report
+            else:  # opcode == camera_report
                 result = read_img_hex_fragment(data)
             result['telemetry_report_type'] = opcode
         except Exception:

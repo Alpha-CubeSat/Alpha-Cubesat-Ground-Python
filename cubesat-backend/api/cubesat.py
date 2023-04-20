@@ -32,7 +32,7 @@ def get_image(name: 'Name of the image'):
     Get Image By Name
     Returns the ttl file with the given name if it exists
     """
-    return image_db.get_image_data(image_db.get_image_by_name(name))
+    return image_db.get_image_data(name)
 
 @cubesat.post('/command')
 @authenticate(token_auth)

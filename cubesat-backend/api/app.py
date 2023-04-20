@@ -25,8 +25,6 @@ def create_app():
     app.register_blueprint(cubesat, url_prefix='/api/cubesat')
     from api.errors import errors
     app.register_blueprint(errors)
-    from api.debug import debug
-    app.register_blueprint(debug, url_prefix='/api/debug')
 
     from api import users_db
     users_db.init_app(app)
@@ -35,5 +33,9 @@ def create_app():
     @app.route('/api')
     def index():
         return redirect(url_for('apifairy.docs'))
+
+    @app.get('/ping')
+    def ping():
+        return {'response': 'pong'}
 
     return app
