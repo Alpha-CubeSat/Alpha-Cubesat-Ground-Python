@@ -25,6 +25,7 @@ def daily_index_strategy(name):
 # Indexes the supplied document into elasticsearch, using the
 # naming strategy to create indices using the given index name.
 def index(index_base_name: str, naming_strategy, content: dict):
-    es = get_connection()
-    es.index(index = literal_index_strategy(index_base_name), body = content)
+    pass
+    # es = get_connection()
+    # es.index(index = literal_index_strategy(index_base_name), body = content)
     

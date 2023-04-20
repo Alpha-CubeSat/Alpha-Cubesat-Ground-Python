@@ -1,5 +1,6 @@
 import os
 
+import pem
 from dotenv import load_dotenv
 
 from util.binary.binary_parser import BinaryTypes
@@ -21,6 +22,9 @@ image_db_index = 'image_fragment_info'
 
 image_root_dir = os.path.join(basedir, 'cubesat_images')
 users_db = os.path.join(basedir, 'users.db')
+
+# Public key provided for JWT verification by rockblock web services documentation
+rockblock_web_pk = pem.parse_file(os.path.join(basedir, 'cert.pem'))
 
 normal_report_structure = [
     ('is_photoresistor_covered', BinaryTypes.uint8),

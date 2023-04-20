@@ -2,6 +2,7 @@ import os
 from os.path import exists
 
 import config as cfg
+import util.binary.hex_string as hex
 
 img_display_info =  {'image_serial': 0, 'latest_fragment': 0, 'missing_fragments': [], 'fragment_count': '?/?', 'highest_fragment': 0}
 fragment_list = []
@@ -107,11 +108,16 @@ def get_images():
 def get_recent_images(n):
     return get_images()[:n]
 
-
-# Gets the most recent complete image
-def get_most_recent():
-    return get_recent_images(1)
-
-# Gets a particular image
+# Gets a particular image by name
 def get_image_by_name(name):
     return f'{cfg.image_root_dir}/img/{name}'
+
+def get_image_data(image_file):
+    with open(image_file, 'rb') as image:
+        bin_img = bytearray(image.read())
+    return {
+        'name': os.path.basename(image_file),
+        'timestamp': os.path.getmtime(image_file),
+        'base64': hex.bytes_to_b64(bin_img)
+    }
+

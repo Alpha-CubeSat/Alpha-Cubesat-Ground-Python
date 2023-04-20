@@ -3,12 +3,11 @@ import time
 from apifairy import response, authenticate, arguments, body, other_responses
 from flask import Blueprint
 
-import telemetry.image_handler as img
+import control.control_handler as control
+import databases.image_database as image_db
 from api.auth import token_auth
 from api.schemas import ImageNameSchema, ImageCountSchema, ImageDataSchema, CommandSchema, \
     CommandResponseSchema
-
-import control.control_handler as control
 
 cubesat = Blueprint('cubesat', __name__)
 
@@ -22,7 +21,7 @@ def get_recent_images(args):
     Get Recent Images
     Returns a list of names of recently received ttl files
     """
-    return {'images': img.get_recent_image_names(args['count'])}
+    return {'images': image_db.get_recent_images(args['count'])}
 
 @cubesat.get('/img/<name>')
 @authenticate(token_auth)
@@ -33,7 +32,7 @@ def get_image(name: 'Name of the image'):
     Get Image By Name
     Returns the ttl file with the given name if it exists
     """
-    return img.get_image_by_name(name)
+    return image_db.get_image_data(image_db.get_image_by_name(name))
 
 @cubesat.post('/command')
 @authenticate(token_auth)
