@@ -4,36 +4,32 @@ from os.path import exists
 import config as cfg
 import util.binary.hex_string as hex
 
-img_display_info =  {'image_serial': 0, 'latest_fragment': 0, 'missing_fragments': [], 'fragment_count': '?/?', 'highest_fragment': 0}
+# list of all image fragment numbers received
 fragment_list = []
+# keeps track of various stats regarding the received image fragments
+img_display_info = {'image_serial': 0, 'latest_fragment': 0, 'missing_fragments': [],
+                    'fragment_count': '?/?', 'highest_fragment': 0}
 
-# Finds the missing fragments and the highest fragment received for an image. 
-# It counts through all already-received fragments every time because fragments could be received in random order.
-def generate_missing_fragments(frag_list):
-    max_frag = max(frag_list)
-    img_display_info['missing_fragments'] = []
-    img_display_info['highest_fragment'] = max_frag
-    for x in range(max_frag):
-        if frag_list.count(x) == 0:
-            img_display_info['missing_fragments'].append(x)
 
-# Saves an image fragment. Creates one if it doesn't exist using the following policy:
-# - new file is created under the directory with the serial number of the image
-# - the name of the file will be the fragment number with the .csfrag extension
-# Example:
-# If fragment 7 of image 23 is saved,
-# then it will be saved as '7.csfrag' in the directory named "23".
-# Note: binary-fragment-data accepts a JAVA BYTE ARRAY, byte[], not a ByteBuffer or clojure vector
-def save_fragment(image_sn, fragment_number, binary_fragment_data):
+def save_fragment(image_sn: int, fragment_number: int, binary_fragment_data: bytearray):
+    """
+    Saves an image fragment. Creates one if it doesn't exist using the following policy:
+        - new file is created under the directory with the serial number of the image
+        - the name of the file will be the fragment number with the .csfrag extension
+    Example:
+        - Fragment 7 of image 23 will be saved as '7.csfrag' under the directory named "23".
+    :param image_sn: serial number of the image the fragment belongs to
+    :param fragment_number: id number of the fragment
+    :param binary_fragment_data: byte array containing the image fragment data
+    """
     if not exists(cfg.image_root_dir):
         os.makedirs(cfg.image_root_dir)
 
-    try:
+    if not exists(f'{cfg.image_root_dir}/{image_sn}'):
         os.makedirs(f'{cfg.image_root_dir}/{image_sn}')
-    except FileExistsError:
-        pass
 
-    frag_file = open(f'{cfg.image_root_dir}/{image_sn}/{fragment_number}.csfrag', 'wb')
+    with open(f'{cfg.image_root_dir}/{image_sn}/{fragment_number}.csfrag', 'wb') as frag_file:
+        frag_file.write(binary_fragment_data)
 
     global img_display_info, fragment_list
     img_display_info['image_serial'] = image_sn
@@ -41,83 +37,95 @@ def save_fragment(image_sn, fragment_number, binary_fragment_data):
     img_display_info['missing_fragments'] = []
     fragment_list = []
 
-    frag_file.write(binary_fragment_data)
-    frag_file.flush()
-    frag_file.close()
 
-
-# Generates a list of the fragments received for a particular image as a list of numbers.
-def generate_fragment_list(fragment_files):
-    for fragment in fragment_files:
-        fragment_list.append(int(os.path.splitext(os.path.basename(fragment))[0]))
-
-# Sorts fragment files by name, stripping the extensions. They are numerically named,
-# but '2.csfrag' should come before '10.csfrag'
-def sort_numeric_files(files):
+def sort_files_numeric(files: list) -> list:
+    """
+    Sorts fragment files by name, stripping the extensions.
+    They are numerically named, but '2.csfrag' comes before '10.csfrag'
+    :param files: list of all image fragment files
+    """
     return sorted(files, key=lambda x: int(os.path.basename(x).split('.')[0]))
 
 
-# Tries to assemble an image out of fragments. If there are enough, saves the image
-# to the directory 'img' as a jpeg file with the serial number as a name. Returns nil
-# otherwise.
-# Example:
-# If image 23 is complete and try-save-image is called, the completed image will
-# be saved as '23.png' under 'img', and assembled out of the fragment files in the directory '23'
-def try_save_image(image_sn, total_fragment_number):
-    fragment_dir = f'{cfg.image_root_dir}/{image_sn}'
+def generate_missing_fragments(frag_list: list):
+    """
+    Finds the missing fragments and the highest fragment received for an image.
+    Counts through all already-received fragments every time because fragments could be received in random order.
+    :param frag_list: list of previously received fragments
+    """
+    max_frag = max(frag_list)
+    img_display_info['missing_fragments'] = []
+    img_display_info['highest_fragment'] = max_frag
+    for x in range(max_frag):
+        if frag_list.count(x) == 0:
+            img_display_info['missing_fragments'].append(x)
+
+
+def try_save_image(image_sn: int, total_fragments: int):
+    """
+    Tries to assemble an image out of fragments. If the total # of fragments currently received
+    equals the total # of fragments, the completed image is saved to the directory 'img' as a
+    jpeg file with the serial number as a name. \n
+    Example: If image 23 is complete when this function is called, the completed image will
+    be saved as '23.jpg' under 'img', and assembled out of the fragment files in the directory '23'
+    :param image_sn: serial number of the image to be assembled
+    :param total_fragments: the total # of fragments needed to assemble the image
+    """
 
     fragment_files = []
-    for r, d, f in os.walk(fragment_dir):
-        for file in f:
+    for dir_path, _, file_names in os.walk(f'{cfg.image_root_dir}/{image_sn}'):
+        for file in file_names:
             if '.csfrag' in file:
-                fragment_files.append(os.path.join(r, file))
+                fragment_files.append(os.path.join(dir_path, file))
 
-    num_fragments = 0
-    for root_dir, cur_dir, files in os.walk(fragment_dir):
-        num_fragments += len(files)
+    num_fragments = len(fragment_files)
 
-    string_total = f'{num_fragments}/' + str(total_fragment_number) if total_fragment_number != 1 else '?'
+    # Generates a list of the fragments received for a particular image as a list of numbers.
+    for fragment in fragment_files:
+        fragment_list.append(int(os.path.splitext(os.path.basename(fragment))[0]))
 
-    generate_fragment_list(fragment_files)
     generate_missing_fragments(fragment_list)
-    img_display_info['fragment_count'] = string_total
-    try:
-        os.makedirs(f'{cfg.image_root_dir}/img')
-    except FileExistsError:
-        pass
+    img_display_info['fragment_count'] = f'{num_fragments}/' + str(
+        total_fragments) if total_fragments != 1 else '?'
 
-    if num_fragments == total_fragment_number:
-        image_file = open(f'{cfg.image_root_dir}/img/{image_sn}.jpeg', 'wb')
-        for fragment in sort_numeric_files(fragment_files):
-            image_file.write(open(fragment, 'rb').read())
+    if num_fragments == total_fragments:
+        if not exists(f'{cfg.image_root_dir}/img'):
+            os.makedirs(f'{cfg.image_root_dir}/img')
 
-        image_file.flush()
-        image_file.close()
-            
-# Returns the contents of the atom img-display-info
-def get_img_display_info():
+        with open(f'{cfg.image_root_dir}/img/{image_sn}.jpg', 'wb') as image_file:
+            for fragment in sort_files_numeric(fragment_files):
+                image_file.write(open(fragment, 'rb').read())
+
+
+def get_img_display_info() -> dict:
+    """Returns the contents of img_display_info"""
     return img_display_info
 
-# Returns a seq of images, sorted by id (so that they're chronological -
-# rockblock may send data out of order, using the serial number is
-# rhe only way to be sure of ordering)
-def get_images():
-    return sort_numeric_files(os.listdir(f'{cfg.image_root_dir}/img'))
 
-# Gets the n most recently taken images (whose data has been fully received by ground)
-def get_recent_images(n):
+def get_images() -> list:
+    """
+    Returns a list of image paths, sorted by serial # (so that they are chronological)
+    """
+    return sort_files_numeric(os.listdir(f'{cfg.image_root_dir}/img'))
+
+
+def get_recent_images(n: int) -> list:
+    """
+    Gets the paths of the n most recently taken images (whose fragments have been fully downlinked)
+    """
     return get_images()[:n]
 
-# Gets a particular image by name
-def get_image_by_name(name):
-    return f'{cfg.image_root_dir}/img/{name}'
 
-def get_image_data(image_file):
-    with open(image_file, 'rb') as image:
+def get_image_data(image_file_name: str) -> dict:
+    """
+    Given the file name of a fully downlinked image, returns a dict containing the image's
+    name, timestamp, and data (as a base64 string)
+    """
+    image_path = f'{cfg.image_root_dir}/img/{image_file_name}'
+    with open(image_path, 'rb') as image:
         bin_img = bytearray(image.read())
     return {
-        'name': os.path.basename(image_file),
-        'timestamp': os.path.getmtime(image_file),
+        'name': os.path.basename(image_path),
+        'timestamp': os.path.getmtime(image_path),
         'base64': hex.bytes_to_b64(bin_img)
     }
-
