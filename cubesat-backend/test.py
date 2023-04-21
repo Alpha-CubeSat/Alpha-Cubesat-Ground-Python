@@ -32,6 +32,16 @@ rockblock_report4 = {'device_type': "ROCKBLOCK", 'iss': "Rock 7", 'iridium_longi
                      'iat': 1628467718, 'iridium_session_status': 0,
                      'data': "630001030000f48a00002a000019796766656acc01b200027f010101010101010101010101"}
 
+#updated rockblock_report to latest flight sw
+rockblock_report5 = {'device_type': "ROCKBLOCK", 'iss': "Rock 7", 'iridium_longitude': -76.6932,
+                     'imei': 300534061384690,
+                     'serial': 203136, 'iridium_latitude': 39.1125, 'momsn': 34, 'iridium_cep': 3.0,
+                     'transmit_time': "2021-09-12T00:08:34Z",
+                     'JWT': "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJsb2NrIDciLCJpYXQiOjE2Mjg0Njc3MTgsImRhdGEiOiIxNTAxMDAwMzAwMDBmNDAwMDAwMDBhMDAwMGZmZmYwMGZmZmZmZmZmMDEwZTAwMDIwMDAwMDEwMTAxMDEwMTAxMDEwMTAxMDAwMTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMCIsImRldmljZV90eXBlIjoiUk9DS0JMT0NLIiwiaW1laSI6IjMwMDUzNDA2MTM4NDY5MCIsImlyaWRpdW1fY2VwIjoiMy4wIiwiaXJpZGllbV9sYXRpdHVkZSI6IjM5LjExMjUiLCJpcmlkaXVtX2xvbmdpdHVkZSI6Ii03Ni42OTMyIiwiaXJpZGl1bV9zZXNzaW9uX3N0YXR1cyI6IjAiLCJtb21zbiI6IjM0Iiwic2VyaWFsIjoiMjAzMTM2IiwidHJhbnNtaXRfdGltZSI6IjIxLTA4LTA5IDAwOjA4OjM0in0.dUpRBK1dpvyoKQKURa8Ny9dZBB8iZGq0tX4F8VcaTCLvnpjrxjHebMbIKKLK0FbCBCJ1cr_C5DVEsQWV-BXWFXiUriJ_x5ElumyQ6t0tkfhPcC7e4Rveb9fD6OBtbD31XoDbjBUSPLlYWvOWuGI4MDzHMgNoiKDbaUjakhp30uELuVF1OeJWErRTXFpuZEkJzWc9MWKZ04GA85WgjwZ1PsPYONuRODh7itK8VGFzuIAyd8YcvHlkKCWw0y_3m4txZ_FrpM9eBQPwVXITHta7afDgfd-CURjQqjJpCl5oU5cJ9QoBO1K4PJ689oem9_Sbo3j4djdntMy63-XWQHVvvg",
+                     'iat': 1628467718, 'iridium_session_status': 0,
+                     'data': "630100010d940100000100d4aa2ab24c1a7dff01000001000100010001"
+                    }
+
 deploy_report1 = {'device_type': "ROCKBLOCK", 'iss': "Rock 7", 'iridium_longitude': -76.6932,
                   'imei': 300534061384690,
                   'serial': 203136, 'iridium_latitude': 39.1125, 'momsn': 34, 'iridium_cep': 3.0,
@@ -127,16 +137,17 @@ metadata = {'device_type': "ROCKBLOCK", 'iss': "Rock 7", 'iridium_longitude': -7
             'iat': 1628467718, 'iridium_session_status': 0}
 
 # normal report
-handle_report(rockblock_report1)
-handle_report(rockblock_report2)
-handle_report(rockblock_report3)
-handle_report(rockblock_report4)
+#handle_report(rockblock_report1)
+#handle_report(rockblock_report2)
+#handle_report(rockblock_report3)
+# handle_report(rockblock_report4)
+handle_report(rockblock_report5)
 
 # imu reports
-handle_report(deploy_report1)
-handle_report(deploy_report2)
-handle_report(deploy_report3)
+# handle_report(deploy_report1)
+# handle_report(deploy_report2)
+# handle_report(deploy_report3)
 
 # image fragment reports
-for fragment in image_fragments:
-    handle_report({**metadata, 'data': fragment})
+#for fragment in image_fragments:
+    #handle_report({**metadata, 'data': fragment})

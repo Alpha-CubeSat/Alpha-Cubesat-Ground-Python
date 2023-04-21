@@ -43,6 +43,7 @@ def save_cubesat_data(data: dict):
     Saves a cubesat report to elasticsearch \n
     :param data: fully processed normal report
     """
+    #print(data)
     es.index(config.cubesat_db_index, es.daily_index_strategy, data)
 
 def generate_missing_fragments(frag_list: list):
@@ -119,18 +120,19 @@ def computer_normal_report_values(data: dict) -> dict:
     :return: fully processed normal report
     """
     fixed_data = {
-        'burnwire_burn_time': map_range(float(data['burnwire_burn_time']), 0, 255, 0, 60000),
-        'burnwire_armed_timeout_limit': map_range(float(data['burnwire_armed_timeout_limit']), 0, 255, 0, 86400000),
-        'burnwire_attempts': map_range(float(data['burnwire_attempts']), 0, 255, 0, 10),
-        'downlink_period': map_range(float(data['downlink_period']), 0, 255, 1000, 172800000),
-        'x_mag': map_range(float(data['x_mag']), 0, 255, -180, 180),
-        'y_mag': map_range(float(data['y_mag']), 0, 255, -180, 180),
-        'z_mag': map_range(float(data['z_mag']), 0, 255, -180, 180),
-        'x_gyro': map_range(float(data['x_gyro']), 0, 255, -180, 180),
-        'y_gyro': map_range(float(data['y_gyro']), 0, 255, -180, 180),
-        'z_gyro': map_range(float(data['z_gyro']), 0, 255, -180, 180),
-        'temp': map_range(float(data['temp']), 0, 255, 0, 200),
-        'solar_current': map_range(float(data['solar_current']), 0, 255, 0, 500),
+        'burnwire_burn_time': map_range(float(data['burnwire_burn_time']), 0, 255, 0, 5000),
+        'burnwire_armed_timeout_limit': map_range(float(data['burnwire_armed_timeout_limit']), 0, 255, 0, 864000000),
+        # 'burnwire_attempts': map_range(float(data['burnwire_attempts']), 0, 255, 0, 10),
+        'downlink_period': map_range(float(data['downlink_period']), 0, 255, 60000, 172800000),
+        'x_mag': map_range(float(data['x_mag']), 0, 255, -150, 150),
+        'y_mag': map_range(float(data['y_mag']), 0, 255, -150, 150),
+        'z_mag': map_range(float(data['z_mag']), 0, 255, -150, 150),
+        'x_gyro': map_range(float(data['x_gyro']), 0, 255, -5, 5),
+        'y_gyro': map_range(float(data['y_gyro']), 0, 255, -5, 5),
+        'z_gyro': map_range(float(data['z_gyro']), 0, 255, -5, 5),
+        'photoresistor' : map_range(float(data['photoresistor']), 0, 255, 0, 1023),
+        'temp': map_range(float(data['temp']), 0, 255, -50, 200),
+        # 'solar_current': map_range(float(data['solar_current']), 0, 255, 0, 500),
         'battery_voltage': map_range(float(data['battery_voltage']), 0, 255, 3, 5)
     }
     data.update(fixed_data)
