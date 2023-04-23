@@ -25,3 +25,4 @@ package-lock.json
 *.env
 */venv
 yarn.lock
+rockblock_config.json
