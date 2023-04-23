@@ -81,9 +81,9 @@ def separate_cycles(fragment_number: int, fragment_data: str):
         # Maps imu cycle values from the range used for transmission (0 - 255) to their actual range (-180 - 180)
         report_data = {
             'cycle_count': int(cycle_count),
-            'x_gyro': map_range(float(x_gyro), 0, 255, -180, 180),
-            'y_gyro': map_range(float(y_gyro), 0, 255, -180, 180),
-            'z_gyro': map_range(float(z_gyro), 0, 255, -180, 180)
+            'x_gyro': float(x_gyro) / 25 - 5,
+            'y_gyro': float(y_gyro) / 25 - 5,
+            'z_gyro': float(z_gyro) / 25 - 5,
         }
         print('report', report_data)
         # Saves a cycle report to elasticsearch

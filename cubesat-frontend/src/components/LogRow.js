@@ -54,7 +54,7 @@ export default function LogRow({ entry }) {
         </>
       </td>
       <td>{new Date(parseFloat(entry.timestamp)).toLocaleString()}</td>
-      <td>{entry.error_message}</td>
+      <td>{entry.message}</td>
     </tr>
   );
 }
