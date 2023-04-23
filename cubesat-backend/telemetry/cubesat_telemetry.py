@@ -120,7 +120,7 @@ def process_save_camera_data(data: dict):
              {**report_metadata(data), **img.get_img_display_info()})
 
 
-def computer_normal_report_values(data: dict) -> dict:
+def compute_normal_report_values(data: dict) -> dict:
     """
     Maps normal report values from the range used for transmission (0 - 255) to their actual range (see spec) \n
     :param data: decoded normal report
@@ -262,7 +262,7 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
     else:
         try:
             if opcode == Opcodes.normal_report:
-                result = computer_normal_report_values(
+                result = compute_normal_report_values(
                     parser.read_structure(config.normal_report_structure))
             elif opcode == Opcodes.imu_report:
                 result = read_imu_hex_fragment(data)
