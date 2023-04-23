@@ -45,14 +45,14 @@ def uplink_command(command):
     Process a command to be sent to cubesat
     """
     print(command)
-    control.handle_command(command)
+    uplink_response = control.handle_command(command)
 
     # for basic integration testing only
     return {
-        'status': 'success',
+        'status': 'success' if uplink_response.find("OK") != -1 else 'failure',
         'timestamp': time.time() * 1000,
         'commands': command,
-        'error_message': ''
+        'message': uplink_response
     }
 
 @cubesat.get('/command')

@@ -36,7 +36,7 @@ class CommandResponseSchema(ma.Schema):
     status = ma.Str(required=True)
     timestamp = ma.Str(required=True)
     commands = ma.Nested(CommandSchema(many=True), required=True)
-    error_message = ma.Str()
+    message = ma.Str()
 
 class TokenResponseSchema(ma.Schema):
     access_token = ma.Str(required=True)
