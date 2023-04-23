@@ -157,7 +157,7 @@ def format_arg(n):
 """Takes a Command and translates it to a string representation as
 specified in the Alpha documentation"""
 def parse_command(command):
-    selected_opcode = command['operation']
+    selected_opcode = command['opcode']
     if selected_opcode == 'SFR_Override':
         namespace = command['namespace']
         field = command['field']

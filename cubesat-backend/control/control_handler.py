@@ -1,5 +1,5 @@
 from datetime import datetime
-import control_protocol as cp
+import control.control_protocol as cp
 import json
 
 FLAG_LENGTH = 2
@@ -42,6 +42,6 @@ def handle_command(commands):
         uplink += cp.parse_command(command)
 
     uplink += format_flag(0) + format_flag(250)
-    with open('rockblock_config.json') as f:
+    with open('./control/rockblock_config.json') as f:
         rockblock_config = json.load(f)
     cp.send_uplink(rockblock_config['imei'], rockblock_config['user'], rockblock_config['password'], uplink)
