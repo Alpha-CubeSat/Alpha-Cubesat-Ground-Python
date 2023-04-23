@@ -71,14 +71,22 @@ def separate_cycles(fragment_number: int, fragment_data: str):
     :param fragment_number: id number of fragment
     :param fragment_data: hex string containing the packet's imu cycle data
     """
+    cycle_num = 0
     for x in range(0, len(fragment_data), 6):
+
+        # Only guaranteed to have 21 complete cycles, 22-th cycle can be incomplete,
+        # so exit loop of end flag is detected on 22-th cycle
+        if cycle_num == 22 and fragment_data[x:].find('fe92') != -1:
+            break
+
         x_gyro = int(fragment_data[x:x + 2], 16)
         y_gyro = int(fragment_data[x + 2:x + 4], 16)
         z_gyro = int(fragment_data[x + 4:x + 6], 16)
         # every full fragment has 22 cycles, new cycle occurs every six digits in the hex string
         cycle_count = fragment_number * 22 + x / 6
+        cycle_num += 1
 
-        # Maps imu cycle values from the range used for transmission (0 - 255) to their actual range (-180 - 180)
+        # Maps imu cycle values from the range used for transmission (0 - 255) to their actual range (-5 - 5)
         report_data = {
             'cycle_count': int(cycle_count),
             'x_gyro': float(x_gyro) / 25 - 5,
@@ -254,7 +262,7 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
         opcode = Opcodes(parser.read_uint8())
 
     # Extract data from report (strip away opcode [0:2] and command log [57:])
-    data = rockblock_report['data'][2:57]
+    data = rockblock_report['data'][2:] #[2:57]
 
     # Reads data from a packet based on its opcode
     if opcode == Opcodes.empty_packet:
