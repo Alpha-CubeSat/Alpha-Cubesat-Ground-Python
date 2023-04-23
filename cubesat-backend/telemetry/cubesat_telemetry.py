@@ -253,8 +253,8 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
     else:
         opcode = Opcodes(parser.read_uint8())
 
-    # Extract data from report (strip away opcode)
-    data = rockblock_report['data'][2:]
+    # Extract data from report (strip away opcode [0:2] and command log [57:])
+    data = rockblock_report['data'][2:57]
 
     # Reads data from a packet based on its opcode
     if opcode == Opcodes.empty_packet:
