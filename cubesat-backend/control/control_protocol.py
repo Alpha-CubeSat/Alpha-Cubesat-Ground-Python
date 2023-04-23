@@ -162,13 +162,13 @@ def parse_command(command):
         field = command['field']
         value = command['value']
         opcode = SFR_OVERRIDE_OPCODES_MAP[namespace][field]
-        arg1 = format_arg(value)
+        arg1 = format_arg(int(value))
         arg2 = format_arg(0)
     else:
         opcode = BURNWIRE_OPCODES[selected_opcode]
         arg1 = format_arg(0)
         arg2 = format_arg(0)
-    return opcode+ arg1 + arg2
+    return opcode + arg1 + arg2
 
 
 """Sends an uplink request to the satellite via the
