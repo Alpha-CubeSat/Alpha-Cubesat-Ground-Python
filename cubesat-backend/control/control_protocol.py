@@ -6,7 +6,7 @@ ARG_LENGTH = 8
 BURNWIRE_OPCODES =  {
     'Deploy': '3333',
     'Arm': '4444',
-    'Fire': '55555'
+    'Fire': '5555'
 }
 SFR_OVERRIDE_OPCODES_MAP = {
     'stabalization': {
