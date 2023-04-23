@@ -1,5 +1,4 @@
 import requests
-import json
 
 # CONSTANTS
 ROCKBLOCK_ENDPOINT = 'https://core.rock7.com/rockblock/MT'
@@ -188,3 +187,4 @@ def send_uplink(imei, user, password, data):
 
     response = requests.post(ROCKBLOCK_ENDPOINT, json = request)
     print(response.text + "\n")
+    return response.text
