@@ -1,6 +1,7 @@
-from datetime import datetime
-import control_protocol as cp
 import json
+from datetime import datetime
+
+import control.control_protocol as cp
 
 FLAG_LENGTH = 2
 
