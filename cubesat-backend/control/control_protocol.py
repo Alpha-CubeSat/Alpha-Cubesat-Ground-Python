@@ -147,7 +147,7 @@ SFR_OVERRIDE_OPCODES_MAP = {
 hexidecimal string without '0x' header, then pads hexadecimal string with '0's 
 at the beginning until it has the length of ARG_LENGTH."""
 def format_arg(n):
-    arg = (hex(n)[2:]).upper()
+    arg = (hex(int(n))[2:]).upper()
     while len(arg) < ARG_LENGTH:
         arg = "0" + arg
     return arg
@@ -184,6 +184,7 @@ def send_uplink(imei, user, password, data):
         'password': password,
         'data': data,
         }
+    print(data)
 
     response = requests.post(ROCKBLOCK_ENDPOINT, json = request)
     print(response.text + "\n")
