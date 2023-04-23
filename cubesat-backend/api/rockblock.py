@@ -36,4 +36,4 @@ def rockblock_telemetry(report):
     # Decode/process rockblock report and save it in elasticsearch
     telemetry.handle_report(report)  # wrap with try/catch in case of error?
 
-    return '', 204
+    return '', 200 # Successful downlink code
