@@ -179,13 +179,14 @@ the rockblock web services response data as a map with keys [:status :id :error-
 The possible responses are documented at https://www.rock7.com/downloads/RockBLOCK-Web-Services-User-Guide.pdf"""
 def send_uplink(imei, user, password, data):
     request = {
-        'imei': imei,
-        'user': user,
-        'password': password,
-        'data': data,
+        "imei": imei,
+        "username": user,
+        "password": password,
+        "data": data,
         }
     print(data)
+    print(request)
 
-    response = requests.post(ROCKBLOCK_ENDPOINT, json = request)
+    response = requests.post(ROCKBLOCK_ENDPOINT, data = request)
     print(response.text + "\n")
     return response.text
