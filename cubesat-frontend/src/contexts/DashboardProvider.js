@@ -8,6 +8,9 @@ export default function DashboardProvider({ children }) {
   // current list of commands to send
   const [commandStack, setCommandStack] = useState([]);
 
+  // list of disabled opcodes based on current commands in command card
+  const [disabledOpcodes, setDisabledOpcodes] = useState([]);
+
   // ***grab prev command history from api on initial render
 
   // notify command log of API response when user sends command
@@ -49,6 +52,8 @@ export default function DashboardProvider({ children }) {
         setCommandStack,
         count,
         setCount,
+        disabledOpcodes,
+        setDisabledOpcodes
       }}
     >
       {children}
