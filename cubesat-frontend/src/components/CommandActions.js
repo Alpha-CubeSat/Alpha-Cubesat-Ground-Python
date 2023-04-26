@@ -8,7 +8,7 @@ import { useApi } from "../contexts/ApiProvider";
 // Allows user to send commands and clear current commands.
 // Send and clear actions protected by confirmation modal to prevent accidental clicks.
 export default function CommandActions() {
-  const { commandStack, setCommandStack, commandLog, setCommandLog } =
+  const { commandStack, setCommandStack, commandLog, setCommandLog, setDisabledOpcodes } =
     useDashboard();
   const api = useApi();
 
@@ -18,7 +18,10 @@ export default function CommandActions() {
 
   const commandsStacked = commandStack.length !== 0;
 
-  const clearCommands = () => setCommandStack([]);
+  const clearCommands = () => {
+    setCommandStack([]);
+    setDisabledOpcodes([])
+  }
 
   const sendCommands = async () => {
     // build api request to send commands
@@ -37,6 +40,9 @@ export default function CommandActions() {
 
     // clear commands
     setCommandStack([]);
+
+    // allow any opcode selection
+    setDisabledOpcodes([]);
   };
 
   return (

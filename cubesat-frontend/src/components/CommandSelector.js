@@ -27,7 +27,7 @@ export const opcodeDesc = {
 // Supports multiple types command arguments (ints, floats, booleans, time) and min/max checking
 // Shows the title and description for a selected command
 export default function CommandSelector() {
-  const { commandStack, setCommandStack, count, setCount } = useDashboard();
+  const { commandStack, setCommandStack, count, setCount, disabledOpcodes, setDisabledOpcodes } = useDashboard();
 
   // Selected dropdown values
   const [selectedOpCode, setOpCode] = useState("None");
@@ -144,6 +144,13 @@ export default function CommandSelector() {
     };
     setCommandStack([...commandStack, new_command]);
     setCount(count + 1);
+    
+    //Allows only one command--deploy, arm, or fire to be sent at a time
+    if (new_command["opcode"] === "Deploy" || new_command["opcode"] === "Arm" || new_command["opcode"] === "Fire") {
+      setDisabledOpcodes(["Deploy","Arm","Fire"])
+    }
+
+    
 
     // reset dropdowns
     setOpCode("None");
@@ -180,7 +187,7 @@ export default function CommandSelector() {
             </Dropdown.Toggle>
             <Dropdown.Menu>
               {Object.keys(OpCodes).map((option, index) => (
-                <Dropdown.Item key={index} onClick={handleOpCodeSelect(option)}>
+                <Dropdown.Item key={index} disabled ={disabledOpcodes.includes(option)} onClick={handleOpCodeSelect(option)}>
                   {option}
                 </Dropdown.Item>
               ))}
