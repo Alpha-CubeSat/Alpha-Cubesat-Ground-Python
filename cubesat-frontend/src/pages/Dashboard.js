@@ -27,7 +27,7 @@ export default function Dashboard() {
             <WidgetCard title="CubeSat Images" children={<ImageViewer />} />
           </Row>
         </Col>
-        <Col sm="5">
+        <Col className="dash_height" sm="5">
           <Row className="h-100 py-2">
             <WidgetCard title="Command History" children={<CommandLog />} />
           </Row>
