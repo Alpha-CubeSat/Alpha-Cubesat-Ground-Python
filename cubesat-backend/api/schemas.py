@@ -2,14 +2,11 @@ from api.app import ma
 
 class RockblockReportSchema(ma.Schema):
     device_type = ma.Str()
-    iss = ma.Str()
     imei = ma.Int()
     serial = ma.Int()
-    iat = ma.Int()
     momsn = ma.Int()
     JWT = ma.Str()
-    transmit_time = ma.DateTime()
-    iridium_session_status = ma.Int()
+    transmit_time = ma.Str()
     iridium_longitude = ma.Float()
     iridium_latitude = ma.Float()
     iridium_cep = ma.Float()
