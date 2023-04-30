@@ -7,7 +7,7 @@ import update from "immutability-helper";
 // Command List (component of CommandBuilder)
 // Provides drag and drop interface to allow easy reordering + deletion of commands.
 export default function CommandList() {
-  const { commandStack, setCommandStack } = useDashboard();
+  const { commandStack, setCommandStack, setDisabledOpcodes } = useDashboard();
 
   // callback function when command position changed due to drag/drop
   const moveCommand = (dragIndex, hoverIndex) => {
@@ -29,6 +29,11 @@ export default function CommandList() {
       ...commandStack.slice(0, index),
       ...commandStack.slice(index + 1),
     ]);
+
+    // Reset dropdown if "Deploy", "Arm", "Fire" opcode is removed
+    if (commandStack[index]["opcode"] === "Deploy" || commandStack[index]["opcode"] === "Arm" || commandStack[index]["opcode"] === "Fire") {
+      setDisabledOpcodes([]);
+    }
   };
 
   return (
