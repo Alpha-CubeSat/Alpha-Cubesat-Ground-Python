@@ -4,6 +4,7 @@ from os.path import exists
 import config as cfg
 import util.binary.hex_string as hex
 
+# TODO: will not work if multiple images received
 # list of all image fragment numbers received
 fragment_list = []
 # keeps track of various stats regarding the received image fragments
@@ -47,7 +48,7 @@ def sort_files_numeric(files: list) -> list:
     return sorted(files, key=lambda x: int(os.path.basename(x).split('.')[0]))
 
 
-def generate_missing_fragments(frag_list: list):
+def generate_missing_fragments(frag_list: list, image_sn: int):
     """
     Finds the missing fragments and the highest fragment received for an image.
     Counts through all already-received fragments every time because fragments could be received in random order.
@@ -59,7 +60,20 @@ def generate_missing_fragments(frag_list: list):
     for x in range(max_frag):
         if frag_list.count(x) == 0:
             img_display_info['missing_fragments'].append(x)
+            # generate a blank 64 byte fragment if a fragment is missing
+            with open(f'{cfg.image_root_dir}/{image_sn}/{x}.csfrag', 'wb') as frag_file:
+                frag_file.write(bytearray.fromhex('f'*128))
 
+def get_saved_fragments(image_sn: int) -> list:
+    """
+    Generates a list of the fragments received for a particular image as a list of numbers.
+    """
+    fragment_files = []
+    for dir_path, _, file_names in os.walk(f'{cfg.image_root_dir}/{image_sn}'):
+        for file in file_names:
+            if '.csfrag' in file:
+                fragment_files.append(os.path.join(dir_path, file))
+    return fragment_files
 
 def try_save_image(image_sn: int, total_fragments: int):
     """
@@ -71,30 +85,25 @@ def try_save_image(image_sn: int, total_fragments: int):
     :param image_sn: serial number of the image to be assembled
     :param total_fragments: the total # of fragments needed to assemble the image
     """
-
-    fragment_files = []
-    for dir_path, _, file_names in os.walk(f'{cfg.image_root_dir}/{image_sn}'):
-        for file in file_names:
-            if '.csfrag' in file:
-                fragment_files.append(os.path.join(dir_path, file))
-
-    num_fragments = len(fragment_files)
-
-    # Generates a list of the fragments received for a particular image as a list of numbers.
+    # Get all currently received fragments
+    fragment_files = get_saved_fragments(image_sn)
     for fragment in fragment_files:
         fragment_list.append(int(os.path.splitext(os.path.basename(fragment))[0]))
 
-    generate_missing_fragments(fragment_list)
-    img_display_info['fragment_count'] = f'{num_fragments}/' + str(
+    # Generate blank fragments if a fragment is missing and update counters
+    generate_missing_fragments(fragment_list, image_sn)
+    img_display_info['fragment_count'] = f'{len(fragment_files)}/' + str(
         total_fragments) if total_fragments != 1 else '?'
 
-    if num_fragments == total_fragments:
+    # Build final image if we have enough fragments (both received + blank)
+    if len(get_saved_fragments(image_sn)) == total_fragments:
         if not exists(f'{cfg.image_root_dir}/img'):
             os.makedirs(f'{cfg.image_root_dir}/img')
 
         with open(f'{cfg.image_root_dir}/img/{image_sn}.jpg', 'wb') as image_file:
             for fragment in sort_files_numeric(fragment_files):
                 image_file.write(open(fragment, 'rb').read())
+                # print(open(fragment, 'rb').read().hex())
 
 
 def get_img_display_info() -> dict:
@@ -129,3 +138,5 @@ def get_image_data(image_file_name: str) -> dict:
         'timestamp': os.path.getmtime(image_path),
         'base64': hex.bytes_to_b64(bin_img)
     }
+
+# try_save_image(10, 57)
