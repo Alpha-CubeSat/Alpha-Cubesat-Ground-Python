@@ -14,7 +14,8 @@ rockblock = Blueprint('rockblock', __name__)
 def rockblock_telemetry(report):
     """
     Rockblock Telemetry
-    Receive data from rockblock web services
+    Used to receive downlinked data reports sent by the CubeSat from the RockBlock portal.
+    Must have a valid JWT token.
     """
     print("report received")
     # print(report)
