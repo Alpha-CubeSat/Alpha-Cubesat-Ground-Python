@@ -19,7 +19,7 @@ cubesat = Blueprint('cubesat', __name__)
 def get_recent_images(args):
     """
     Get Recent Images
-    Returns a list of names of recently received ttl files
+    Returns a list of names of all the fully downlinked image files received by the ground station.
     """
     return {'images': image_db.get_recent_images(args['count'])}
 
@@ -30,7 +30,7 @@ def get_recent_images(args):
 def get_image(name: 'Name of the image'):
     """
     Get Image By Name
-    Returns the ttl file with the given name if it exists
+    Returns the image file with the given name if it exists.
     """
     return image_db.get_image_data(name)
 
@@ -42,12 +42,12 @@ def get_image(name: 'Name of the image'):
 def uplink_command(command):
     """
     Uplink Command
-    Process a command to be sent to cubesat
+    Process a command to be sent to the CubeSat via the RockBlock portal.
+    Opcode, namespace, field, and value fields must be valid per the Alpha flight SW documentation.
     """
     print(command)
     uplink_response = control.handle_command(command)
 
-    # for basic integration testing only
     return {
         'status': 'success' if uplink_response.find("OK") != -1 else 'failure',
         'timestamp': time.time() * 1000,
@@ -63,6 +63,6 @@ def uplink_command(command):
 def get_command_history(command):
     """
     Get Command History
-    Get all previously sent commands to the CubeSat
+    Get all previously sent commands to the CubeSat via the RockBlock portal.
     """
     return 'API not configured yet.', 503
