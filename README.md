@@ -1,4 +1,4 @@
-# Alpha-Cubesat-Ground
+# Alpha CubeSat Ground
 Ground Station software for the Alpha CubeSat project
 
 ## Overview
@@ -53,8 +53,8 @@ The `config.py` file provided has placeholder/default values for everything, so 
 
 [//]: # (Under `:telemetry`, you can specify the ElasticSearch indices for storing data received from RockBlock Web Services as well as processed satellite data. )
 [//]: # (Under `:database` configuration, you can specify the location of the ElasticSearch server, as well as authentication credentials.)
-[//]: # (If you are not using authentication in ElasticSearch &#40;you won't by default&#41;, you can remove the `:basic-auth` option entirely under `:conn-config`.
-[//]: # (Under `:image` you can configure the root directory on the local filesystem where satellite image data will be stored &#40;and served from&#41;.
+[//]: # (If you are not using authentication in ElasticSearch &#40;you won't by default&#41;, you can remove the `:basic-auth` option entirely under `:conn-config`. )
+[//]: # (Under `:image` you can configure the root directory on the local filesystem where satellite image data will be stored &#40;and served from&#41;. )
 [//]: # (Finally, under `:control` you specify your RockBlock web services credentials as well as the id "imei" of the physical RockBlock unit you are using. This allows the ground system to authenticate with RockBlock and issue commands to the device.&#41;&#41;)
 
 4. **Run the Backend Server.**
@@ -73,7 +73,7 @@ As this UI will attempt to make requests against the actual backend API, the fro
 [//]: # (&#40;which should be running if you completed step 4&#41;. By default, this attempts to reroute to `localhost:3000`, as this is the default address for the Alpha backend. )
 [//]: # (But if you are using a different one, you will need to change `:proxy-url` to point to the right address.)
 
-6. **Run the Frontend UI**
+6. **Run the Frontend UI.**
 Once configured, run the command `npm start` (make sure the back-end is still running). 
 This will boot the server that serves the UI and proxies requests to the real backend. 
 Navigate to the address configured (it will be printed in the terminal, and it is `localhost:3000` by default). 
