@@ -285,7 +285,7 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
     if opcode == Opcodes.empty_packet:
         result = error_data(rockblock_report, 'empty packet')
     else:
-        # try:
+        try:
             if opcode == Opcodes.normal_report:
                 result = compute_normal_report_values(
                     parser.read_structure(config.normal_report_structure))
@@ -296,6 +296,6 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
             else:  # opcode == camera_report
                 result = read_img_hex_fragment(data)
             result['telemetry_report_type'] = opcode
-        # except Exception:
-            # result = error_data(rockblock_report, traceback.format_exc())
+        except Exception:
+            result = error_data(rockblock_report, traceback.format_exc())
     return {**report_metadata(rockblock_report), **result}
