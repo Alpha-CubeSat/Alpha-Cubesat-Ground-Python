@@ -147,6 +147,27 @@ def compute_normal_report_values(data: dict) -> dict:
     return data
 
 
+def read_normal_report_command_log(data):
+    """
+    Processes the raw rockblock data to create a list of commands received by the CubeSat
+    :param data: section of raw rockblock data containing command log information
+    :return: dictionary with the command log
+    """
+    commandlog = {"command log": []}
+    while (data != "feff" or len(data) < 4):
+        if int(data[:4]) > 1100 and int(data[:4]) < 2899:
+            commandlog["command log"].append("SFR_Override")
+        elif int(data[:4]) == 3333:
+            commandlog["command log"].append("Deploy")
+        elif int(data[:4]) == 4444:
+            commandlog["command log"].append("Arm")
+        elif int(data[:4]) == 5555:
+            commandlog["command log"].append("Fire")
+        else:
+            commandlog["command log"].append("Unknown")
+        data = data[4:]
+    return commandlog
+
 def read_imu_hex_fragment(data: str) -> dict:
     """
     Separates the fragment's id number and data and returns them in a dictionary, where
@@ -248,7 +269,6 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
     :param rockblock_report: raw data report from rockblock API
     :return: processed/decoded rockblock report or error report if empty or exception occurred
     """
-
     # Convert hex encoded data into a python byte array
     binary_data = hex.hex_str_to_bytes(rockblock_report['data'])
 
@@ -259,22 +279,23 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
     else:
         opcode = Opcodes(parser.read_uint8())
 
-    # Extract data from report (strip away opcode [0:2] and command log [57:])
-    data = rockblock_report['data'][2:] #[2:57]
-
+    # Extract data from report (strip away opcode [0:2])
+    data = rockblock_report['data'][2:] 
     # Reads data from a packet based on its opcode
     if opcode == Opcodes.empty_packet:
         result = error_data(rockblock_report, 'empty packet')
     else:
-        try:
+        # try:
             if opcode == Opcodes.normal_report:
                 result = compute_normal_report_values(
                     parser.read_structure(config.normal_report_structure))
+                result = {**result, **read_normal_report_command_log(rockblock_report['data'][58:])}
+                print(result)
             elif opcode == Opcodes.imu_report:
                 result = read_imu_hex_fragment(data)
             else:  # opcode == camera_report
                 result = read_img_hex_fragment(data)
             result['telemetry_report_type'] = opcode
-        except Exception:
-            result = error_data(rockblock_report, traceback.format_exc())
+        # except Exception:
+            # result = error_data(rockblock_report, traceback.format_exc())
     return {**report_metadata(rockblock_report), **result}

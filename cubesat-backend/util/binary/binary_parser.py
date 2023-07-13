@@ -10,7 +10,7 @@ class BinaryTypes(Enum):
     # int32 = 1
     # uint32 = 2
     # int16 = 3
-    # uint16 = 4
+    uint16 = 4
     # int8 = 5
     uint8 = 6
     # float64 = 7
@@ -32,6 +32,10 @@ class BinaryParser:
     def read_uint8(self) -> int:
         """Reads and returns the next unsigned 8-bit integer from the buffer"""
         return self.reader.read_uint8()
+    
+    def read_uint16(self) -> int:
+        """Reads and returns the next unsigned 16-bit integer from the buffer"""
+        return self.reader.read_uint16()
 
     def read_structure(self, structure: list[tuple[str, BinaryTypes]]) -> dict:
         """
@@ -48,10 +52,11 @@ class BinaryParser:
             the map key and the second is the BinaryType of the binary number to be read
         :return: a map containing the decoded numbers under their specified map keys
         """
-        decoded = {}
+        decoded = {"command_log": []}
         for (name, ptype) in structure:
             if ptype == BinaryTypes.uint8:
-                decoded[name] = self.read_uint8()
+                decoded[name] = self.read_uint8()                
             else:
                 raise NotImplementedError()
         return decoded
+
