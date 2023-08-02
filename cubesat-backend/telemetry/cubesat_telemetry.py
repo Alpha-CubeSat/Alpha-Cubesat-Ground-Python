@@ -155,13 +155,13 @@ def read_normal_report_command_log(data):
     """
     commandlog = {"command log": []}
     while (data != "feff" or len(data) < 4):
-        if int(data[:4]) > 1100 and int(data[:4]) < 2899:
+        if int(data[:4], 16) > 1100 and int(data[:4], 16) < 2899:
             commandlog["command log"].append("SFR_Override")
-        elif int(data[:4]) == 3333:
+        elif int(data[:4], 16) == 3333:
             commandlog["command log"].append("Deploy")
-        elif int(data[:4]) == 4444:
+        elif int(data[:4], 16) == 4444:
             commandlog["command log"].append("Arm")
-        elif int(data[:4]) == 5555:
+        elif int(data[:4], 16) == 5555:
             commandlog["command log"].append("Fire")
         else:
             commandlog["command log"].append("Unknown")
