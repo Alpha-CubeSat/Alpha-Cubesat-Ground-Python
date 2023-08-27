@@ -48,7 +48,7 @@ def sort_files_numeric(files: list) -> list:
     return sorted(files, key=lambda x: int(os.path.basename(x).split('.')[0]))
 
 
-def generate_missing_fragments(frag_list: list, image_sn: int):
+def generate_missing_fragments(frag_list: list):
     """
     Finds the missing fragments and the highest fragment received for an image.
     Counts through all already-received fragments every time because fragments could be received in random order.
@@ -60,9 +60,6 @@ def generate_missing_fragments(frag_list: list, image_sn: int):
     for x in range(max_frag):
         if frag_list.count(x) == 0:
             img_display_info['missing_fragments'].append(x)
-            # generate a blank 64 byte fragment if a fragment is missing
-            with open(f'{cfg.image_root_dir}/{image_sn}/{x}.csfrag', 'wb') as frag_file:
-                frag_file.write(bytearray.fromhex('f'*128))
 
 def get_saved_fragments(image_sn: int) -> list:
     """
@@ -86,24 +83,29 @@ def try_save_image(image_sn: int, total_fragments: int):
     :param total_fragments: the total # of fragments needed to assemble the image
     """
     # Get all currently received fragments
-    fragment_files = get_saved_fragments(image_sn)
-    for fragment in fragment_files:
-        fragment_list.append(int(os.path.splitext(os.path.basename(fragment))[0]))
+    fragment_map = {}
+    for file in sort_files_numeric(get_saved_fragments(image_sn)):
+        fragment_map[int(os.path.splitext(os.path.basename(file))[0])] = file
+
+    global fragment_list
+    fragment_list = list(fragment_map.keys())
 
     # Generate blank fragments if a fragment is missing and update counters
-    generate_missing_fragments(fragment_list, image_sn)
-    img_display_info['fragment_count'] = f'{len(fragment_files)}/' + str(
+    generate_missing_fragments(fragment_list)
+    img_display_info['fragment_count'] = f'{len(fragment_list)}/' + str(
         total_fragments) if total_fragments != 1 else '?'
 
-    # Build final image if we have enough fragments (both received + blank)
-    if len(get_saved_fragments(image_sn)) == total_fragments:
-        if not exists(f'{cfg.image_root_dir}/img'):
-            os.makedirs(f'{cfg.image_root_dir}/img')
+    # Build final image with currently received fragments (filling in missing ones with blanks)
+    if not exists(f'{cfg.image_root_dir}/img'):
+        os.makedirs(f'{cfg.image_root_dir}/img')
 
-        with open(f'{cfg.image_root_dir}/img/{image_sn}.jpg', 'wb') as image_file:
-            for fragment in sort_files_numeric(fragment_files):
-                image_file.write(open(fragment, 'rb').read())
-                # print(open(fragment, 'rb').read().hex())
+    with open(f'{cfg.image_root_dir}/img/{image_sn}.jpg', 'wb') as image_file:
+        for i in range(fragment_list[-1] + 1):
+            if i in fragment_list:
+                image_file.write(open(fragment_map[i], 'rb').read())
+            else: # generate a blank 64 byte fragment if a fragment is missing
+                print(f'fragment {i} missing')
+                image_file.write(bytearray.fromhex('f'*128))
 
 
 def get_img_display_info() -> dict:
