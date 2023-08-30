@@ -1,13 +1,14 @@
 import time
 
 from apifairy import response, authenticate, arguments, body, other_responses
-from flask import Blueprint
+from flask import Blueprint, Response
 
 import control.control_handler as control
 import databases.image_database as image_db
 from api.auth import token_auth
 from api.schemas import ImageNameSchema, ImageCountSchema, ImageDataSchema, CommandSchema, \
     CommandResponseSchema
+import json
 
 cubesat = Blueprint('cubesat', __name__)
 
@@ -66,3 +67,16 @@ def get_command_history(command):
     Get all previously sent commands to the CubeSat via the RockBlock portal.
     """
     return 'API not configured yet.', 503
+
+@cubesat.get('/commandLog')
+@authenticate(token_auth)
+@body(CommandSchema(many=True))
+@response(CommandResponseSchema)
+@other_responses({401: 'Invalid access token'})
+def get_processed_commands(commandLog):
+    """
+    Get Processed Commands
+    Get all previously sent commands to the CubeSat via the Rockblock portal
+    that have been confirmed in the command log of the normal report.
+    """
+    # TODO

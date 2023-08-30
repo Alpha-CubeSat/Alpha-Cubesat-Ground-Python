@@ -1,6 +1,7 @@
 import datetime
 
 from elasticsearch import Elasticsearch
+import creds
 
 
 # Makes a connection to an Elasticsearch database based on
@@ -8,8 +9,8 @@ from elasticsearch import Elasticsearch
 def get_connection() -> Elasticsearch:
     # config = cfg.get_config()
     # auth = config['database']['elasticsearch']['conn-config']['basic-auth']
-    # es = Elasticsearch('https://localhost:9200', basic_auth=auth, ca_certs = 'http_ca.crt')
-    return Elasticsearch('http://localhost:9200')
+    es = Elasticsearch('https://localhost:9200', basic_auth=creds.elastic_auth, verify_certs=False)
+    return es
 
 # Returns the input name
 def literal_index_strategy(name):

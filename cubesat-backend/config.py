@@ -54,6 +54,7 @@ normal_report_structure = [
     ('camera_on', BinaryTypes.uint8),
     ('eeprom_boot_counter', BinaryTypes.uint8),
     ('imu_is_valid', BinaryTypes.uint8),
-    ('battery_is_valid', BinaryTypes.uint8)
+    ('battery_is_valid', BinaryTypes.uint8),
+    ('command_log', BinaryTypes.uint16)
     ]
 
