@@ -147,27 +147,6 @@ def compute_normal_report_values(data: dict) -> dict:
     return data
 
 
-def read_normal_report_command_log(data):
-    """
-    Processes the raw rockblock data to create a list of commands received by the CubeSat
-    :param data: section of raw rockblock data containing command log information
-    :return: dictionary with the command log
-    """
-    commandlog = {"command log": []}
-    while (data != "feff" or len(data) < 4):
-        if int(data[:4], 16) > 1100 and int(data[:4], 16) < 2899:
-            commandlog["command log"].append("SFR_Override")
-        elif int(data[:4], 16) == 3333:
-            commandlog["command log"].append("Deploy")
-        elif int(data[:4], 16) == 4444:
-            commandlog["command log"].append("Arm")
-        elif int(data[:4], 16) == 5555:
-            commandlog["command log"].append("Fire")
-        else:
-            commandlog["command log"].append("Unknown")
-        data = data[4:]
-    return commandlog
-
 def read_imu_hex_fragment(data: str) -> dict:
     """
     Separates the fragment's id number and data and returns them in a dictionary, where
@@ -289,7 +268,6 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
             if opcode == Opcodes.normal_report:
                 result = compute_normal_report_values(
                     parser.read_structure(config.normal_report_structure))
-                result = {**result, **read_normal_report_command_log(rockblock_report['data'][58:])}
                 print(result)
             elif opcode == Opcodes.imu_report:
                 result = read_imu_hex_fragment(data)
