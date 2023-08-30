@@ -144,13 +144,13 @@ export default function CommandSelector() {
     };
     setCommandStack([...commandStack, new_command]);
     setCount(count + 1);
-    
+
     //Allows only one command--deploy, arm, or fire to be sent at a time
     if (new_command["opcode"] === "Deploy" || new_command["opcode"] === "Arm" || new_command["opcode"] === "Fire") {
-      setDisabledOpcodes(["Deploy","Arm","Fire"])
+      setDisabledOpcodes(["Deploy", "Arm", "Fire"])
     }
 
-    
+
 
     // reset dropdowns
     setOpCode("None");
@@ -187,7 +187,7 @@ export default function CommandSelector() {
             </Dropdown.Toggle>
             <Dropdown.Menu>
               {Object.keys(OpCodes).map((option, index) => (
-                <Dropdown.Item key={index} disabled ={disabledOpcodes.includes(option)} onClick={handleOpCodeSelect(option)}>
+                <Dropdown.Item key={index} disabled={disabledOpcodes.includes(option)} onClick={handleOpCodeSelect(option)}>
                   {option}
                 </Dropdown.Item>
               ))}
@@ -196,10 +196,11 @@ export default function CommandSelector() {
         </Col>
 
         {/* Namespace dropdown selection*/}
-        <Col className="justify-content-mid" md={4}>
+        <Col className="justify-content-mid" md={4} style={{ marginRight: '30px' }}>
           <span style={{ fontWeight: "bold" }}>Namespace</span>
           <Form>
             <Typeahead
+              className="position-absolute"
               id="searchable-dropdown"
               labelKey="namespace"
               options={namespaceList}
@@ -214,7 +215,7 @@ export default function CommandSelector() {
         </Col>
 
         {/* SFR field dropdown selection*/}
-        <Col>
+        <Col md={4} style={{ marginRight: '10px' }}>
           <span style={{ fontWeight: "bold" }}>Field</span>
           <Typeahead
             id="second-searchable-dropdown"
@@ -256,8 +257,8 @@ export default function CommandSelector() {
                       fieldData.type === Types.Minute
                         ? "Minutes"
                         : fieldData.type === Types.Hour
-                        ? "Hours"
-                        : "Value"
+                          ? "Hours"
+                          : "Value"
                     }
                     error={inputError}
                     fieldRef={fieldInputRef}

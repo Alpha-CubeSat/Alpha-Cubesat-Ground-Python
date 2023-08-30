@@ -32,7 +32,7 @@ export default function LogRow({ entry }) {
               {command.opcode}
             </p>
           ))}
-          {/*  Button to view command fields if they exist */}
+          {/* Button to view command fields if they exist */}
           {/*{Object.entries(entry.fields).length > 0 && (*/}
           {/*  <>*/}
           {/*    <Button*/}
@@ -50,8 +50,15 @@ export default function LogRow({ entry }) {
           {/*      </div>*/}
           {/*    </Collapse>*/}
           {/*  </>*/}
-          {/*)}*/}
+          {/*)} */}
         </>
+      </td>
+      <td>
+        {entry.processed === "true" ? (
+          <BsCheckCircleFill color="green" />
+        ) : (
+          <BsXCircleFill color="red" />
+        )}
       </td>
       <td>{new Date(parseFloat(entry.timestamp)).toLocaleString()}</td>
       <td>{entry.message}</td>

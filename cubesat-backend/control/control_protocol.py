@@ -9,7 +9,7 @@ BURNWIRE_OPCODES =  {
     'Fire': '5555'
 }
 SFR_OVERRIDE_OPCODES_MAP = {
-    'stabalization': {
+    'stabilization': {
         'max_time': '1100',
     },
     'boot': {
