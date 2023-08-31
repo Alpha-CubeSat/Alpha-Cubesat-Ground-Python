@@ -25,8 +25,13 @@ export default function LogRow({ entry }) {
             <p
               key={i}
               title={
-                command.opcode === OpCodes.SFR_Override &&
-                command.namespace + "::" + command.field + " = " + command.value
+                command.opcode === OpCodes.SFR_Override
+                  ? command.namespace +
+                    "::" +
+                    command.field +
+                    " = " +
+                    command.value
+                  : ""
               }
             >
               {command.opcode}
