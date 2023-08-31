@@ -1,28 +1,28 @@
 import { useState } from "react";
-import { Form, Button, Row, Col } from "react-bootstrap";
+import { Button, Form } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import alpha from "../AlphaPatch.png";
-
-//temp dictionary with login information
-export const loginDict = {
-  username: 1,
-  password: 1,
-};
+import { useUser } from "../contexts/UserProvider";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [show, setShow] = useState(true);
+  const { navigate } = useNavigate();
+
+  const { user, login } = useUser();
 
   const handleClose = () => setShow(false);
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    console.log("test");
-    //Temporary code using loginDict before setting up user database
-    if (username in loginDict && password in loginDict) {
-      handleClose();
-    } else alert("wrong username or password");
+    await login(username, password);
+    if (user) {
+      navigate("/");
+    } else {
+      alert("Wrong username or password");
+    }
   };
 
   return (
@@ -56,6 +56,7 @@ export default function Login() {
               placeholder="Enter username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
+              required
             />
           </Form.Group>
           <Form.Group controlId="formBasicPassword">
@@ -65,6 +66,7 @@ export default function Login() {
               placeholder="Password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              required
             />
           </Form.Group>
           <hr />
