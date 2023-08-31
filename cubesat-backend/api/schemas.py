@@ -37,3 +37,18 @@ class CommandResponseSchema(ma.Schema):
 
 class TokenResponseSchema(ma.Schema):
     access_token = ma.Str(required=True)
+
+class UsernameSchema(ma.Schema):
+    username = ma.Str(required=True)
+
+class CreateUserSchema(ma.Schema):
+    username = ma.Str(required=True)
+    password = ma.Str(required=True)
+
+class UserSchema(ma.Schema):
+    id = ma.Int(required=True)
+    username = ma.Str(required=True)
+    is_admin = ma.Bool()
+
+class UserListSchema(ma.Schema):
+    users = ma.List(ma.Str())

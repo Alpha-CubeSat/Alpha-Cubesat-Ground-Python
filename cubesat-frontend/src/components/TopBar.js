@@ -2,11 +2,13 @@ import { Container, Navbar, NavDropdown } from "react-bootstrap";
 import alpha from "../AlphaPatch.png";
 import AdminUserManage from "../pages/AdminUserManage";
 import { useState } from "react";
+import { useUser } from "../contexts/UserProvider";
 
 // Top Bar
 // Shows info such as alpha logo + name, dropdown for logging out and managing users (admin only)
 export default function TopBar() {
   const [editShow, setEditShow] = useState(false);
+  const { logout } = useUser();
 
   return (
     <>
@@ -22,7 +24,9 @@ export default function TopBar() {
             <NavDropdown.Item onClick={() => setEditShow(true)}>
               ADMIN: Edit Users
             </NavDropdown.Item>
-            <NavDropdown.Item>Log Out</NavDropdown.Item>
+            <NavDropdown.Item onClick={() => logout()}>
+              Log Out
+            </NavDropdown.Item>
           </NavDropdown>
         </Container>
       </Navbar>
