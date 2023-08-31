@@ -33,8 +33,9 @@ export default function UserProvider({ children }) {
   };
 
   // Logs in a user with their username and password
+  // Returns true/false depending on whether login was successful or not
   const login = async (username, password) => {
-    await api
+    return api
       .post(
         "/auth/token",
         {},
@@ -47,10 +48,12 @@ export default function UserProvider({ children }) {
       .then((res) => {
         localStorage.setItem("token", res.data["access_token"]);
         userFromToken();
+        return true;
       })
       .catch((e) => {
         console.log(e);
         setUser(null);
+        return false;
       });
   };
 

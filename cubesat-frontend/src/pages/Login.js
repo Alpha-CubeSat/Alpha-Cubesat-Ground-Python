@@ -1,27 +1,40 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button, Form } from "react-bootstrap";
 import Modal from "react-bootstrap/Modal";
 import alpha from "../AlphaPatch.png";
 import { useUser } from "../contexts/UserProvider";
-import { useNavigate } from "react-router-dom";
+import InputField from "../components/InputField";
 
 export default function Login() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [show, setShow] = useState(true);
-  const { navigate } = useNavigate();
+  const usernameRef = useRef("");
+  const passwordRef = useRef("");
+  const [formError, setFormError] = useState({});
 
-  const { user, login } = useUser();
+  const [show, setShow] = useState(true);
+
+  const { login } = useUser();
 
   const handleClose = () => setShow(false);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await login(username, password);
-    if (user) {
-      navigate("/");
-    } else {
-      alert("Wrong username or password");
+    const username = usernameRef.current.value;
+    const password = passwordRef.current.value;
+
+    // make sure username and password are non-empty
+    let error = {};
+    if (username.length === 0) error.username = "Username cannot be empty.";
+    if (password.length === 0) error.password = "Password cannot be empty.";
+    setFormError(error);
+    if (Object.keys(error).length > 0) return;
+
+    // attempt to login user
+    let success = await login(username, password);
+    if (!success) {
+      setFormError({
+        username: "Username or password is incorrect.",
+        password: "Username or password is incorrect.",
+      });
     }
   };
 
@@ -48,27 +61,23 @@ export default function Login() {
           alt="Alpha Logo"
           className="mx-auto d-block"
         />
-        <Form onSubmit={handleSubmit}>
-          <Form.Group controlId="formBasicEmail">
-            <Form.Label>Username</Form.Label>
-            <Form.Control
-              type="username"
-              placeholder="Enter username"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
-              required
-            />
-          </Form.Group>
-          <Form.Group controlId="formBasicPassword">
-            <Form.Label>Password</Form.Label>
-            <Form.Control
-              type="password"
-              placeholder="Password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </Form.Group>
+        <Form noValidate onSubmit={handleSubmit}>
+          <InputField
+            name="login-username"
+            type="username"
+            placeholder="Enter username"
+            label="Username"
+            error={formError.username}
+            fieldRef={usernameRef}
+          />
+          <InputField
+            name="login-password"
+            type="password"
+            placeholder="Enter password"
+            label="Password"
+            error={formError.password}
+            fieldRef={passwordRef}
+          />
           <hr />
           <Button my={10} variant="primary" type="submit">
             Login
