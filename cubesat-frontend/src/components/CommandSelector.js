@@ -1,6 +1,6 @@
 import { useRef, useState } from "react";
 import Dropdown from "react-bootstrap/Dropdown";
-import { Container, Row, Col, Button, Form } from "react-bootstrap";
+import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useDashboard } from "../contexts/DashboardProvider";
 import namespaces, { Types } from "./SFR_Overrides";
 import InputField from "./InputField";
@@ -27,7 +27,14 @@ export const opcodeDesc = {
 // Supports multiple types command arguments (ints, floats, booleans, time) and min/max checking
 // Shows the title and description for a selected command
 export default function CommandSelector() {
-  const { commandStack, setCommandStack, count, setCount, disabledOpcodes, setDisabledOpcodes } = useDashboard();
+  const {
+    commandStack,
+    setCommandStack,
+    count,
+    setCount,
+    disabledOpcodes,
+    setDisabledOpcodes,
+  } = useDashboard();
 
   // Selected dropdown values
   const [selectedOpCode, setOpCode] = useState("None");
@@ -146,11 +153,13 @@ export default function CommandSelector() {
     setCount(count + 1);
 
     //Allows only one command--deploy, arm, or fire to be sent at a time
-    if (new_command["opcode"] === "Deploy" || new_command["opcode"] === "Arm" || new_command["opcode"] === "Fire") {
-      setDisabledOpcodes(["Deploy", "Arm", "Fire"])
+    if (
+      new_command["opcode"] === "Deploy" ||
+      new_command["opcode"] === "Arm" ||
+      new_command["opcode"] === "Fire"
+    ) {
+      setDisabledOpcodes(["Deploy", "Arm", "Fire"]);
     }
-
-
 
     // reset dropdowns
     setOpCode("None");
@@ -177,8 +186,8 @@ export default function CommandSelector() {
         <hr />
       </Row>
 
-      {/* Opcode dropdown selection*/}
-      <Row>
+      {/* Opcode dropdown selection */}
+      <Row className="d-flex flex-wrap">
         <Col>
           <span style={{ fontWeight: "bold" }}>Opcode</span>
           <Dropdown>
@@ -187,7 +196,11 @@ export default function CommandSelector() {
             </Dropdown.Toggle>
             <Dropdown.Menu>
               {Object.keys(OpCodes).map((option, index) => (
-                <Dropdown.Item key={index} disabled={disabledOpcodes.includes(option)} onClick={handleOpCodeSelect(option)}>
+                <Dropdown.Item
+                  key={index}
+                  disabled={disabledOpcodes.includes(option)}
+                  onClick={handleOpCodeSelect(option)}
+                >
                   {option}
                 </Dropdown.Item>
               ))}
@@ -195,17 +208,16 @@ export default function CommandSelector() {
           </Dropdown>
         </Col>
 
-        {/* Namespace dropdown selection*/}
-        <Col className="justify-content-mid" md={4} style={{ marginRight: '30px' }}>
+        {/* Namespace dropdown selection */}
+        <Col>
           <span style={{ fontWeight: "bold" }}>Namespace</span>
           <Form>
             <Typeahead
-              className="position-absolute"
-              id="searchable-dropdown"
+              id="namespace-dropdown"
               labelKey="namespace"
               options={namespaceList}
               disabled={selectedOpCode !== OpCodes.SFR_Override}
-              placeholder="namespace..."
+              placeholder="Select"
               ref={namespaceRef}
               onChange={(selected) => handleNamespaceSelect(selected)}
               onInputChange={(selected) => handleNamespaceSelect(selected)}
@@ -214,11 +226,11 @@ export default function CommandSelector() {
           </Form>
         </Col>
 
-        {/* SFR field dropdown selection*/}
-        <Col md={4} style={{ marginRight: '10px' }}>
+        {/* SFR field dropdown selection */}
+        <Col>
           <span style={{ fontWeight: "bold" }}>Field</span>
           <Typeahead
-            id="second-searchable-dropdown"
+            id="field-dropdown"
             labelKey="field"
             options={fieldList}
             ref={fieldRef}
@@ -226,82 +238,67 @@ export default function CommandSelector() {
               selectedOpCode !== OpCodes.SFR_Override ||
               !(selectedNamespace in namespaces)
             }
-            placeholder="field..."
+            placeholder="Select"
             onChange={(select) => handleFieldSelect(select)}
             onInputChange={(select) => handleFieldSelect(select)}
             renderMenuItemChildren={(option, { text }) => <>{option}</>}
           />
-          {/* SFR field input */}
-          <Row className="mt-3 mb-3">
-            <Col className="justify-content-end" md={14}>
-              <Form onSubmit={handleSubmit} noValidate>
-                {fieldData.type && (
-                  <span
-                    className="mb-3"
-                    style={{
-                      position: "absolute",
-                      top: "220px",
-                      fontWeight: "bold",
-                    }}
-                  >
-                    Field Argument
-                  </span>
-                )}
 
-                {fieldData.type && fieldData.type !== Types.Bool && (
-                  <InputField
-                    name="sfr_override"
-                    type="number"
-                    className="mt-4"
-                    placeholder={
-                      fieldData.type === Types.Minute
-                        ? "Minutes"
-                        : fieldData.type === Types.Hour
-                          ? "Hours"
-                          : "Value"
-                    }
-                    error={inputError}
-                    fieldRef={fieldInputRef}
-                  />
-                )}
-                {fieldData.type === Types.Bool && (
-                  <>
-                    <Form.Check
-                      className="mt-3"
-                      name="sfr_override"
-                      label="true"
-                      type="radio"
-                      inline
-                      defaultChecked
-                      ref={fieldInputRef}
-                    />
-                    <Form.Check
-                      className="mt-3"
-                      name="sfr_override"
-                      label="false"
-                      type="radio"
-                      inline
-                    />
-                  </>
-                )}
-                {/* Submit disabled if no opcode selected or SFR override selected but no namespace or field selected */}
-                <Button
-                  style={{ position: "absolute", left: "30px", bottom: "30px" }}
-                  variant="primary"
-                  type="submit"
-                  disabled={
-                    selectedOpCode === "None" ||
-                    (selectedOpCode === OpCodes.SFR_Override &&
-                      (selectedNamespace === "None" ||
-                        selectedField === "None"))
-                  }
-                  className="mt-2"
-                >
-                  + Command
-                </Button>
-              </Form>
-            </Col>
-          </Row>
+          {/* SFR field input */}
+          <Form onSubmit={handleSubmit} noValidate className="mt-2">
+            {fieldData.type && (
+              <span style={{ fontWeight: "bold" }}>Argument</span>
+            )}
+
+            {fieldData.type && fieldData.type !== Types.Bool && (
+              <InputField
+                name="sfr_override"
+                type="number"
+                className="mt-1"
+                placeholder={
+                  fieldData.type === Types.Minute
+                    ? "Minutes"
+                    : fieldData.type === Types.Hour
+                    ? "Hours"
+                    : "Value"
+                }
+                error={inputError}
+                fieldRef={fieldInputRef}
+              />
+            )}
+            {fieldData.type === Types.Bool && (
+              <div className="mt-2">
+                <Form.Check
+                  name="sfr_override"
+                  label="true"
+                  type="radio"
+                  inline
+                  defaultChecked
+                  ref={fieldInputRef}
+                />
+                <Form.Check
+                  name="sfr_override"
+                  label="false"
+                  type="radio"
+                  inline
+                />
+              </div>
+            )}
+            {/* Submit disabled if no opcode selected or SFR override selected but no namespace or field selected */}
+            <Button
+              style={{ position: "absolute", left: "30px", bottom: "30px" }}
+              variant="primary"
+              type="submit"
+              disabled={
+                selectedOpCode === "None" ||
+                (selectedOpCode === OpCodes.SFR_Override &&
+                  (selectedNamespace === "None" || selectedField === "None"))
+              }
+              className="mt-2"
+            >
+              + Command
+            </Button>
+          </Form>
         </Col>
       </Row>
     </Container>
