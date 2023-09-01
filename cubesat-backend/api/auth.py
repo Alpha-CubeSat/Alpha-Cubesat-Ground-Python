@@ -58,7 +58,7 @@ def get_token():
     Authenticates to get an access token for API access
     """
     token = base64.b64encode(os.urandom(24)).decode('utf-8')
-    token_expiration = datetime.utcnow() + timedelta(days=1)
+    token_expiration = datetime.utcnow() + timedelta(weeks=1) # when deployed this should be < 1 day
     get_db().execute('UPDATE user SET token = ?, token_expiration = ? WHERE username = ?',
                      (token, token_expiration, basic_auth.current_user()['username']))
     get_db().commit()
