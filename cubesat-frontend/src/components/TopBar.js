@@ -8,7 +8,7 @@ import { useUser } from "../contexts/UserProvider";
 // Shows info such as alpha logo + name, dropdown for logging out and managing users (admin only)
 export default function TopBar() {
   const [editShow, setEditShow] = useState(false);
-  const { logout } = useUser();
+  const { user, logout } = useUser();
 
   return (
     <>
@@ -21,16 +21,19 @@ export default function TopBar() {
             Alpha CubeSat Mission Control Dashboard
           </Navbar.Text>
           <NavDropdown title="Settings" className="text-white" align="end">
-            <NavDropdown.Item onClick={() => setEditShow(true)}>
-              ADMIN: Edit Users
-            </NavDropdown.Item>
+            {user.is_admin && (
+              <NavDropdown.Item onClick={() => setEditShow(true)}>
+                ADMIN: Edit Users
+              </NavDropdown.Item>
+            )}
             <NavDropdown.Item onClick={() => logout()}>
               Log Out
             </NavDropdown.Item>
           </NavDropdown>
         </Container>
       </Navbar>
-      <AdminUserManage show={editShow} setShow={setEditShow} />
+      {/* key prop uses date object to generate random # each time modal is opened to reset state */}
+      <AdminUserManage key={new Date()} show={editShow} setShow={setEditShow} />
     </>
   );
 }

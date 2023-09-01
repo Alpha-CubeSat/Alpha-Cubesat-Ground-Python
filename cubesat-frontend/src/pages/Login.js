@@ -23,8 +23,8 @@ export default function Login() {
 
     // make sure username and password are non-empty
     let error = {};
-    if (username.length === 0) error.username = "Username cannot be empty.";
-    if (password.length === 0) error.password = "Password cannot be empty.";
+    if (!username) error.username = "Username cannot be empty.";
+    if (!password) error.password = "Password cannot be empty.";
     setFormError(error);
     if (Object.keys(error).length > 0) return;
 
