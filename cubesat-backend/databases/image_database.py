@@ -112,19 +112,14 @@ def get_img_display_info() -> dict:
     """Returns the contents of img_display_info"""
     return img_display_info
 
-
-def get_images() -> list:
-    """
-    Returns a list of image paths, sorted by serial # (so that they are chronological)
-    """
-    return sort_files_numeric(os.listdir(f'{cfg.image_root_dir}/img'))
-
-
 def get_recent_images(n: int) -> list:
     """
     Gets the paths of the n most recently taken images (whose fragments have been fully downlinked)
+    Images are sorted by serial # (so that they are chronological)
     """
-    return get_images()[:n]
+    if not exists(cfg.image_root_dir):
+        return []
+    return sort_files_numeric(os.listdir(f'{cfg.image_root_dir}/img'))[:n]
 
 
 def get_image_data(image_file_name: str) -> dict:
@@ -140,5 +135,3 @@ def get_image_data(image_file_name: str) -> dict:
         'timestamp': os.path.getmtime(image_path),
         'base64': hex.bytes_to_b64(bin_img)
     }
-
-# try_save_image(10, 57)
