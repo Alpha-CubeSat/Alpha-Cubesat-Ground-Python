@@ -29,4 +29,21 @@ def index(index_base_name: str, naming_strategy, content: dict):
     es = get_connection()
     es.index(index = literal_index_strategy(index_base_name), body = content)
     # pass
-    
+
+# Returns the data corresponding to the supplied name
+def get_index(name):
+    res = []
+    es = get_connection()
+    response = es.search(
+    index="cubesat_normal_report",
+    body={
+        "_source": [name],
+        "query": {
+        "match_all": {}
+        }
+    }
+    )
+    for hit in response['hits']['hits']:
+        res.append(hit['_source']['command_log'])
+    return res
+
