@@ -2,6 +2,8 @@ import { Table } from "react-bootstrap";
 import { useDashboard } from "../contexts/DashboardProvider";
 import { useEffect } from "react";
 import LogRow from "./LogRow";
+import { useApi } from "../contexts/ApiProvider";
+
 
 // Command History Log
 // Shows a log of all previously sent commands to the CubeSat with each command's status, name,
@@ -9,28 +11,42 @@ import LogRow from "./LogRow";
 export default function CommandLog() {
   const { commandLog, setCommandLog } = useDashboard();
 
-  // Checks whether a command has appeared in the command log of the downlinked normal report
-  // const checkProcessed = async () => {
-  //   axios.get('/cubesat/commandLog', commandLog).then(response => {
-  //     const newCommandLog = JSON.parse(JSON.stringify(commandLog));
-  //     for (let logEntry of newCommandLog) {
-  //       for (let command of logEntry.commands) {
-  //         if (response.opcode === command.opcode && response.namespace === opcode.namespace
-  //           && response.value === command.value) {
-  //           command.processed = "true";
-  //         }
-  //       }
-  //     }
-  //     setCommandLog(newCommandLog)
-  //   })
-  // };
+  const api = useApi();
 
-  // useEffect(() => {
-  //   // Poll every 5000 milliseconds (5 second)
-  //   const interval = setInterval(() => {
-  //     checkProcessed();
-  //   });
-  // }, 5000);
+  // Checks whether a command has appeared in the command log of the downlinked normal report
+  const checkProcessed = async () => {
+    api.get('/cubesat/commandLog').then(response => {
+      const dataList = response["data"][response["data"].length - 1]
+      const sfrList = []
+      for (let item of dataList) {
+        if (item.includes(":")) {
+          sfrList.push(item.substr(0, item.indexOf(" :")), item.substr(item.indexOf(":") + 2))
+        }
+      }
+      const newCommandLog = JSON.parse(JSON.stringify(commandLog));
+      for (let logEntry of newCommandLog) {
+        for (let command of logEntry.commands) {
+          if (!("processed" in command) && (dataList.includes(command["opcode"].toLowerCase()) ||
+            (sfrList.includes(command["namespace"]) && sfrList.includes(command["field"])))) {
+            command["processed"] = "true";
+          }
+        }
+      }
+      setCommandLog(newCommandLog)
+    })
+  };
+
+  useEffect(() => {
+    // Poll every 10000 milliseconds (10 seconds)
+    const interval = setInterval(() => {
+      checkProcessed();
+    }, 5000);
+
+    // Cleanup: clear the interval when the component is unmounted or the effect re-runs
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   return (
     <Table hover>

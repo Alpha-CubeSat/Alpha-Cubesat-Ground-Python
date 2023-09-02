@@ -8,7 +8,6 @@ import { OpCodes } from "./CommandSelector";
 // for every sent command
 export default function LogRow({ entry }) {
   // const [fieldsOpen, setOpen] = useState(false);
-
   return (
     <tr>
       <td>
@@ -27,10 +26,10 @@ export default function LogRow({ entry }) {
               title={
                 command.opcode === OpCodes.SFR_Override
                   ? command.namespace +
-                    "::" +
-                    command.field +
-                    " = " +
-                    command.value
+                  "::" +
+                  command.field +
+                  " = " +
+                  command.value
                   : ""
               }
             >
@@ -59,11 +58,27 @@ export default function LogRow({ entry }) {
         </>
       </td>
       <td>
-        {entry.processed === "true" ? (
-          <BsCheckCircleFill color="green" />
-        ) : (
-          <BsXCircleFill color="red" />
-        )}
+        {entry.commands.map((command, i) => (
+          // TODO: find better way to seperate commands + show command arguments
+          <p
+            key={i}
+            title={
+              command.opcode === OpCodes.SFR_Override
+                ? command.namespace +
+                "::" +
+                command.field +
+                " = " +
+                command.value
+                : ""
+            }
+          >
+            {command.processed === "true"
+              ?
+              <BsCheckCircleFill color="green" />
+              :
+              <BsXCircleFill color="red" />}
+          </p>
+        ))}
       </td>
       <td>{new Date(parseFloat(entry.timestamp)).toLocaleString()}</td>
       <td>{entry.message}</td>
