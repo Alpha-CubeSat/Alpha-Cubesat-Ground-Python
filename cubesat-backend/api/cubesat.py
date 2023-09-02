@@ -8,7 +8,7 @@ import databases.image_database as image_db
 from api.auth import token_auth
 from api.schemas import ImageNameSchema, ImageCountSchema, ImageDataSchema, CommandSchema, \
     CommandResponseSchema
-import json
+from databases.elastic import get_index
 
 cubesat = Blueprint('cubesat', __name__)
 
@@ -69,14 +69,14 @@ def get_command_history(command):
     return 'API not configured yet.', 503
 
 @cubesat.get('/commandLog')
+# @body(CommandSchema(many=True))
+# @response(CommandResponseSchema)
 @authenticate(token_auth)
-@body(CommandSchema(many=True))
-@response(CommandResponseSchema)
 @other_responses({401: 'Invalid access token'})
-def get_processed_commands(commandLog):
+def get_processed_commands():
     """
     Get Processed Commands
     Get all previously sent commands to the CubeSat via the Rockblock portal
     that have been confirmed in the command log of the normal report.
     """
-    # TODO
+    return get_index("command_log")
