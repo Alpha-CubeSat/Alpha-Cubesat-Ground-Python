@@ -41,15 +41,6 @@ def map_range(x, in_min, in_max, out_min, out_max):
     return out_min + (((out_max - out_min) / (in_max - in_min)) * (x - in_min))
 
 
-def save_cubesat_data(data: dict):
-    """
-    Saves a cubesat report to elasticsearch \n
-    :param data: fully processed normal report
-    """
-    #print(data)
-    es.index(config.cubesat_db_index, es.daily_index_strategy, data)
-
-
 def generate_missing_fragments(frag_list: list):
     """
     Finds the missing fragments and the highest fragment received for IMU deployment downlinks.
