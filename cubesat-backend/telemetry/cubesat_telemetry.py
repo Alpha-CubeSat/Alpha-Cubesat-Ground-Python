@@ -1,4 +1,5 @@
 import traceback
+from datetime import datetime, timedelta
 from enum import Enum
 
 import config
@@ -24,6 +25,7 @@ fragment_list = []
 imu_display_info = {'latest_fragment': 0,
                     'missing_fragments': [],
                     'highest_fragment': 0}
+first_fragment_time = None
 
 
 def map_range(x, in_min, in_max, out_min, out_max):
@@ -71,13 +73,16 @@ def separate_cycles(fragment_number: int, fragment_data: str):
         cycle_count = fragment_number * 22 + x / 6
 
         # Maps imu cycle values from the range used for transmission (0 - 255) to their actual range (-5 - 5)
+        # timestamp: 154 total cycles * 250ms per cycle = 38,500 ms => 38.5 seconds
         report_data = {
+            'timestamp': first_fragment_time + timedelta(milliseconds=(cycle_count+1) * 250),
             'cycle_count': int(cycle_count),
             'x_gyro': float(x_gyro) / 25 - 5,
             'y_gyro': float(y_gyro) / 25 - 5,
             'z_gyro': float(z_gyro) / 25 - 5,
         }
         print('report', report_data)
+
         # Saves a cycle report to elasticsearch
         es.index(config.cycle_db_index, es.daily_index_strategy, report_data)
 
@@ -92,6 +97,13 @@ def process_save_deploy_data(data: dict):
     imu_display_info['latest_fragment'] = data['fragment_number']
     generate_missing_fragments(fragment_list)
     print(fragment_list, imu_display_info)
+
+    # if this is the first IMU fragment, store the time received as the basis
+    # for calculating future IMU datapoint timestamps
+    global first_fragment_time
+    if not first_fragment_time:
+        first_fragment_time = datetime.strptime(data['transmit_time'], "%Y-%m-%dT%H:%M:%SZ")
+
     separate_cycles(data['fragment_number'], data['fragment_data'])
     es.index(config.deploy_db_index, es.daily_index_strategy,
              {**report_metadata(data), **imu_display_info})
@@ -149,7 +161,8 @@ def read_imu_hex_fragment(data: str) -> dict:
     """
 
     # 462 bytes of imu data sent over 7 packets, end flag (fe92) is present for the last packet
-    # each report has 66 bytes of imu data (all 22 cycles are complete)
+    # each report has 66 bytes of imu data (all 22 cycles are complete) => 154 total cycles
+    # 154 cycles * 3 bytes each = 462 bytes
     print(data)
     end_flag_present = data.count('fe92') != 0
     return {
