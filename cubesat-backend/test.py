@@ -42,29 +42,15 @@ rockblock_report5 = {'device_type': "ROCKBLOCK", 'iss': "Rock 7", 'iridium_longi
                      'data': "630100010d940100000100d4aa2ab24c1a7dff010000010001000100015555444433332000feff"
                     }
 
-deploy_report1 = {'device_type': "ROCKBLOCK", 'iss': "Rock 7", 'iridium_longitude': -76.6932,
-                  'imei': 300534061384690,
-                  'serial': 203136, 'iridium_latitude': 39.1125, 'momsn': 34, 'iridium_cep': 3.0,
-                  'transmit_time': "2022-01-12T00:08:34Z",
-                  'JWT': "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJsb2NrIDciLCJpYXQiOjE2Mjg0Njc3MTgsImRhdGEiOiIxNTAxMDAwMzAwMDBmNDAwMDAwMDBhMDAwMGZmZmYwMGZmZmZmZmZmMDEwZTAwMDIwMDAwMDEwMTAxMDEwMTAxMDEwMTAxMDAwMTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMCIsImRldmljZV90eXBlIjoiUk9DS0JMT0NLIiwiaW1laSI6IjMwMDUzNDA2MTM4NDY5MCIsImlyaWRpdW1fY2VwIjoiMy4wIiwiaXJpZGllbV9sYXRpdHVkZSI6IjM5LjExMjUiLCJpcmlkaXVtX2xvbmdpdHVkZSI6Ii03Ni42OTMyIiwiaXJpZGl1bV9zZXNzaW9uX3N0YXR1cyI6IjAiLCJtb21zbiI6IjM0Iiwic2VyaWFsIjoiMjAzMTM2IiwidHJhbnNtaXRfdGltZSI6IjIxLTA4LTA5IDAwOjA4OjM0in0.dUpRBK1dpvyoKQKURa8Ny9dZBB8iZGq0tX4F8VcaTCLvnpjrxjHebMbIKKLK0FbCBCJ1cr_C5DVEsQWV-BXWFXiUriJ_x5ElumyQ6t0tkfhPcC7e4Rveb9fD6OBtbD31XoDbjBUSPLlYWvOWuGI4MDzHMgNoiKDbaUjakhp30uELuVF1OeJWErRTXFpuZEkJzWc9MWKZ04GA85WgjwZ1PsPYONuRODh7itK8VGFzuIAyd8YcvHlkKCWw0y_3m4txZ_FrpM9eBQPwVXITHta7afDgfd-CURjQqjJpCl5oU5cJ9QoBO1K4PJ689oem9_Sbo3j4djdntMy63-XWQHVvvg",
-                  'iat': 1628467718, 'iridium_session_status': 0,
-                  'data': "1800125a7456459b324590072139a1cc42b21e265be31288ae47adc2fdfa85fc5c2ee9f264a9e259818e30514e30f316d86a"}
+imu1 = "18007d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d"
+imu2 = "18017d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d"
+imu3 = "18027d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d"
+imu4 = "18037d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d"
+imu5 = "18047d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d"
+imu6 = "18057d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7df27d7d7b7d7d7c7d7d7b7d7d7b7d7d7c7d7d7c7d7d7c7d7d7c7d7d7b7d7d7c7d7d7c7d7d7c7d7d7c7d7d7c7d"
+imu7 = "18067d7c7d7d7c7d7d7b7d7d7b7d7d7c7d7d7b7d7d7b7d7d7c7d7d7c7d7d7c7d7d7b7d7d7c7d7d7c7d7d7c7d7d7c7d7d7c7d7d7b7d7d7c7d7d7c7d7d7c7d7d7b7d7d7c7dfe92"
 
-deploy_report2 = {'device_type': "ROCKBLOCK", 'iss': "Rock 7", 'iridium_longitude': -76.6932,
-                  'imei': 300534061384690,
-                  'serial': 203136, 'iridium_latitude': 39.1125, 'momsn': 34, 'iridium_cep': 3.0,
-                  'transmit_time': "2022-02-12T00:08:34Z",
-                  'JWT': "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJsb2NrIDciLCJpYXQiOjE2Mjg0Njc3MTgsImRhdGEiOiIxNTAxMDAwMzAwMDBmNDAwMDAwMDBhMDAwMGZmZmYwMGZmZmZmZmZmMDEwZTAwMDIwMDAwMDEwMTAxMDEwMTAxMDEwMTAxMDAwMTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMCIsImRldmljZV90eXBlIjoiUk9DS0JMT0NLIiwiaW1laSI6IjMwMDUzNDA2MTM4NDY5MCIsImlyaWRpdW1fY2VwIjoiMy4wIiwiaXJpZGllbV9sYXRpdHVkZSI6IjM5LjExMjUiLCJpcmlkaXVtX2xvbmdpdHVkZSI6Ii03Ni42OTMyIiwiaXJpZGl1bV9zZXNzaW9uX3N0YXR1cyI6IjAiLCJtb21zbiI6IjM0Iiwic2VyaWFsIjoiMjAzMTM2IiwidHJhbnNtaXRfdGltZSI6IjIxLTA4LTA5IDAwOjA4OjM0in0.dUpRBK1dpvyoKQKURa8Ny9dZBB8iZGq0tX4F8VcaTCLvnpjrxjHebMbIKKLK0FbCBCJ1cr_C5DVEsQWV-BXWFXiUriJ_x5ElumyQ6t0tkfhPcC7e4Rveb9fD6OBtbD31XoDbjBUSPLlYWvOWuGI4MDzHMgNoiKDbaUjakhp30uELuVF1OeJWErRTXFpuZEkJzWc9MWKZ04GA85WgjwZ1PsPYONuRODh7itK8VGFzuIAyd8YcvHlkKCWw0y_3m4txZ_FrpM9eBQPwVXITHta7afDgfd-CURjQqjJpCl5oU5cJ9QoBO1K4PJ689oem9_Sbo3j4djdntMy63-XWQHVvvg",
-                  'iat': 1628467718, 'iridium_session_status': 0,
-                  'data': "18077f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7f7ffe92"}
-
-deploy_report3 = {'device_type': "ROCKBLOCK", 'iss': "Rock 7", 'iridium_longitude': -76.6932,
-                  'imei': 300534061384690,
-                  'serial': 203136, 'iridium_latitude': 39.1125, 'momsn': 34, 'iridium_cep': 3.0,
-                  'transmit_time': "2021-03-12T00:08:34Z",
-                  'JWT': "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJsb2NrIDciLCJpYXQiOjE2Mjg0Njc3MTgsImRhdGEiOiIxNTAxMDAwMzAwMDBmNDAwMDAwMDBhMDAwMGZmZmYwMGZmZmZmZmZmMDEwZTAwMDIwMDAwMDEwMTAxMDEwMTAxMDEwMTAxMDAwMTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMCIsImRldmljZV90eXBlIjoiUk9DS0JMT0NLIiwiaW1laSI6IjMwMDUzNDA2MTM4NDY5MCIsImlyaWRpdW1fY2VwIjoiMy4wIiwiaXJpZGllbV9sYXRpdHVkZSI6IjM5LjExMjUiLCJpcmlkaXVtX2xvbmdpdHVkZSI6Ii03Ni42OTMyIiwiaXJpZGl1bV9zZXNzaW9uX3N0YXR1cyI6IjAiLCJtb21zbiI6IjM0Iiwic2VyaWFsIjoiMjAzMTM2IiwidHJhbnNtaXRfdGltZSI6IjIxLTA4LTA5IDAwOjA4OjM0in0.dUpRBK1dpvyoKQKURa8Ny9dZBB8iZGq0tX4F8VcaTCLvnpjrxjHebMbIKKLK0FbCBCJ1cr_C5DVEsQWV-BXWFXiUriJ_x5ElumyQ6t0tkfhPcC7e4Rveb9fD6OBtbD31XoDbjBUSPLlYWvOWuGI4MDzHMgNoiKDbaUjakhp30uELuVF1OeJWErRTXFpuZEkJzWc9MWKZ04GA85WgjwZ1PsPYONuRODh7itK8VGFzuIAyd8YcvHlkKCWw0y_3m4txZ_FrpM9eBQPwVXITHta7afDgfd-CURjQqjJpCl5oU5cJ9QoBO1K4PJ689oem9_Sbo3j4djdntMy63-XWQHVvvg",
-                  'iat': 1628467718, 'iridium_session_status': 0,
-                  'data': "1802345557793263765189000aa7b778af27809e9f1e7b1686e9f5699b454a789e51d489faba5dd5ef84718899e8c10a1cbf"}
+imu_fragments = [imu1, imu2, imu3, imu4, imu5, imu6, imu7]
 
 a1 = "2a0000000000ffd8fffe0024f800eb250000000000000000000000000000007800a0001e0032120b510451040000ffdb00840008050607060508070607080808090b130c0b0a"
 a2 = "2a00000000010a0b1710110e131b181d1c1b181a1a1e222b251e2029201a1a263326292d2e3031301d243539352f382b2f302e010808080b0a0b160c0c162e1f1a1f2e2e2e2e"
@@ -132,23 +118,22 @@ image_fragments = [a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, 
 metadata = {'device_type': "ROCKBLOCK", 'iss': "Rock 7", 'iridium_longitude': -76.6932,
             'imei': 300534061384690,
             'serial': 203136, 'iridium_latitude': 39.1125, 'momsn': 34, 'iridium_cep': 3.0,
-            'transmit_time': "2021-03-12T00:08:34Z",
+            'transmit_time': "2023-09-04T00:00:00Z",
             'JWT': "eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJsb2NrIDciLCJpYXQiOjE2Mjg0Njc3MTgsImRhdGEiOiIxNTAxMDAwMzAwMDBmNDAwMDAwMDBhMDAwMGZmZmYwMGZmZmZmZmZmMDEwZTAwMDIwMDAwMDEwMTAxMDEwMTAxMDEwMTAxMDAwMTAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMCIsImRldmljZV90eXBlIjoiUk9DS0JMT0NLIiwiaW1laSI6IjMwMDUzNDA2MTM4NDY5MCIsImlyaWRpdW1fY2VwIjoiMy4wIiwiaXJpZGllbV9sYXRpdHVkZSI6IjM5LjExMjUiLCJpcmlkaXVtX2xvbmdpdHVkZSI6Ii03Ni42OTMyIiwiaXJpZGl1bV9zZXNzaW9uX3N0YXR1cyI6IjAiLCJtb21zbiI6IjM0Iiwic2VyaWFsIjoiMjAzMTM2IiwidHJhbnNtaXRfdGltZSI6IjIxLTA4LTA5IDAwOjA4OjM0in0.dUpRBK1dpvyoKQKURa8Ny9dZBB8iZGq0tX4F8VcaTCLvnpjrxjHebMbIKKLK0FbCBCJ1cr_C5DVEsQWV-BXWFXiUriJ_x5ElumyQ6t0tkfhPcC7e4Rveb9fD6OBtbD31XoDbjBUSPLlYWvOWuGI4MDzHMgNoiKDbaUjakhp30uELuVF1OeJWErRTXFpuZEkJzWc9MWKZ04GA85WgjwZ1PsPYONuRODh7itK8VGFzuIAyd8YcvHlkKCWw0y_3m4txZ_FrpM9eBQPwVXITHta7afDgfd-CURjQqjJpCl5oU5cJ9QoBO1K4PJ689oem9_Sbo3j4djdntMy63-XWQHVvvg",
             'iat': 1628467718, 'iridium_session_status': 0}
 
-# normal report
+# normal report (old)
 #handle_report(rockblock_report1)
 #handle_report(rockblock_report2)
 #handle_report(rockblock_report3)
-# handle_report(rockblock_report4)
+#handle_report(rockblock_report4)
 
-# new report
-handle_report(rockblock_report5)
+# new normal report
+# handle_report(rockblock_report5)
 
 # imu reports
-# handle_report(deploy_report1)
-# handle_report(deploy_report2)
-# handle_report(deploy_report3)
+for fragment in imu_fragments:
+    handle_report({**metadata, 'data': fragment})
 
 # image fragment reports
 #for fragment in image_fragments:
