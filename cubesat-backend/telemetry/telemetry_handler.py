@@ -17,15 +17,16 @@ def handle_report(rockblock_report: dict):
         'lat': rockblock_report['iridium_latitude'],
         'lon': rockblock_report['iridium_longitude']
     }
-    # es.index(config.rockblock_db_index, es.daily_index_strategy, rockblock_report)
+    es.index(config.rockblock_db_index, es.daily_index_strategy, rockblock_report)
 
+    # if report is not empty, parse and save report
     if rockblock_report['data']:
         result = cs.read_cubesat_data(rockblock_report)
         print('result', result)
 
         operation = result['telemetry_report_type']
         if operation == cs.Opcodes.normal_report:
-            cs.save_cubesat_data(result)
+            es.index(config.cubesat_db_index, es.daily_index_strategy, result)
         elif operation == cs.Opcodes.imu_report:
             cs.process_save_deploy_data(result)
         elif operation == cs.Opcodes.camera_report:

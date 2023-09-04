@@ -1,15 +1,15 @@
 import datetime
 
 from elasticsearch import Elasticsearch
-import creds
+
+import config
 
 
-# Makes a connection to an Elasticsearch database based on
-# configured host, port, and options
+# Makes a connection to an Elasticsearch database based on configured host, port, and options
 def get_connection() -> Elasticsearch:
-    # config = cfg.get_config()
-    # auth = config['database']['elasticsearch']['conn-config']['basic-auth']
-    es = Elasticsearch('https://localhost:9200', basic_auth=creds.elastic_auth, verify_certs=False)
+    cfg = config.elastic_config
+    es = Elasticsearch('https://localhost:9200',
+                       basic_auth=(cfg['username'], cfg['password']), ca_certs=cfg['certs'])
     return es
 
 # Returns the input name
@@ -27,7 +27,7 @@ def daily_index_strategy(name):
 # naming strategy to create indices using the given index name.
 def index(index_base_name: str, naming_strategy, content: dict):
     es = get_connection()
-    es.index(index = literal_index_strategy(index_base_name), body = content)
+    es.index(index=literal_index_strategy(index_base_name), body=content)
     # pass
 
 # Returns the data corresponding to the supplied name

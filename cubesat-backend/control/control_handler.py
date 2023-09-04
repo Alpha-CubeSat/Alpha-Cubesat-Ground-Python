@@ -52,7 +52,6 @@ def handle_command(commands):
         uplink += cp.parse_command(command)
 
     uplink += format_flag(0) + format_flag(250)
-    with open(config.rockblock_config) as f:
-        rockblock_config = json.load(f)
+    rockblock_config = config.rockblock_config
     return cp.send_uplink(rockblock_config['imei'], rockblock_config['user'],
                           rockblock_config['password'], uplink)
