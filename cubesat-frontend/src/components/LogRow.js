@@ -1,13 +1,18 @@
 import { BsCheckCircleFill, BsXCircleFill } from "react-icons/bs";
 import { OpCodes } from "./CommandSelector";
-// import { useState } from "react";
-// import { Button, Collapse } from "react-bootstrap";
+import React, { useState, useRef } from 'react';
+import Overlay from 'react-bootstrap/Overlay';
 
-// LogRow (component of CommandLog)
-// Shows the status, command name, command fields, submission time, an API response message
-// for every sent command
 export default function LogRow({ entry }) {
-  // const [fieldsOpen, setOpen] = useState(false);
+  const [show, setShow] = useState(() => entry.commands.map(() => false));
+  const targets = useRef(entry.commands.map(() => React.createRef()));
+
+  const toggleTooltip = (index) => {
+    const newShow = [...show];
+    newShow[index] = !newShow[index];
+    setShow(newShow);
+  };
+
   return (
     <tr>
       <td>
@@ -20,68 +25,50 @@ export default function LogRow({ entry }) {
       <td>
         <>
           {entry.commands.map((command, i) => (
-            // TODO: find better way to seperate commands + show command arguments
-            <p
-              key={i}
-              title={
-                command.opcode === OpCodes.SFR_Override
-                  ? command.namespace +
-                  "::" +
-                  command.field +
-                  " = " +
-                  command.value
-                  : ""
-              }
-            >
-              {command.opcode}
-            </p>
-          ))}
-          {/* Button to view command fields if they exist */}
-          {/*{Object.entries(entry.fields).length > 0 && (*/}
-          {/*  <>*/}
-          {/*    <Button*/}
-          {/*      onClick={() => setOpen(!fieldsOpen)}*/}
-          {/*      variant="secondary"*/}
-          {/*      size="sm"*/}
-          {/*      aria-controls="fields-text"*/}
-          {/*      aria-expanded={fieldsOpen}*/}
-          {/*    >*/}
-          {/*      View Fields*/}
-          {/*    </Button>*/}
-          {/*    <Collapse in={fieldsOpen}>*/}
-          {/*      <div id="fields-text" className="py-2">*/}
-          {/*        {Object.entries(entry.fields).map(([k, v]) => k + ": " + v)}*/}
-          {/*      </div>*/}
-          {/*    </Collapse>*/}
-          {/*  </>*/}
-          {/*)} */}
+            command.namespace ? (
+              <>
+                <p className="clickable-text" ref={targets.current[i]} onClick={() => toggleTooltip(i)}>
+                  {command.opcode}
+                </p>
+                <Overlay target={targets.current[i].current} show={show[i]} placement="right">
+                  {props => (
+                    <div
+                      {...props}
+                      style={{
+                        position: 'relative',
+                        backgroundColor: 'lightblue',
+                        padding: '2px 8px',
+                        color: 'black',
+                        borderRadius: 5,
+                        ...props.style,
+                      }}
+                    >
+                      {command.namespace + ":" + command.field + "=" + command.value}
+                    </div>
+                  )}
+                </Overlay>
+              </>
+            ) : command.opcode))}
         </>
       </td>
       <td>
         {entry.commands.map((command, i) => (
-          // TODO: find better way to seperate commands + show command arguments
           <p
             key={i}
             title={
               command.opcode === OpCodes.SFR_Override
-                ? command.namespace +
-                "::" +
-                command.field +
-                " = " +
-                command.value
+                ? `${command.namespace}::${command.field} = ${command.value}`
                 : ""
             }
           >
             {command.processed === "true"
-              ?
-              <BsCheckCircleFill color="green" />
-              :
-              <BsXCircleFill color="red" />}
+              ? <BsCheckCircleFill color="green" />
+              : <BsXCircleFill color="red" />}
           </p>
         ))}
       </td>
       <td>{new Date(parseFloat(entry.timestamp)).toLocaleString()}</td>
       <td>{entry.message}</td>
-    </tr>
+    </tr >
   );
 }
