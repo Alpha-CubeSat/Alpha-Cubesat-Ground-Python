@@ -7,7 +7,7 @@
 }
 
 .dash_height {
-    height: calc(100vh - var(--headerHeight) ) !important;
+    height: calc(100vh - var(--headerHeight)) !important;
 }
 
 .scrollbar-small::-webkit-scrollbar {
@@ -18,4 +18,14 @@
 .scrollbar-small::-webkit-scrollbar-thumb {
     border-radius: 10px;
     background-color: #c1c1c1;
+}
+
+.clickable-text {
+    color: darkblue;
+    cursor: pointer;
+}
+
+.clickable-text:hover {
+    text-decoration: underline;
+    color: blue;
 }

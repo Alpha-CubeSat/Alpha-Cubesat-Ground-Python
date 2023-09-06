@@ -1,6 +1,6 @@
 import { Table } from "react-bootstrap";
 import { useDashboard } from "../contexts/DashboardProvider";
-import { useEffect } from "react";
+import { useEffect, useCallback } from "react";
 import LogRow from "./LogRow";
 import { useApi } from "../contexts/ApiProvider";
 
@@ -12,15 +12,13 @@ export default function CommandLog() {
   const { commandLog, setCommandLog } = useDashboard();
 
   const api = useApi();
-
-  // Checks whether a command has appeared in the command log of the downlinked normal report
-  const checkProcessed = async () => {
-    api.get('/cubesat/commandLog').then(response => {
-      const dataList = response["data"][response["data"].length - 1]
-      const sfrList = []
+  const checkProcessed = useCallback(async () => {
+    await api.get('/cubesat/commandLog').then(response => {
+      const dataList = response["data"][response["data"].length - 1];
+      const sfrList = [];
       for (let item of dataList) {
         if (item.includes(":")) {
-          sfrList.push(item.substr(0, item.indexOf(" :")), item.substr(item.indexOf(":") + 2))
+          sfrList.push(item.substr(0, item.indexOf(" :")), item.substr(item.indexOf(":") + 2));
         }
       }
       const newCommandLog = JSON.parse(JSON.stringify(commandLog));
@@ -32,21 +30,22 @@ export default function CommandLog() {
           }
         }
       }
-      setCommandLog(newCommandLog)
-    })
-  };
+      setCommandLog(newCommandLog);
+    });
+  }, [api, commandLog, setCommandLog]);
 
+  // Checks whether a command has appeared in the command log of the downlinked normal report
   useEffect(() => {
     // Poll every 10000 milliseconds (10 seconds)
     const interval = setInterval(() => {
       checkProcessed();
     }, 5000);
 
-    // Cleanup: clear the interval when the component is unmounted or the effect re-runs
+    // Cleanup: clear the interval when the component is unmounted or the effect re - runs
     return () => {
       clearInterval(interval);
     };
-  }, []);
+  }, [checkProcessed]);
 
   return (
     <Table hover>
