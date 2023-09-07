@@ -1,161 +1,38 @@
+import json
+from datetime import datetime
+
 import requests
 
-# CONSTANTS
-ROCKBLOCK_ENDPOINT = 'https://core.rock7.com/rockblock/MT'
-ARG_LENGTH = 8
-BURNWIRE_OPCODES =  {
-    'Deploy': '3333',
-    'Arm': '4444',
-    'Fire': '5555'
-}
-SFR_OVERRIDE_OPCODES_MAP = {
-    'stabilization': {
-        'max_time': '1100',
-    },
-    'boot': {
-        'max_time': '1200',
-    },
-    'simple': {
-        'max_time': '1300',
-    },
-    'point': {
-        'max-time': '1400',
-    },
-    'detumble': {
-        'start_time': '1500',
-        'max_time': '1501',
-        'min_stable_gyro_z': '1502',
-        'max_stable_gyro_x': '1503',
-        'max_stable_gyro_y': '1504',
-        'min_unstable_gyro_x': '1505',
-        'min_unstable_gyro_y': '1506',
-    },
-    'aliveSignal' : {
-        'max_downlink_hard_faults': '1600',
-        'downlinked': '1601',
-        'max_time': '1602',
-        'num_hard_faults': '1603',
-    },
-    'photoresistor': {
-        'covered': '1700',
-    },
-    'mission': {
-        'acs_transmit_cycle_time': '1800',
-        'time_deployed': '1801',
-        'deployed': '1802',
-        'already_deployed': '1803',
-        'possible_uncovered': '1804',
-    },
-    'burnwire': {
-        'attempts': '1900',
-        'start_time': '1901',
-        'burn_time': '1902',
-        'armed_time': '1903',
-        'mode': '1904',
-        'attempts_limit': '1905',
-        'mandatory_attempts_limit': '1906',
-        'delay_time': '1907',
-    },
-    'camera': {
-        'photo_taken_sd_failed': '2000',
-        'take_photo': '2001',
-        'turn_on': '2002',
-        'turn_off': '2003',
-        'powered': '2004',
-        'start_progress': '2005',
-        'step_time': '2006',
-        'init_start_time': '2007',
-        'init_timeout': '2008',
-        'begin_delay': '2009',
-        'resolution_set_delay': '2010',
-        'resolution_get_delay': '2011',
-        'init_mode': '2012',
-        'mode': '2013',
-        'images_written': '2014',
-        'fragments_written': '2015',
-        'set_res': '2016',
-        'failed_times': '2017',
-        'failed_limit': '2018',
-        'fragment_number_requested': '2019',
-        'serial_requested': '2020',
-    },
-    'rockblock': {
-        'ready_status': '2100',
-        'last_downlink': '2101',
-        'downlink_period': '2102',
-        'waiting_message': '2103',
-        'max_commands_count': '2104',
-        'imu_max_fragments': '2105',
-        'imu_downlink_start_time': '2106',
-        'imu_downlink_remain_time': '2107',
-        'imu_first_start': '2108',
-        'imu_downlink_on': '2109',
-        'flush_status': '2110',
-        'waiting_command': '2111',
-        'conseq_reads': '2112',
-        'timeout': '2113',
-        'start_time': '2114',
-        'start_time_check_signal': '2115',
-        'max_check_signal_time': '2116',
-        'sleep_mode': '2117',
-        'downlink_report_type': '2118',
-        'mode': '2119',
-    },
-    'imu': {
-        'mode': '2200',
-        'init_mode': '2201',
-        'max_fragments': '2202',
-        'sample_gyro': '2203',
-        'turn_on': '2204',
-        'turn_off': '2205',
-        'powered': '2206',
-        'failed_times': '2207',
-        'failed_limit': '2208',
-    },
-    'temperature': {
-        'in_sun': '2300',
-    },
-    'current': {
-        'in_sun': '2400',
-    },
-    'acs': {
-        'max_no_communication': '2500',
-        'on_time': '2501',
-        'off': '2502',
-        'mag': '2503',
-    },
-    'battery': {
-        'acceptable_battery': '2600',
-        'min_battery': '2601',
-    },
-    'button': {
-        'pressed': '2700',
-    },
-    'eeprom': {
-        'boot_counter': '2800',
-        'wait_time_write_step_time': '2801',
-        'allotted_time': '2802',
-        'allotted_time_passed': '2803',
-        'sfr_write_step_time': '2804',
-        'sfr_address_age': '2805',
-        'storage_full': '2806',
-    },
-}
+from config import *
 
 
-"""Helper function that translates the decimal number n into an all uppercase
-hexidecimal string without '0x' header, then pads hexadecimal string with '0's 
-at the beginning until it has the length of ARG_LENGTH."""
 def format_arg(n):
+    """
+    Helper function that translates the decimal number n into an all uppercase
+    hexadecimal string without '0x' header, then pads hexadecimal string with '0's
+    at the beginning until it has the length of ARG_LENGTH.
+    """
     arg = (hex(int(n))[2:]).upper()
     while len(arg) < ARG_LENGTH:
         arg = "0" + arg
     return arg
 
+def format_flag(n):
+    """
+    Helper function that translates the decimal number n into an all uppercase
+    hexadecimal string without '0x' header, then pads hexadecimal string with '0's
+    at the beginning until it has the length of FLAG_LENGTH.
+    """
+    flag = (hex(n)[2:]).upper()
+    while len(flag) < FLAG_LENGTH:
+        flag = "0" + flag
+    return flag
 
-"""Takes a Command and translates it to a string representation as
-specified in the Alpha documentation"""
 def parse_command(command):
+    """
+    Takes a Command and translates it to a string representation as
+    specified in the Alpha documentation
+    """
     selected_opcode = command['opcode']
     if selected_opcode == 'SFR_Override':
         namespace = command['namespace']
@@ -170,21 +47,55 @@ def parse_command(command):
         arg2 = format_arg(0)
     return opcode + arg1 + arg2
 
+def log_command(command):
+    """
+    Stores the result of uplinking a command into the command text file logs.
+    """
+    currentMinute = datetime.now().minute
+    currentHour = datetime.now().hour
+    currentDay = datetime.now().day
+    currentMonth = datetime.now().month
+    currentYear = datetime.now().year
 
-"""Sends an uplink request to the satellite via the
-Rockblock API. Requires rockblock user, password, and
-imei for the radio, as well as the string data to send. Returns
-the rockblock web services response data as a map with keys [:status :id :error-code :description].
-:description and :code are only returned when there is an error, and :id is only returned on success
-The possible responses are documented at https://www.rock7.com/downloads/RockBLOCK-Web-Services-User-Guide.pdf"""
-def send_uplink(imei, user, password, data):
+    time = str(currentHour) + ":" + str(currentMinute)
+    date = str(currentMonth) + "/" + str(currentDay) + "/" + str(currentYear)
+    writeContent = f"{date},{time},{json.dumps(command)}\n"
+    filename = f"commands_{currentYear}.txt"
+    file = open(filename, 'a')
+    file.write(writeContent)
+    file.close()
+
+    # TODO: Add RockBlock response and status of the command
+
+def handle_command(commands):
+    """
+    Handles a list of commands created by a ground system to send to
+    the satellite. Authenticates with rockblock web services using credentials
+    provided in the config file
+    """
+    print("Processing commands!")
+    uplink = ""
+    for command in commands:
+        log_command(command)
+        uplink += parse_command(command)
+
+    uplink += format_flag(0) + format_flag(250)
+    return send_uplink(uplink)
+
+def send_uplink(data):
+    """
+    Sends an uplink request to the satellite via the Rockblock API.
+    Requires the string data to uplink.
+    Returns the rockblock web services response data as a map with keys [:status :id :error-code :description].
+    :description and :code are only returned when there is an error, and :id is only returned on success
+    The possible responses are documented at https://www.rock7.com/downloads/RockBLOCK-Web-Services-User-Guide.pdf
+    """
     request = {
-        "imei": imei,
-        "username": user,
-        "password": password,
+        "imei": rockblock_config['imei'],
+        "username": rockblock_config['user'],
+        "password": rockblock_config['password'],
         "data": data,
-        }
-    print(data)
+    }
     print(request)
 
     response = requests.post(ROCKBLOCK_ENDPOINT, data = request)

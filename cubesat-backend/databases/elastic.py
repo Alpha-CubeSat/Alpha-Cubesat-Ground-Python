@@ -12,10 +12,6 @@ def get_connection() -> Elasticsearch:
                        basic_auth=(cfg['username'], cfg['password']), ca_certs=cfg['certs'])
     return es
 
-# Returns the input name
-def literal_index_strategy(name):
-    return name
-
 # Appends the current year, month, and day to the supplied index name 
 # to break up an index into a daily index pattern.
 def daily_index_strategy(name):
@@ -25,23 +21,22 @@ def daily_index_strategy(name):
 
 # Indexes the supplied document into elasticsearch, using the
 # naming strategy to create indices using the given index name.
-def index(index_base_name: str, naming_strategy, content: dict):
+def index(index_base_name: str, content: dict):
     es = get_connection()
-    es.index(index=literal_index_strategy(index_base_name), body=content)
-    # pass
+    es.index(index=index_base_name, body=content)
 
 # Returns the data corresponding to the supplied name
 def get_index(name):
     res = []
     es = get_connection()
     response = es.search(
-    index="cubesat_normal_report",
-    body={
-        "_source": [name],
-        "query": {
-        "match_all": {}
+        index="cubesat_normal_report",
+        body={
+            "_source": [name],
+            "query": {
+            "match_all": {}
+            }
         }
-    }
     )
     for hit in response['hits']['hits']:
         res.append(hit['_source']['command_log'])
