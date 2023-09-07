@@ -1,8 +1,8 @@
+import base64
 import os
 from os.path import exists
 
 import config as cfg
-import util.binary.hex_string as hex
 
 # TODO: will not work if multiple images received
 # list of all image fragment numbers received
@@ -133,5 +133,5 @@ def get_image_data(image_file_name: str) -> dict:
     return {
         'name': os.path.basename(image_path),
         'timestamp': os.path.getmtime(image_path),
-        'base64': hex.bytes_to_b64(bin_img)
+        'base64': base64.b64encode(bin_img)
     }

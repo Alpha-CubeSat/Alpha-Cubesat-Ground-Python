@@ -1,6 +1,8 @@
 from enum import Enum
-import opcode_map
+
 from binary_reader import BinaryReader
+
+import opcode_map
 
 
 class BinaryTypes(Enum):

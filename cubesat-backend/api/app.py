@@ -21,8 +21,6 @@ def create_app():
     app.register_blueprint(auth, url_prefix='/api/auth')
     from api.user import user
     app.register_blueprint(user, url_prefix='/api/user')
-    from api.rockblock import rockblock
-    app.register_blueprint(rockblock, url_prefix='/api/rockblock')
     from api.cubesat import cubesat
     app.register_blueprint(cubesat, url_prefix='/api/cubesat')
     from api.errors import errors
