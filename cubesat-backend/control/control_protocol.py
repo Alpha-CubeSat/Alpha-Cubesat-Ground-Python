@@ -3,7 +3,8 @@ from datetime import datetime
 
 import requests
 
-from config import *
+from config import rockblock_config
+from control.control_constants import *
 
 
 def format_arg(n):

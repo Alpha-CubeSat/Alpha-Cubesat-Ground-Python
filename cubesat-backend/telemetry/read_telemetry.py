@@ -1,6 +1,6 @@
 import traceback
 
-from config import normal_report_structure, Opcodes
+from telemetry.telemetry_constants import *
 from util.binary_parser import BinaryParser
 
 

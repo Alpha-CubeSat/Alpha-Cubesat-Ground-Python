@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from config import *
 from databases import elastic, image_database
 from telemetry.read_telemetry import read_cubesat_data
+from telemetry.telemetry_constants import *
 
 # list of all imu fragment numbers received
 fragment_list = []
