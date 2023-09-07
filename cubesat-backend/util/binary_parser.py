@@ -2,7 +2,7 @@ from enum import Enum
 
 from binary_reader import BinaryReader
 
-from util import opcode_map
+from util.opcode_map import opcode_map
 
 
 class BinaryTypes(Enum):
@@ -70,7 +70,7 @@ class BinaryParser:
                     if opcode == "65279":
                         break
                     if opcode in opcode_map:
-                        decoded[name].append(opcode_map.opcode_map[opcode])
+                        decoded[name].append(opcode_map[opcode])
             else:
                 raise NotImplementedError()
         return decoded
