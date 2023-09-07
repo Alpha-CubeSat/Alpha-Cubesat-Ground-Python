@@ -2,7 +2,7 @@ from enum import Enum
 
 from binary_reader import BinaryReader
 
-import opcode_map
+from util import opcode_map
 
 
 class BinaryTypes(Enum):
@@ -12,7 +12,8 @@ class BinaryTypes(Enum):
     # int32 = 1
     # uint32 = 2
     # int16 = 3
-    uint16 = 4
+    # uint16 = 4
+    uint16_list = 4
     # int8 = 5
     uint8 = 6
     # float64 = 7
@@ -62,13 +63,13 @@ class BinaryParser:
         for (name, ptype) in structure:
             if ptype == BinaryTypes.uint8:
                 decoded[name] = self.read_uint8()
-            elif ptype == BinaryTypes.uint16:
+            elif ptype == BinaryTypes.uint16_list:
                 decoded[name] = []
                 while self.remaining()-self.pos() > 2:
                     opcode = str(self.read_uint16())
                     if opcode == "65279":
                         break
-                    if opcode in opcode_map.opcode_map:
+                    if opcode in opcode_map:
                         decoded[name].append(opcode_map.opcode_map[opcode])
             else:
                 raise NotImplementedError()

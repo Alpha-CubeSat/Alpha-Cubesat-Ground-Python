@@ -4,13 +4,13 @@ import jwt
 from apifairy import response, authenticate, arguments, body, other_responses
 from flask import Blueprint
 
-import config
 from api.auth import token_auth
 from api.schemas import ImageNameSchema, ImageCountSchema, ImageDataSchema, CommandSchema, \
     CommandResponseSchema, RockblockReportSchema
 from control import control_protocol
 from databases import elastic, image_database
 from telemetry import process_telemetry
+from telemetry.telemetry_constants import ROCKBLOCK_PK
 
 cubesat = Blueprint('cubesat', __name__)
 
@@ -29,7 +29,7 @@ def rockblock_telemetry(report):
     # Verifies the JWT token sent in a rockblock report
     # If JWT is invalid, handle exception and return 401/Unauthorized
     try:
-        jwt.decode(report['JWT'], config.rockblock_web_pk, algorithms=['RS256'])
+        jwt.decode(report['JWT'], ROCKBLOCK_PK, algorithms=['RS256'])
     except:
         print('JWT verification error')
         return '', 401
