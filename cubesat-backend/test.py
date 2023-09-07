@@ -1,4 +1,4 @@
-from telemetry.telemetry_handler import handle_report
+from telemetry.process_telemetry import handle_report
 
 rockblock_report1 = {'device_type': "ROCKBLOCK", 'iss': "Rock 7", 'iridium_longitude': -76.6932,
                      'imei': 300534061384690,

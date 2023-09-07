@@ -1,28 +1,62 @@
 import time
 
+import jwt
 from apifairy import response, authenticate, arguments, body, other_responses
-from flask import Blueprint, Response
+from flask import Blueprint
 
-import control.control_handler as control
-import databases.image_database as image_db
+import config
 from api.auth import token_auth
 from api.schemas import ImageNameSchema, ImageCountSchema, ImageDataSchema, CommandSchema, \
-    CommandResponseSchema
-from databases.elastic import get_index
+    CommandResponseSchema, RockblockReportSchema
+from control import control_protocol
+from databases import elastic, image_database
+from telemetry import process_telemetry
 
 cubesat = Blueprint('cubesat', __name__)
+
+@cubesat.post('/telemetry')
+@body(RockblockReportSchema)
+@other_responses({401: 'Invalid JWT token'})
+def rockblock_telemetry(report):
+    """
+    Rockblock Telemetry
+    Used to receive downlinked data reports sent by the CubeSat from the RockBlock portal.
+    Must have a valid JWT token.
+    """
+    print("report received")
+    # print(report)
+
+    # Verifies the JWT token sent in a rockblock report
+    # If JWT is invalid, handle exception and return 401/Unauthorized
+    try:
+        jwt.decode(report['JWT'], config.rockblock_web_pk, algorithms=['RS256'])
+    except:
+        print('JWT verification error')
+        return '', 401
+
+    # Fixes the date format of the transmit_time field in the rockblock report.
+    # Rockblock uses YY-MM-DD HH:mm:ss as the date format instead of the YYYY-MM-DDThh:mm:ssZ
+    # standard format. Conversion is done by appending "20" to the start of the date string,
+    # which means this fix may not work after the year 2100.
+    report['transmit_time'] = f"20{report['transmit_time'].replace(' ', 'T')}Z"
+
+    # Decode/process rockblock report and save it in elasticsearch
+    process_telemetry.handle_report(report)  # wrap with try/catch in case of error?
+    print("report processed")
+
+    return '', 200 # Successful downlink code
 
 @cubesat.get('/img/recent')
 @authenticate(token_auth)
 @arguments(ImageCountSchema)
 @response(ImageNameSchema)
 @other_responses({401: 'Invalid access token'})
-def get_recent_images(args):
+def get_recent_imgs(args):
     """
     Get Recent Images
     Returns a list of names of all the fully downlinked image files received by the ground station.
     """
-    return {'images': image_db.get_recent_images(args['count'])}
+    return {'images': image_database.get_recent_images(args['count'])}
 
 @cubesat.get('/img/<name>')
 @authenticate(token_auth)
@@ -33,7 +67,7 @@ def get_image(name: 'Name of the image'):
     Get Image By Name
     Returns the image file with the given name if it exists.
     """
-    return image_db.get_image_data(name)
+    return image_database.get_image_data(name)
 
 @cubesat.post('/command')
 @authenticate(token_auth)
@@ -47,7 +81,7 @@ def uplink_command(command):
     Opcode, namespace, field, and value fields must be valid per the Alpha flight SW documentation.
     """
     print(command)
-    uplink_response = control.handle_command(command)
+    uplink_response = control_protocol.handle_command(command)
 
     return {
         'status': 'success' if uplink_response.find("OK") != -1 else 'failure',
@@ -79,4 +113,4 @@ def get_processed_commands():
     Get all previously sent commands to the CubeSat via the Rockblock portal
     that have been confirmed in the command log of the normal report.
     """
-    return get_index("command_log")
+    return elastic.get_index("command_log")
