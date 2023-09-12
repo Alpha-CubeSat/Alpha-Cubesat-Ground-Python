@@ -1,8 +1,9 @@
 import axios from "axios";
 
-const BASE_API_URL = "http://localhost:5000";
-
-//process.env.REACT_APP_BASE_API_URL;
+const BASE_API_URL =
+  process.env.REACT_APP_BASE_API_URL === undefined
+    ? "http://localhost:5000"
+    : process.env.REACT_APP_BASE_API_URL;
 
 export default class ApiClient {
   async request(options) {
