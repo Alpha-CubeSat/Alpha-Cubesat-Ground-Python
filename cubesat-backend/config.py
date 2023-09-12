@@ -20,6 +20,7 @@ image_db_index = 'image_fragment_info'
 image_root_dir = os.path.join(basedir, 'cubesat_images')
 users_db = os.path.join(basedir, 'users.db')
 
+gs_admin_password = os.environ.get('GS_ADMIN_PASS', 'admin')
 rockblock_config = {
     'imei': os.environ.get('ROCKBLOCK_IMEI'),
     'username': os.environ.get('ROCKBLOCK_USER'),

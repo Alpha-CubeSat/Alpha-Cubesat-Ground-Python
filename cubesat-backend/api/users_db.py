@@ -5,7 +5,7 @@ import click
 from flask import g
 from werkzeug.security import generate_password_hash
 
-from config import users_db
+from config import users_db, gs_admin_password
 
 
 def get_db() -> sqlite3.Connection:
@@ -32,7 +32,7 @@ def init_db():
             token_expiration INTEGER
         )""")
         db.execute('INSERT INTO user (username, password_hash) VALUES (?, ?)',
-                         ('admin', generate_password_hash('admin')))
+                         ('admin', generate_password_hash(gs_admin_password)))
         db.commit()
         print('Users Database Created')
 
