@@ -1,4 +1,6 @@
+import json
 import time
+from os.path import exists
 
 import jwt
 from apifairy import response, authenticate, arguments, body, other_responses
@@ -8,7 +10,7 @@ from api.auth import token_auth
 from api.schemas import ImageNameSchema, ImageCountSchema, ImageDataSchema, CommandSchema, \
     CommandResponseSchema, RockblockReportSchema
 from control import control_protocol
-from databases import elastic, image_database
+from databases import image_database
 from telemetry import process_telemetry
 from telemetry.telemetry_constants import ROCKBLOCK_PK
 
@@ -83,24 +85,39 @@ def uplink_command(command):
     print(command)
     uplink_response = control_protocol.handle_command(command)
 
-    return {
+    api_response = {
         'status': 'success' if uplink_response.find("OK") != -1 else 'failure',
         'timestamp': time.time() * 1000,
         'commands': command,
         'message': uplink_response
     }
 
-@cubesat.get('/command')
+    # log commands
+    with open('command_log.txt', 'a') as f:
+        f.write(json.dumps(api_response) + '\n')
+
+    return api_response
+
+@cubesat.get('/command_history')
 @authenticate(token_auth)
-# @body(CommandSchema)
-# @response(CommandResponseSchema)
+@response(CommandResponseSchema(many=True))
 @other_responses({401: 'Invalid access token'})
-def get_command_history(command):
+def get_command_history():
     """
     Get Command History
     Get all previously sent commands to the CubeSat via the RockBlock portal.
     """
-    return 'API not configured yet.', 503
+
+    if not exists("command_log.txt"):
+        return []
+
+    history = []
+    with open('command_log.txt') as f:
+        for entry in f.readlines():
+            history.append(json.loads(entry[:-1]))
+
+    history.reverse()
+    return history
 
 @cubesat.get('/commandLog')
 # @body(CommandSchema(many=True))
