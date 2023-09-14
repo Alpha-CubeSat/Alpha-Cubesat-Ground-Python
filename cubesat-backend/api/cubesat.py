@@ -10,7 +10,7 @@ from api.auth import token_auth
 from api.schemas import ImageNameSchema, ImageCountSchema, ImageDataSchema, CommandSchema, \
     CommandResponseSchema, RockblockReportSchema
 from control import control_protocol
-from databases import image_database
+from databases import image_database, elastic
 from telemetry import process_telemetry
 from telemetry.telemetry_constants import ROCKBLOCK_PK
 
