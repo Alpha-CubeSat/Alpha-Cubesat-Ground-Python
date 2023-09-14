@@ -1,24 +1,21 @@
-import json
-from datetime import datetime
-
 import requests
 
 from config import rockblock_config
 from control.control_constants import *
 
 
-def format_arg(n):
+def format_arg(n: int) -> str:
     """
     Helper function that translates the decimal number n into an all uppercase
     hexadecimal string without '0x' header, then pads hexadecimal string with '0's
     at the beginning until it has the length of ARG_LENGTH.
     """
-    arg = (hex(int(n))[2:]).upper()
+    arg = (hex(n)[2:]).upper()
     while len(arg) < ARG_LENGTH:
         arg = "0" + arg
     return arg
 
-def format_flag(n):
+def format_flag(n: int) -> str:
     """
     Helper function that translates the decimal number n into an all uppercase
     hexadecimal string without '0x' header, then pads hexadecimal string with '0's
@@ -29,7 +26,7 @@ def format_flag(n):
         flag = "0" + flag
     return flag
 
-def parse_command(command):
+def parse_command(command: dict) -> str:
     """
     Takes a Command and translates it to a string representation as
     specified in the Alpha documentation
@@ -39,6 +36,8 @@ def parse_command(command):
         namespace = command['namespace']
         field = command['field']
         value = command['value']
+        if value in ['true', 'false']:
+            value = bool(value)
         opcode = SFR_OVERRIDE_OPCODES_MAP[namespace][field]
         arg1 = format_arg(int(value))
         arg2 = format_arg(0)
@@ -48,27 +47,7 @@ def parse_command(command):
         arg2 = format_arg(0)
     return opcode + arg1 + arg2
 
-def log_command(command):
-    """
-    Stores the result of uplinking a command into the command text file logs.
-    """
-    currentMinute = datetime.now().minute
-    currentHour = datetime.now().hour
-    currentDay = datetime.now().day
-    currentMonth = datetime.now().month
-    currentYear = datetime.now().year
-
-    time = str(currentHour) + ":" + str(currentMinute)
-    date = str(currentMonth) + "/" + str(currentDay) + "/" + str(currentYear)
-    writeContent = f"{date},{time},{json.dumps(command)}\n"
-    filename = f"commands_{currentYear}.txt"
-    file = open(filename, 'a')
-    file.write(writeContent)
-    file.close()
-
-    # TODO: Add RockBlock response and status of the command
-
-def handle_command(commands):
+def handle_command(commands: list) -> str:
     """
     Handles a list of commands created by a ground system to send to
     the satellite. Authenticates with rockblock web services using credentials
@@ -77,13 +56,12 @@ def handle_command(commands):
     print("Processing commands!")
     uplink = ""
     for command in commands:
-        log_command(command)
         uplink += parse_command(command)
 
     uplink += format_flag(0) + format_flag(250)
     return send_uplink(uplink)
 
-def send_uplink(data):
+def send_uplink(data: str) -> str:
     """
     Sends an uplink request to the satellite via the Rockblock API.
     Requires the string data to uplink.
@@ -93,11 +71,10 @@ def send_uplink(data):
     """
     request = {
         "imei": rockblock_config['imei'],
-        "username": rockblock_config['user'],
+        "username": rockblock_config['username'],
         "password": rockblock_config['password'],
         "data": data,
     }
-    print(request)
 
     response = requests.post(ROCKBLOCK_ENDPOINT, data = request)
     print(response.text + "\n")

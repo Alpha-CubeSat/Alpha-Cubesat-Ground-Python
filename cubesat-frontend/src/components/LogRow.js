@@ -1,7 +1,7 @@
 import { BsCheckCircleFill, BsXCircleFill } from "react-icons/bs";
 import { OpCodes } from "./CommandSelector";
-import React, { useState, useRef } from 'react';
-import Overlay from 'react-bootstrap/Overlay';
+import React, { useRef, useState } from "react";
+import Overlay from "react-bootstrap/Overlay";
 
 export default function LogRow({ entry }) {
   const [show, setShow] = useState(() => entry.commands.map(() => false));
@@ -15,6 +15,7 @@ export default function LogRow({ entry }) {
 
   return (
     <tr>
+      {/* status indicator */}
       <td>
         {entry.status === "success" ? (
           <BsCheckCircleFill color="green" />
@@ -22,36 +23,58 @@ export default function LogRow({ entry }) {
           <BsXCircleFill color="red" />
         )}
       </td>
+      {/* command(s) */}
       <td>
-        <>
-          {entry.commands.map((command, i) => (
-            command.namespace ? (
-              <>
-                <p className="clickable-text" ref={targets.current[i]} onClick={() => toggleTooltip(i)}>
-                  {command.opcode}
-                </p>
-                <Overlay target={targets.current[i].current} show={show[i]} placement="right">
-                  {props => (
-                    <div
-                      {...props}
-                      style={{
-                        position: 'relative',
-                        backgroundColor: 'lightblue',
-                        padding: '2px 8px',
-                        color: 'black',
-                        borderRadius: 5,
-                        ...props.style,
-                      }}
-                    >
-                      {command.namespace + ":" + command.field + "=" + command.value}
-                    </div>
-                  )}
-                </Overlay>
-              </>
-            ) : command.opcode))}
-        </>
+        {entry.commands.map((command, i) =>
+          command.namespace ? (
+            <div key={i}>
+              <p
+                className="clickable-text"
+                ref={targets.current[i]}
+                onClick={() => toggleTooltip(i)}
+              >
+                {command.opcode}
+              </p>
+              <Overlay
+                target={targets.current[i].current}
+                show={show[i]}
+                placement="right"
+              >
+                {({
+                  placement: _placement,
+                  arrowProps: _arrowProps,
+                  show: _show,
+                  popper: _popper,
+                  hasDoneInitialMeasure: _hasDoneInitialMeasure,
+                  ...props
+                }) => (
+                  <div
+                    {...props}
+                    style={{
+                      position: "relative",
+                      backgroundColor: "lightblue",
+                      padding: "2px 8px",
+                      color: "black",
+                      borderRadius: 5,
+                      ...props.style,
+                    }}
+                  >
+                    {command.namespace +
+                      ":" +
+                      command.field +
+                      "=" +
+                      command.value}
+                  </div>
+                )}
+              </Overlay>
+            </div>
+          ) : (
+            <p key={i}>{command.opcode}</p>
+          )
+        )}
       </td>
       <td>
+        {/* command processed indicator */}
         {entry.commands.map((command, i) => (
           <p
             key={i}
@@ -61,14 +84,17 @@ export default function LogRow({ entry }) {
                 : ""
             }
           >
-            {command.processed === "true"
-              ? <BsCheckCircleFill color="green" />
-              : <BsXCircleFill color="red" />}
+            {command.processed === "true" ? (
+              <BsCheckCircleFill color="green" />
+            ) : (
+              <BsXCircleFill color="red" />
+            )}
           </p>
         ))}
       </td>
+      {/* timestamp and rockblock message */}
       <td>{new Date(parseFloat(entry.timestamp)).toLocaleString()}</td>
       <td>{entry.message}</td>
-    </tr >
+    </tr>
   );
 }
