@@ -54,7 +54,7 @@ normal_report_structure = [
     ('voltage_value', BinaryTypes.uint8),
     ('voltage_average', BinaryTypes.uint8),
     (fault_fields, BinaryTypes.uint8_split),
-    ('mission_mode_log', BinaryTypes.uint5_list)
+    ('mission_mode_log', BinaryTypes.uint5_list),
     ('command_log', BinaryTypes.uint16_list)
 ]
 
