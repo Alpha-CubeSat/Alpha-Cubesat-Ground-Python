@@ -129,11 +129,11 @@ metadata = {'device_type': "ROCKBLOCK", 'iss': "Rock 7", 'iridium_longitude': -7
 #handle_report(rockblock_report4)
 
 # new normal report
-# handle_report(rockblock_report5)
+handle_report(rockblock_report5)
 
 # imu reports
-for fragment in imu_fragments:
-    handle_report({**metadata, 'data': fragment})
+# for fragment in imu_fragments:
+#     handle_report({**metadata, 'data': fragment})
 
 # image fragment reports
 #for fragment in image_fragments:
