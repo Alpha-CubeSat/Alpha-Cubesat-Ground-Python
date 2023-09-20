@@ -25,7 +25,7 @@ def compute_normal_report_values(data: dict) -> dict:
     :return: fully processed normal report
     """
     fixed_data = {
-        'burn_time': map_range(float(data['burnwire_burn_time']), 0, 255, 0, 5000),
+        'burn_time': map_range(float(data['burn_time']), 0, 255, 0, 5000),
         'armed_time': map_range(float(data['armed_time']), 0, 255, 0, 43200000),
         'downlink_period': map_range(float(data['downlink_period']), 0, 255, 1000, 86400000),
         'eeprom_boot_counter': map_range(float(data['eeprom_boot_counter']), 0, 255, 0, 0),
@@ -47,7 +47,7 @@ def compute_normal_report_values(data: dict) -> dict:
         'gyro_x_average' : map_range(float(data['gyro_x_average']), 0, 255, -5, 5),
         'gyro_y_average' : map_range(float(data['gyro_y_average']), 0, 255, -5, 5),
         'gyro_z_average' : map_range(float(data['gyro_z_average']), 0, 255, -5, 5),
-        'temo_c_value' : map_range(float(data['temo_c_value']), 0, 255, -100, 200),
+        'temp_c_value' : map_range(float(data['temp_c_value']), 0, 255, -100, 200),
         'temp_c_average' : map_range(float(data['temp_c_average']), 0, 255, -100, 200),
         'solar_current_average' : map_range(float(data['solar_current_average']), 0, 255, -100, 200),
         'voltage_value' : map_range(float(data['voltage_value']), 0, 255, 0, 5.5),
@@ -151,7 +151,6 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
         opcode = Opcodes.empty_packet
     else:
         opcode = Opcodes(parser.read_uint8())
-
     # Extract data from report (strip away opcode [0:2])
     data = rockblock_report['data'][2:]
     # Reads data from a packet based on its opcode
@@ -162,7 +161,7 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
             if opcode == Opcodes.normal_report:
                 result = compute_normal_report_values(
                     parser.read_structure(normal_report_structure))
-                print(result)
+                # print(result)
             elif opcode == Opcodes.imu_report:
                 result = read_imu_hex_fragment(data)
             else:  # opcode == camera_report
