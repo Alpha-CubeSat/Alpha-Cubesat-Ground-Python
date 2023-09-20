@@ -26,7 +26,7 @@ def rockblock_telemetry(report):
     Must have a valid JWT token.
     """
     print("report received")
-    # print(report)
+    print(report)
 
     # Verifies the JWT token sent in a rockblock report
     # If JWT is invalid, handle exception and return 401/Unauthorized
