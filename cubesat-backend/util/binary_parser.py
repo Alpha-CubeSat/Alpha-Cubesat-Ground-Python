@@ -56,10 +56,10 @@ class BinaryParser:
             fir_4bit = (byte_value >> 4) & 0x0F
             sec_4bit = byte_value & 0x0F
             # Handles case where only one 4-bit integer is packaged
-            if len(entry[i]) == 1:
-                decoded[entry[i][0]] = fir_4bit
+            if len(entry) == 1:
+                decoded[entry[0]] = fir_4bit
             else: 
-                decoded[entry[i][0]], decoded[entry[i][1]] = fir_4bit, sec_4bit
+                decoded[entry[0]], decoded[entry[1]] = fir_4bit, sec_4bit
     
     def read_uint8_bools(self, name_list, decoded) -> int:
         """Reads and returns 8 bools from the next unsigned 8-bit integer.
@@ -74,20 +74,22 @@ class BinaryParser:
         """
         bit_buffer = 0
         bits_in_buffer = 0
-
-        # 10 mission modes will always be transmitted
-        while len(decoded[name]) < 10:
+        
+        while len(decoded[name]) < 16:
             # If the buffer has less than 5 bits, read more.
-            if bits_in_buffer < 5:
+            if self.pos() < 49 and bits_in_buffer < 5:
                 byte_value = self.read_uint8()
-                bit_buffer |= byte_value << bits_in_buffer
+                bit_buffer = (bit_buffer << 8) | byte_value
                 bits_in_buffer += 8
-            # If the buffer has 5 or more bits, extract 5 bits for a mission mode.
-            if bits_in_buffer >= 5:
-                mission_mode = bit_buffer & 0x1F  # 0x1F is 11111 in binary
-                decoded[name].append(mission_mode)
-                bit_buffer >>= 5
-                bits_in_buffer -= 5
+
+            # If the buffer has 5 or more bits, extract the leftmost 5 bits for a mission mode.
+            mission_mode = (bit_buffer >> (bits_in_buffer - 5)) & 0x1F
+            decoded[name].append(mission_mode)
+            
+            # Remove the leftmost 5 bits
+            bit_buffer <<= 5
+            bits_in_buffer -= 5
+
 
     def read_uint16_list(self, name, decoded):
         """Reads and returns unsigned 16-bit integers until the end flag. 

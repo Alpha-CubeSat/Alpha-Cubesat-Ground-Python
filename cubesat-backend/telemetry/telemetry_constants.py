@@ -18,11 +18,11 @@ bool_fields = ["button_pressed", "current_in_sun", "temp_in_sun",
                "waiting_command", "waiting_message", "camera_powered", 
                "possible_uncovered", "photo_resistor_covered"]
 
-fault_fields = [['mag_x_value','mag_x_average'], ['mag_y_value','mag_y_average'], 
-                ['mag_z_value','mag_z_average'], ['gyro_x_value','gyro_x_average'], 
-                ['gyro_y_value','gyro_y_average'], ['gyro_z_value','gyro_z_average'],
-                ['temp_c_value','temp_c_average'], ['voltage_value','voltage_average'],
-                ['solar_current_average'], ['light_val', 'hardware_faults']]
+fault_fields = [['mag_x_value_fault','mag_x_average_fault'], ['mag_y_value_fault','mag_y_average_fault'], 
+                ['mag_z_value_fault','mag_z_average_fault'], ['gyro_x_value_fault','gyro_x_average_fault'], 
+                ['gyro_y_value_fault','gyro_y_average_fault'], ['gyro_z_value_fault','gyro_z_average_fault'],
+                ['temp_c_value_fault','temp_c_average_fault'], ['voltage_value_fault','voltage_average_fault'],
+                ['solar_current_average_fault'], ['light_val_fault', 'hardware_faults']]
 
 normal_report_structure = [
     ('burn_time', BinaryTypes.uint8),
