@@ -1,15 +1,17 @@
+from marshmallow import INCLUDE
+
 from api.app import ma
 
+
 class RockblockReportSchema(ma.Schema):
-    device_type = ma.Str()
-    imei = ma.Int()
-    serial = ma.Int()
-    momsn = ma.Int()
-    JWT = ma.Str()
-    transmit_time = ma.Str()
-    iridium_longitude = ma.Float()
-    iridium_latitude = ma.Float()
-    iridium_cep = ma.Float()
+    class Meta:
+        unknown = INCLUDE
+
+    imei = ma.Int(required=True)
+    JWT = ma.Str(required=True)
+    transmit_time = ma.Str(required=True)
+    iridium_longitude = ma.Float(required=True)
+    iridium_latitude = ma.Float(required=True)
     data = ma.Str(required=True)
 
 class ImageCountSchema(ma.Schema):
