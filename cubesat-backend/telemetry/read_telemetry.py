@@ -150,12 +150,18 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
     if parser.remaining() == 0:
         opcode = Opcodes.empty_packet
     else:
-        opcode = Opcodes(parser.read_uint8())
+        opcode_val = parser.read_uint8()
+        if opcode_val in list(map(int, Opcodes)):
+            opcode = Opcodes(opcode_val)
+        else:
+            return error_data(rockblock_report, 'Invalid opcode: ' + str(opcode_val))
+
     # Extract data from report (strip away opcode [0:2])
     data = rockblock_report['data'][2:]
+
     # Reads data from a packet based on its opcode
     if opcode == Opcodes.empty_packet:
-        return error_data(rockblock_report, 'empty packet')
+        return error_data(rockblock_report, 'Empty packet')
     else:
         try:
             if opcode == Opcodes.normal_report:
