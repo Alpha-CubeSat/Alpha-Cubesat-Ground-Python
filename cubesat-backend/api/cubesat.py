@@ -6,6 +6,7 @@ import jwt
 from apifairy import response, authenticate, arguments, body, other_responses
 from flask import Blueprint
 
+import config
 from api.auth import token_auth
 from api.schemas import ImageNameSchema, ImageCountSchema, ImageDataSchema, CommandSchema, \
     CommandResponseSchema, RockblockReportSchema
@@ -139,4 +140,16 @@ def get_processed_commands():
     Get all previously sent commands to the CubeSat via the Rockblock portal
     that have been confirmed in the command log of the normal report.
     """
-    return elastic.get_index("command_log")
+    query = elastic.get_es_data(config.cubesat_db_index, ["command_log"])
+    return map(lambda x: x["command_log"], query)
+
+@cubesat.get('/downlink_history')
+@authenticate(token_auth)
+@other_responses({401: 'Invalid access token'})
+def get_downlink_history():
+    """
+    Get Downlink History
+    Gets transmit type, opcode, and error message of all downlinks previously processed
+    by the ground station
+    """
+    return elastic.get_es_data(config.rockblock_db_index, ['telemetry_report_type', 'transmit_time', 'error'])
