@@ -1,10 +1,20 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Dropdown from "react-bootstrap/Dropdown";
 import { Button, Col, Container, Form, Row } from "react-bootstrap";
 import { useDashboard } from "../contexts/DashboardProvider";
-import namespaces, { Types } from "./SFR_Overrides";
 import InputField from "./InputField";
 import { Typeahead } from "react-bootstrap-typeahead";
+import { useApi } from "../contexts/ApiProvider";
+
+// SFR field types
+// defaults to Int unless type attribute is set
+const SFR_Type = Object.freeze({
+  Second: "SECOND",
+  Minute: "MINUTE",
+  Hour: "HOUR",
+  Float: "FLOAT",
+  Bool: "BOOL",
+});
 
 // Allowed opcodes
 export const OpCodes = Object.freeze({
@@ -35,6 +45,21 @@ export default function CommandSelector() {
     disabledOpcodes,
     setDisabledOpcodes,
   } = useDashboard();
+
+  const api = useApi();
+
+  // SFR namspaces
+  const [namespaces, setNamespaces] = useState({});
+
+  // fetch metadata for all SFR override opcodes
+  useEffect(() => {
+    api
+      .get("/cubesat/opcodes")
+      .then((response) =>
+        setNamespaces(response.status === 200 ? response.data : {})
+      );
+  }, [api]);
+  // console.log(namespaces);
 
   // Selected dropdown values
   const [selectedOpCode, setOpCode] = useState("None");
@@ -108,7 +133,7 @@ export default function CommandSelector() {
     let input_value = "";
     if (selectedOpCode === OpCodes.SFR_Override) {
       input_value =
-        fieldData.type !== Types.Bool
+        fieldData.type !== SFR_Type.Bool
           ? fieldInputRef.current.value
           : fieldInputRef.current.checked.toString();
 
@@ -119,14 +144,15 @@ export default function CommandSelector() {
       if (!input_value) {
         error = "Field cannot be empty.";
       } else if (
-        (fieldData.type === Types.Int ||
-          fieldData.type === Types.Minute ||
-          fieldData.type === Types.Hour) &&
+        (fieldData.type === undefined ||
+          fieldData.type === SFR_Type.Second ||
+          fieldData.type === SFR_Type.Minute ||
+          fieldData.type === SFR_Type.Hour) &&
         !int_check.test(input_value)
       ) {
         error = "Not a valid integer.";
       } else if (
-        fieldData.type === Types.Float &&
+        fieldData.type === SFR_Type.Float &&
         !float_check.test(input_value)
       ) {
         error = "Not a valid float.";
@@ -137,6 +163,13 @@ export default function CommandSelector() {
       }
       setInputError(error);
       if (error.length > 0) return;
+    }
+
+    // convert minutes and hours to seconds
+    if (fieldData.type === SFR_Type.Minute) {
+      input_value *= 60;
+    } else if (fieldData.type === SFR_Type.Hour) {
+      input_value *= 3600;
     }
 
     // add to command builder
@@ -245,20 +278,26 @@ export default function CommandSelector() {
           />
 
           {/* SFR field input */}
-          <Form onSubmit={handleSubmit} noValidate className="mt-2">
-            {fieldData.type && (
-              <span style={{ fontWeight: "bold" }}>Argument</span>
-            )}
+          <Form
+            onSubmit={handleSubmit}
+            noValidate
+            className="mt-2"
+            hidden={selectedField === "None"}
+          >
+            {fieldData && <span style={{ fontWeight: "bold" }}>Argument</span>}
 
-            {fieldData.type && fieldData.type !== Types.Bool && (
+            {(fieldData.type === undefined ||
+              fieldData.type !== SFR_Type.Bool) && (
               <InputField
                 name="sfr_override"
                 type="number"
                 className="mt-1"
                 placeholder={
-                  fieldData.type === Types.Minute
+                  fieldData.type === SFR_Type.Second
+                    ? "Seconds"
+                    : fieldData.type === SFR_Type.Minute
                     ? "Minutes"
-                    : fieldData.type === Types.Hour
+                    : fieldData.type === SFR_Type.Hour
                     ? "Hours"
                     : "Value"
                 }
@@ -266,7 +305,7 @@ export default function CommandSelector() {
                 fieldRef={fieldInputRef}
               />
             )}
-            {fieldData.type === Types.Bool && (
+            {fieldData.type === SFR_Type.Bool && (
               <div className="mt-2">
                 <Form.Check
                   name="sfr_override"
