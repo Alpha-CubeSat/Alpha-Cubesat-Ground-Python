@@ -18,30 +18,31 @@ bool_fields = ["button_pressed", "current_in_sun", "temp_in_sun",
                "waiting_command", "waiting_message", "camera_powered", 
                "possible_uncovered", "photo_resistor_covered"]
 
+eeprom_bools = ["boot_mode", "error_mode", "light_switch", "sfr_save_completed"]
+
 fault_fields = [['mag_x_value_fault','mag_x_average_fault'], ['mag_y_value_fault','mag_y_average_fault'], 
                 ['mag_z_value_fault','mag_z_average_fault'], ['gyro_x_value_fault','gyro_x_average_fault'], 
                 ['gyro_y_value_fault','gyro_y_average_fault'], ['gyro_z_value_fault','gyro_z_average_fault'],
                 ['temp_c_value_fault','temp_c_average_fault'], ['voltage_value_fault','voltage_average_fault'],
-                ['solar_current_average_fault'], ['light_val_fault', 'hardware_faults']]
+                ['light_val_fault', 'hardware_faults'], ['solar_current_average_fault', eeprom_bools]]
 
 normal_report_structure = [
     ('burn_time', BinaryTypes.uint8),
     ('armed_time', BinaryTypes.uint8),
     ('downlink_period', BinaryTypes.uint8),
-    ('eeprom_boot_counter', BinaryTypes.uint8),
     ('Id_index', BinaryTypes.uint8),
     ('Kd_index', BinaryTypes.uint8),
     ('Kp_index', BinaryTypes.uint8),
     ('c_index', BinaryTypes.uint8),
+    ('boot_counter', BinaryTypes.uint8),
+    ('dynamic_data_addr', BinaryTypes.uint8),
+    ('sfr_data_addr', BinaryTypes.uint8),
+    ('time_alive', BinaryTypes.uint8),
+    ('dynamic_data_age', BinaryTypes.uint8),
+    ('sfr_data_age', BinaryTypes.uint8),
     (bool_fields, BinaryTypes.uint8_bools),
     ('light_val_average_standby', BinaryTypes.uint8),
     ('light_val_average_deployment', BinaryTypes.uint8),
-    ('mag_x_value', BinaryTypes.uint8),
-    ('mag_y_value', BinaryTypes.uint8),
-    ('mag_z_value', BinaryTypes.uint8),
-    ('gyro_x_value', BinaryTypes.uint8),
-    ('gyro_y_value', BinaryTypes.uint8),
-    ('gyro_z_value', BinaryTypes.uint8),
     ('mag_x_average', BinaryTypes.uint8),
     ('mag_y_average', BinaryTypes.uint8),
     ('mag_z_average', BinaryTypes.uint8),
