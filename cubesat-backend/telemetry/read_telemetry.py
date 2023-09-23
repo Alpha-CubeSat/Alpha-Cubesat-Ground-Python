@@ -1,5 +1,3 @@
-import traceback
-
 from telemetry.telemetry_constants import *
 from util.binary_parser import BinaryParser
 
@@ -115,18 +113,13 @@ def read_img_hex_fragment(data: str) -> dict:
 
 
 
-def error_data(rockblock_report: dict, error_msg: str) -> dict:
+def error_data(error_msg: str) -> dict:
     """
-    Returns a map containing a cubesat report with the error opcode, raw data, and an error message.
-
-    :param rockblock_report: raw data report from rockblock API
-    :param error_msg: the error message
-    :return: an error report
+    Returns a map containing a cubesat report with the error opcode and the error message.
     """
     return {
         'telemetry_report_type': Opcodes.error,
-        'error': error_msg,
-        'raw_data': rockblock_report['data']
+        'error': error_msg
     }
 
 
@@ -146,31 +139,25 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
     # Read opcode of report
     parser = BinaryParser(binary_data)
     if parser.remaining() == 0:
-        opcode = Opcodes.empty_packet
+        return error_data('Empty packet')
     else:
         opcode_val = parser.read_uint8()
         if opcode_val in list(map(int, Opcodes)):
             opcode = Opcodes(opcode_val)
         else:
-            return error_data(rockblock_report, 'Invalid opcode: ' + str(opcode_val))
+            return error_data('Invalid opcode: ' + str(opcode_val))
 
     # Extract data from report (strip away opcode [0:2])
     data = rockblock_report['data'][2:]
 
     # Reads data from a packet based on its opcode
-    if opcode == Opcodes.empty_packet:
-        return error_data(rockblock_report, 'Empty packet')
-    else:
-        try:
-            if opcode == Opcodes.normal_report:
-                result = compute_normal_report_values(
-                    parser.read_structure(normal_report_structure))
-                # print(result)
-            elif opcode == Opcodes.imu_report:
-                result = read_imu_hex_fragment(data)
-            else:  # opcode == camera_report
-                result = read_img_hex_fragment(data)
-            result['telemetry_report_type'] = opcode
-            return result
-        except Exception:
-            return error_data(rockblock_report, traceback.format_exc())
+    if opcode == Opcodes.normal_report:
+        result = compute_normal_report_values(
+            parser.read_structure(normal_report_structure))
+        # print(result)
+    elif opcode == Opcodes.imu_report:
+        result = read_imu_hex_fragment(data)
+    else:  # opcode == camera_report
+        result = read_img_hex_fragment(data)
+    result['telemetry_report_type'] = opcode
+    return result
