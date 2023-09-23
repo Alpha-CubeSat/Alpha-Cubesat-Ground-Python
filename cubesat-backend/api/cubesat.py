@@ -10,6 +10,7 @@ from api.auth import token_auth
 from api.schemas import ImageNameSchema, ImageCountSchema, ImageDataSchema, CommandSchema, \
     CommandResponseSchema, RockblockReportSchema
 from control import control_protocol
+from control.control_constants import SFR_OVERRIDE_OPCODES_MAP
 from databases import image_database, elastic
 from telemetry import process_telemetry
 from telemetry.telemetry_constants import ROCKBLOCK_PK
@@ -98,6 +99,14 @@ def uplink_command(command):
 
     return api_response
 
+@cubesat.get('/opcodes')
+@authenticate(token_auth)
+def get_opcodes():
+    """
+    Get All Opcodes
+    """
+    return SFR_OVERRIDE_OPCODES_MAP
+
 @cubesat.get('/command_history')
 @authenticate(token_auth)
 @response(CommandResponseSchema(many=True))
@@ -119,9 +128,7 @@ def get_command_history():
     history.reverse()
     return history
 
-@cubesat.get('/commandLog')
-# @body(CommandSchema(many=True))
-# @response(CommandResponseSchema)
+@cubesat.get('/processed_commands')
 @authenticate(token_auth)
 @other_responses({401: 'Invalid access token'})
 def get_processed_commands():
