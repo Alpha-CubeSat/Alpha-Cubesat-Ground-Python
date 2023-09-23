@@ -54,7 +54,7 @@ export default function CommandSelector() {
   // fetch metadata for all SFR override opcodes
   useEffect(() => {
     api
-      .get("/cubesat/opcodes")
+      .get("/cubesat/sfr_opcodes")
       .then((response) =>
         setNamespaces(response.status === 200 ? response.data : {})
       );
