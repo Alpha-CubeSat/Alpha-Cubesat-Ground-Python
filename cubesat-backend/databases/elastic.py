@@ -25,20 +25,17 @@ def index(index_base_name: str, content: dict):
     es = get_connection()
     es.index(index=index_base_name, body=content)
 
-# Returns the data corresponding to the supplied name
-def get_index(name):
-    res = []
-    es = get_connection()
-    response = es.search(
-        index="cubesat_normal_report",
-        body={
-            "_source": [name],
-            "query": {
+# Returns the data corresponding to the supplied index and a list of input fields
+def get_es_data(idx: str, cols: list):
+    result = []
+    response = get_connection().search(
+        index=idx,
+        source=cols,
+        query={
             "match_all": {}
-            }
         }
     )
     for hit in response['hits']['hits']:
-        res.append(hit['_source']['command_log'])
-    return res
+        result.append(hit['_source'])
+    return result
 
