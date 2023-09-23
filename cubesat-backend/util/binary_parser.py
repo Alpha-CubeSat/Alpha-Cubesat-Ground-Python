@@ -51,16 +51,18 @@ class BinaryParser:
         """Reads and returns two 4-bit integers from the next unsigned 
         8-bit integer w/ the format (4-bit int + 4-bit int) from the buffer. 
         Written specifically for reading faults."""
-        for i, entry in enumerate(name_list):
+        for entry in name_list:
             byte_value = self.reader.read_uint8()
             fir_4bit = (byte_value >> 4) & 0x0F
             sec_4bit = byte_value & 0x0F
-            # Handles case where only one 4-bit integer is packaged
-            if len(entry) == 1:
-                decoded[entry[0]] = fir_4bit
-            else: 
+            # Handles cases where only faults are present/eeprom_bools are present
+            if entry[0] != "solar_current_average_fault":
                 decoded[entry[0]], decoded[entry[1]] = fir_4bit, sec_4bit
-    
+            else:
+                decoded[entry[0]] = fir_4bit
+                for i, bool in enumerate(entry[1]):
+                    decoded[bool] = (sec_4bit >> i) & 1 == 1
+
     def read_uint8_bools(self, name_list, decoded) -> int:
         """Reads and returns 8 bools from the next unsigned 8-bit integer.
         Written specifically for reading packaged bools."""
@@ -74,10 +76,11 @@ class BinaryParser:
         """
         bit_buffer = 0
         bits_in_buffer = 0
-        
+        accum = 0
         while len(decoded[name]) < 16:
             # If the buffer has less than 5 bits, read more.
-            if self.pos() < 49 and bits_in_buffer < 5:
+            if bits_in_buffer < 5:
+                accum+=1 
                 byte_value = self.read_uint8()
                 bit_buffer = (bit_buffer << 8) | byte_value
                 bits_in_buffer += 8
