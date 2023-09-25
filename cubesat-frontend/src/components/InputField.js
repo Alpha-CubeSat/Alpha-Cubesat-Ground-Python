@@ -9,15 +9,18 @@ export default function InputField({
   error,
   fieldRef,
   className,
+  onChange
 }) {
   return (
     <Form.Group controlId={name} className={className}>
       {label && <Form.Label>{label}</Form.Label>}
       <Form.Control
+        name={name}
         type={type || "text"}
         placeholder={placeholder}
         className={error && "is-invalid"}
         ref={fieldRef}
+        onChange={onChange}
       />
       <Form.Text className="text-danger">{error}</Form.Text>
     </Form.Group>

@@ -5,6 +5,7 @@ export const Types = Object.freeze({
   Minute: "Minute",
   Hour: "Hour",
   Int: "Int",
+  MultiInt: "MultiInt",
   Float: "Float",
   Bool: "Bool",
 });
@@ -197,6 +198,7 @@ const eeprom = {
   sfr_write_step_time: { type: Types.Int },
   sfr_address_age: { type: Types.Int },
   storage_full: { type: Types.Bool },
+  error_mode_reset: { type: Types.MultiInt }
 };
 
 const namespaces = {
