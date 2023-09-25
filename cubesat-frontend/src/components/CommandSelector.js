@@ -149,7 +149,7 @@ export default function CommandSelector() {
 
     let input_value = "";
     if (selectedOpCode === OpCodes.SFR_Override) {
-      if (selectedField[0] === "error_mode_reset") {
+      if (fieldData.type === SFR_Type.Multi) {
         input_value = String(eepromFields['bootCount']) + String(eepromFields['lightSwitch'])
           + String(eepromFields['sfrAddress']) + String(eepromFields['dataAddress']) +
           String(eepromFields['sfrWriteAge']) + String(eepromFields['dataWriteAge'])
@@ -305,12 +305,16 @@ export default function CommandSelector() {
           <Row>
             <Col>
               {/* SFR field input */}
-              <Form onSubmit={handleSubmit} noValidate className="col-lg-12 mt-2">
-                {fieldData && (
+              <Form
+                onSubmit={handleSubmit}
+                noValidate
+                className="col-lg-12 mt-2"
+              >
+                {fieldData.type && (
                   <span style={{ fontWeight: "bold" }}>Argument</span>
                 )}
                 {(fieldData.type === SFR_Type.Minute || fieldData.type === SFR_Type.Hour
-                  || fieldData.type === SFR_Type.Float || fieldData.type === SFR_Type.Int)
+                  || fieldData.type === SFR_Type.Float)
                   && (
                     <InputField
                       name="sfr_override"
