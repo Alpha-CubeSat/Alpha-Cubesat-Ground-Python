@@ -11,6 +11,7 @@ class SFR_T(str, Enum):
     SECOND = 'SECOND',
     MINUTE = 'MINUTE',
     HOUR = 'HOUR',
+    MULTI = 'MULTI'
 
 BURNWIRE_OPCODES = {
     'Deploy': '3333',
@@ -423,6 +424,10 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
         'sfr_data_age': {
             'hex': '2809',
+        },
+        'eeprom_reset': {
+            'hex': '2810',
+            'type': SFR_T.MULTI
         }
     },
 }
