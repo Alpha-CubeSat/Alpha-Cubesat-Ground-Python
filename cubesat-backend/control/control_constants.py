@@ -8,11 +8,11 @@ FLAG_LENGTH = 2
 class SFR_T(str, Enum):
     BOOL = 'BOOL',
     FLOAT = 'FLOAT',
+    INT = 'INT',
     SECOND = 'SECOND',
     MINUTE = 'MINUTE',
     HOUR = 'HOUR',
-    MULTI = 'MULTI',
-    INT = "INT"
+    MULTI = 'MULTI'
 
 BURNWIRE_OPCODES = {
     'Deploy': '3333',
@@ -134,12 +134,15 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
         'burn_time': {
             'hex': '1905',
+            'min': 0,
+            'max': 5000,
             'type': SFR_T.SECOND,
-
         },
         'armed_time': {
             'hex': '1906',
-            'type': SFR_T.HOUR,
+            'min': 0,
+            'max': 12*360000,
+            'type': SFR_T.SECOND,
         },
         'delay_time': {
             'hex': '1907',
@@ -287,22 +290,36 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
         'downlink_period': {
             'hex': '2110',
+            'min': 1,
+            'max': 86400000*2,
+            'type': SFR_T.SECOND,
+        },
+        'lp_downlink_period': {
+            'hex': '2111',
+            'min': 1,
+            'max': 86400000*2,
+            'type': SFR_T.SECOND,
+        },
+        'transmit_downlink_period': {
+            'hex': '2112',
+            'min': 1,
+            'max': 86400000*2,
             'type': SFR_T.SECOND,
         },
         'conseq_reads': {
-            'hex': '2111',
+            'hex': '2113',
             'type': SFR_T.INT
         },
         'start_time_check_signal': {
-            'hex': '2112',
+            'hex': '2114',
             'type': SFR_T.INT
         },
         'max_check_signal_time': {
-            'hex': '2113',
+            'hex': '2115',
             'type': SFR_T.MINUTE,
         },
         'on_time': {
-            'hex': '2114',
+            'hex': '2116',
             'type': SFR_T.MINUTE,
         }
     },
@@ -463,10 +480,14 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
         'dynamic_data_addr': {
             'hex': '2805',
+            'min': 10,
+            'max': 89,
             'type': SFR_T.INT
         },
         'sfr_data_addr': {
             'hex': '2806',
+            'min': 90,
+            'max': 4085,
             'type': SFR_T.INT
         },
         'time_alive': {
