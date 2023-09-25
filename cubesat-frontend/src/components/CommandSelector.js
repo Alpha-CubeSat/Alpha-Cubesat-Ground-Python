@@ -15,6 +15,7 @@ const SFR_Type = Object.freeze({
   Multi: "MULTI",
   Float: "FLOAT",
   Bool: "BOOL",
+  Int: "INT"
 });
 
 // Allowed opcodes
@@ -129,7 +130,6 @@ export default function CommandSelector() {
       setField(field);
       setFieldData(namespaces[selectedNamespace][field]);
       setInputError();
-
       setTitle("sfr::" + selectedNamespace + "::" + field);
       // setDesc();
     }
@@ -313,8 +313,10 @@ export default function CommandSelector() {
                 {fieldData.type && (
                   <span style={{ fontWeight: "bold" }}>Argument</span>
                 )}
+                {console.log(fieldData.type)}
                 {(fieldData.type === SFR_Type.Minute || fieldData.type === SFR_Type.Hour
-                  || fieldData.type === SFR_Type.Float)
+                  || fieldData.type === SFR_Type.Float || fieldData.type === SFR_Type.Int
+                  || fieldData.type === SFR_Type.Second)
                   && (
                     <InputField
                       name="sfr_override"
