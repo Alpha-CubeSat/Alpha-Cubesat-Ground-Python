@@ -38,7 +38,7 @@ def parse_command(command: dict) -> str:
         value = command['value']
         if value in ['true', 'false']:
             value = bool(value)
-        opcode = SFR_OVERRIDE_OPCODES_MAP[namespace][field]
+        opcode = SFR_OVERRIDE_OPCODES_MAP[namespace][field]['hex']
         arg1 = format_arg(int(value))
         arg2 = format_arg(0)
     else:
