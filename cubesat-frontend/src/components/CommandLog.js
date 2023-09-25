@@ -45,7 +45,7 @@ export default function CommandLog() {
     // Poll every 10000 milliseconds (10 seconds)
     const interval = setInterval(() => {
       checkProcessed();
-    }, 5000);
+    }, 10000);
 
     // Cleanup: clear the interval when the component is unmounted or the effect re - runs
     return () => {

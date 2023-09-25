@@ -28,7 +28,8 @@ fault_fields = [['mag_x_value_fault','mag_x_average_fault'], ['mag_y_value_fault
 normal_report_structure = [
     ('burn_time', BinaryTypes.uint8),
     ('armed_time', BinaryTypes.uint8),
-    ('downlink_period', BinaryTypes.uint8),
+    ('lp_downlink_period', BinaryTypes.uint8),
+    ('transmit_downlink_period', BinaryTypes.uint8),
     ('Id_index', BinaryTypes.uint8),
     ('Kd_index', BinaryTypes.uint8),
     ('Kp_index', BinaryTypes.uint8),
