@@ -11,7 +11,6 @@ class Opcodes(int, Enum):
     normal_report = 99
     imu_report = 24
     camera_report = 42
-    empty_packet = 0
     error = -1
 
 bool_fields = ["button_pressed", "current_in_sun", "temp_in_sun", 

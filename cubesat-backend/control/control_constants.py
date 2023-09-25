@@ -1,143 +1,428 @@
 # Constants related to Cubesat commanding
+from enum import Enum
 
 ROCKBLOCK_ENDPOINT = 'https://core.rock7.com/rockblock/MT'
 ARG_LENGTH = 8
 FLAG_LENGTH = 2
-BURNWIRE_OPCODES =  {
+
+class SFR_T(str, Enum):
+    BOOL = 'BOOL',
+    FLOAT = 'FLOAT',
+    SECOND = 'SECOND',
+    MINUTE = 'MINUTE',
+    HOUR = 'HOUR',
+
+BURNWIRE_OPCODES = {
     'Deploy': '3333',
     'Arm': '4444',
     'Fire': '5555'
 }
+
 SFR_OVERRIDE_OPCODES_MAP = {
     'stabilization': {
-        'max_time': '1100',
+        'max_time': {
+            'hex': '1100',
+            'type': SFR_T.MINUTE,
+        }
     },
     'boot': {
-        'max_time': '1200',
-    },
-    'simple': {
-        'max_time': '1300',
-    },
-    'point': {
-        'max-time': '1400',
+        'max_time': {
+            'hex': '1200',
+            'type': SFR_T.HOUR,
+        },
     },
     'detumble': {
-        'start_time': '1500',
-        'max_time': '1501',
-        'min_stable_gyro_z': '1502',
-        'max_stable_gyro_x': '1503',
-        'max_stable_gyro_y': '1504',
-        'min_unstable_gyro_x': '1505',
-        'min_unstable_gyro_y': '1506',
+        'min_stable_gyro_z': {
+            'hex': '1500',
+            'type': SFR_T.FLOAT,
+        },
+        'max_stable_gyro_x': {
+            'hex': '1501',
+            'type': SFR_T.FLOAT,
+        },
+        'max_stable_gyro_y': {
+            'hex': '1502',
+            'type': SFR_T.FLOAT,
+        },
+        'min_unstable_gyro_x': {
+            'hex': '1503',
+            'type': SFR_T.FLOAT,
+        },
+        'min_unstable_gyro_y': {
+            'hex': '1504',
+            'type': SFR_T.FLOAT,
+        },
     },
-    'aliveSignal' : {
-        'max_downlink_hard_faults': '1600',
-        'downlinked': '1601',
-        'max_time': '1602',
-        'num_hard_faults': '1603',
+    'aliveSignal': {
+        'downlinked': {
+            'hex': '1600',
+            'type': SFR_T.BOOL,
+        },
+        'max_downlink_hard_faults': {
+            'hex': '1601',
+        },
+        'num_hard_faults': {
+            'hex': '1602',
+        },
+        'max_time': {
+            'hex': '1603',
+            'type': SFR_T.HOUR,
+        },
     },
     'photoresistor': {
-        'covered': '1700',
+        'covered': {
+            'hex': '1700',
+            'type': SFR_T.BOOL,
+        },
     },
     'mission': {
-        'acs_transmit_cycle_time': '1800',
-        'time_deployed': '1801',
-        'deployed': '1802',
-        'already_deployed': '1803',
-        'possible_uncovered': '1804',
+        'deployed': {
+            'hex': '1800',
+            'type': SFR_T.BOOL,
+        },
+        'possible_uncovered': {
+            'hex': '1801',
+            'type': SFR_T.BOOL,
+        },
+        'mission_mode_hist_length': {
+            'hex': '1802',
+        },
+        'cycle_no': {
+            'hex': '1803',
+        },
+        'cycle_dur': {
+            'hex': '1804',
+        },
+        'mission_time': {
+            'hex': '1805',
+        },
+        'boot_time': {
+            'hex': '1806',
+        },
     },
     'burnwire': {
-        'attempts': '1900',
-        'start_time': '1901',
-        'burn_time': '1902',
-        'armed_time': '1903',
-        'mode': '1904',
-        'attempts_limit': '1905',
-        'mandatory_attempts_limit': '1906',
-        'delay_time': '1907',
+        'attempts': {
+            'hex': '1900',
+        },
+        'mode': {
+            'hex': '1901',
+            'min': 0,
+            'max': 2,
+        },
+        'attempts_limit': {
+            'hex': '1902',
+        },
+        'mandatory_attempts_limit': {
+            'hex': '1903',
+        },
+        'start_time': {
+            'hex': '1904',
+        },
+        'burn_time': {
+            'hex': '1905',
+            'type': 'SECONDS',
+        },
+        'armed_time': {
+            'hex': '1906',
+            'type': SFR_T.HOUR,
+        },
+        'delay_time': {
+            'hex': '1907',
+        },
     },
     'camera': {
-        'photo_taken_sd_failed': '2000',
-        'take_photo': '2001',
-        'turn_on': '2002',
-        'turn_off': '2003',
-        'powered': '2004',
-        'start_progress': '2005',
-        'step_time': '2006',
-        'init_start_time': '2007',
-        'init_timeout': '2008',
-        'begin_delay': '2009',
-        'resolution_set_delay': '2010',
-        'resolution_get_delay': '2011',
-        'init_mode': '2012',
-        'mode': '2013',
-        'images_written': '2014',
-        'fragments_written': '2015',
-        'set_res': '2016',
-        'failed_times': '2017',
-        'failed_limit': '2018',
-        'fragment_number_requested': '2019',
-        'serial_requested': '2020',
+        'photo_taken_sd_failed': {
+            'hex': '2000',
+            'type': SFR_T.BOOL,
+        },
+        'take_photo': {
+            'hex': '2001',
+            'type': SFR_T.BOOL,
+        },
+        'turn_on': {
+            'hex': '2002',
+            'type': SFR_T.BOOL,
+        },
+        'turn_off': {
+            'hex': '2003',
+            'type': SFR_T.BOOL,
+        },
+        'powered': {
+            'hex': '2004',
+            'type': SFR_T.BOOL,
+        },
+        'report_ready': {
+            'hex': '2005',
+            'type': SFR_T.BOOL,
+        },
+        'fragment_requested': {
+            'hex': '2006',
+            'type': SFR_T.BOOL,
+        },
+        'start_progress': {
+            'hex': '2007',
+        },
+        'serial_requested': {
+            'hex': '2008',
+        },
+        'mode': {
+            'hex': '2009',
+            'min': 0,
+            'max': 2,
+        },
+        'failed_times': {
+            'hex': '2010',
+        },
+        'failed_limit': {
+            'hex': '2011',
+        },
+        'init_mode': {
+            'hex': '2012',
+            'min': 0,
+            'max': 3,
+        },
+        'step_time': {
+            'hex': '2013',
+        },
+        'init_start_time': {
+            'hex': '2014',
+        },
+        'init_timeout': {
+            'hex': '2015',
+        },
+        'resolution_set_delay': {
+            'hex': '2016',
+        },
+        'resolution_get_delay': {
+            'hex': '2017',
+        },
+        'images_written': {
+            'hex': '2018',
+        },
+        'fragments_written': {
+            'hex': '2019',
+        },
+        'set_res': {
+            'hex': '2020',
+        },
+        'fragment_number_requested': {
+            'hex': '2021',
+        },
     },
     'rockblock': {
-        'ready_status': '2100',
-        'last_downlink': '2101',
-        'downlink_period': '2102',
-        'waiting_message': '2103',
-        'max_commands_count': '2104',
-        'imu_max_fragments': '2105',
-        'imu_downlink_start_time': '2106',
-        'imu_downlink_remain_time': '2107',
-        'imu_first_start': '2108',
-        'imu_downlink_on': '2109',
-        'flush_status': '2110',
-        'waiting_command': '2111',
-        'conseq_reads': '2112',
-        'timeout': '2113',
-        'start_time': '2114',
-        'start_time_check_signal': '2115',
-        'max_check_signal_time': '2116',
-        'sleep_mode': '2117',
-        'downlink_report_type': '2118',
-        'mode': '2119',
+        'ready_status': {
+            'hex': '2100',
+            'type': SFR_T.BOOL,
+        },
+        'waiting_message': {
+            'hex': '2101',
+            'type': SFR_T.BOOL,
+        },
+        'waiting_command': {
+            'hex': '2102',
+            'type': SFR_T.BOOL,
+        },
+        'flush_status': {
+            'hex': '2103',
+            'type': SFR_T.BOOL,
+        },
+        'sleep_mode': {
+            'hex': '2104',
+            'type': SFR_T.BOOL,
+        },
+        'max_commands_count': {
+            'hex': '2105',
+        },
+        'imu_max_fragments': {
+            'hex': '2106',
+        },
+        'downlink_report_type': {
+            'hex': '2107',
+            'min': 0,
+            'max': 2,
+        },
+        'mode': {
+            'hex': '2108',
+            'min': 0,
+            'max': 22,
+        },
+        'last_downlink': {
+            'hex': '2109',
+        },
+        'downlink_period': {
+            'hex': '2110',
+            'type': SFR_T.SECOND,
+        },
+        'conseq_reads': {
+            'hex': '2111',
+        },
+        'start_time_check_signal': {
+            'hex': '2112',
+        },
+        'max_check_signal_time': {
+            'hex': '2113',
+            'type': SFR_T.MINUTE,
+        },
+        'on_time': {
+            'hex': '2114',
+            'type': SFR_T.MINUTE,
+        }
     },
     'imu': {
-        'mode': '2200',
-        'init_mode': '2201',
-        'max_fragments': '2202',
-        'sample_gyro': '2203',
-        'turn_on': '2204',
-        'turn_off': '2205',
-        'powered': '2206',
-        'failed_times': '2207',
-        'failed_limit': '2208',
+        'sample_gyro': {
+            'hex': '2200',
+            'type': SFR_T.BOOL,
+        },
+        'turn_on': {
+            'hex': '2201',
+            'type': SFR_T.BOOL,
+        },
+        'turn_off': {
+            'hex': '2202',
+            'type': SFR_T.BOOL,
+        },
+        'powered': {
+            'hex': '2203',
+            'type': SFR_T.BOOL,
+        },
+        'report_written': {
+            'hex': '2204',
+            'type': SFR_T.BOOL,
+        },
+        'report_ready': {
+            'hex': '2205',
+            'type': SFR_T.BOOL,
+        },
+        'mode': {
+            'hex': '2206',
+            'min': 0,
+            'max': 2,
+        },
+        'init_mode': {
+            'hex': '2207',
+            'min': 0,
+            'max': 3,
+        },
+        'failed_times': {
+            'hex': '2208',
+        },
+        'failed_limit': {
+            'hex': '2209',
+        },
+        'imu_boot_collection_start_time': {
+            'hex': '2210',
+        },
+        'door_open__collection_start_time': {
+            'hex': '2211',
+        },
+        'max_fragments': {
+            'hex': '2212',
+        },
     },
     'temperature': {
-        'in_sun': '2300',
+        'in_sun': {
+            'hex': '2300',
+            'type': SFR_T.BOOL,
+        },
     },
     'current': {
-        'in_sun': '2400',
+        'in_sun': {
+            'hex': '2400',
+            'type': SFR_T.BOOL,
+        },
     },
     'acs': {
-        'max_no_communication': '2500',
-        'on_time': '2501',
-        'off': '2502',
-        'mag': '2503',
+        'off': {
+            'hex': '2500',
+            'type': SFR_T.BOOL,
+        },
+        'mode': {
+            'hex': '2501',
+            'min': 0,
+            'max': 2,
+        },
+        'simple_mag': {
+            'hex': '2502',
+            'type': SFR_T.BOOL,
+        },
+        'simple_current': {
+            'hex': '2503',
+            'type': SFR_T.BOOL,
+        },
+        'on_time': {
+            'hex': '2504',
+            'type': SFR_T.MINUTE,
+        },
+        'Id_index': {
+            'hex': '2505',
+            'min': 0,
+            'max': 1,
+        },
+        'Kd_index': {
+            'hex': '2506',
+            'min': 0,
+            'max': 1,
+        },
+        'Kp_index': {
+            'hex': '2507',
+            'min': 0,
+            'max': 1,
+        },
+        'c_index': {
+            'hex': '2508',
+            'min': 0,
+            'max': 1,
+        },
     },
     'battery': {
-        'acceptable_battery': '2600',
-        'min_battery': '2601',
+        'acceptable_battery': {
+            'hex': '2600',
+            'type': SFR_T.FLOAT,
+        },
+        'min_battery': {
+            'hex': '2601',
+        },
     },
     'button': {
-        'pressed': '2700',
+        'pressed': {
+            'hex': '2700',
+            'type': SFR_T.BOOL,
+        },
     },
     'eeprom': {
-        'boot_counter': '2800',
-        'wait_time_write_step_time': '2801',
-        'allotted_time': '2802',
-        'allotted_time_passed': '2803',
-        'sfr_write_step_time': '2804',
-        'sfr_address_age': '2805',
-        'storage_full': '2806',
+        'boot_mode': {
+            'hex': '2800',
+            'type': SFR_T.BOOL,
+        },
+        'error_mode': {
+            'hex': '2801',
+            'type': SFR_T.BOOL,
+        },
+        'light_switch': {
+            'hex': '2802',
+            'type': SFR_T.BOOL,
+        },
+        'sfr_save_completed': {
+            'hex': '2803',
+            'type': SFR_T.BOOL,
+        },
+        'boot_counter': {
+            'hex': '2804',
+        },
+        'dynamic_data_addr': {
+            'hex': '2805',
+        },
+        'sfr_data_addr': {
+            'hex': '2806',
+        },
+        'time_alive': {
+            'hex': '2807',
+        },
+        'dynamic_data_age': {
+            'hex': '2808',
+        },
+        'sfr_data_age': {
+            'hex': '2809',
+        }
     },
 }
