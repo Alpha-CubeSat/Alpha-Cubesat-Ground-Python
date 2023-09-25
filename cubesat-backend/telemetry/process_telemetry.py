@@ -1,8 +1,9 @@
+import traceback
 from datetime import datetime, timedelta
 
 from config import *
 from databases import elastic, image_database
-from telemetry.read_telemetry import read_cubesat_data
+from telemetry.read_telemetry import read_cubesat_data, error_data
 from telemetry.telemetry_constants import *
 
 # list of all imu fragment numbers received
@@ -124,24 +125,34 @@ def handle_report(rockblock_report: dict):
         'lat': rockblock_report['iridium_latitude'],
         'lon': rockblock_report['iridium_longitude']
     }
-    elastic.index(rockblock_db_index, rockblock_report)
 
     # if report is not empty, parse and save report
     if rockblock_report['data']:
-        result = {
-            **report_metadata(rockblock_report),
-            **read_cubesat_data(rockblock_report)
-        }
-        print('result', result)
+        try:
+            decoded_report = read_cubesat_data(rockblock_report)
+            result = {
+                **report_metadata(rockblock_report),
+                **decoded_report
+            }
+            print('result', result)
 
-        operation = result['telemetry_report_type']
-        if operation == Opcodes.normal_report:
-            elastic.index(cubesat_db_index, result)
-        elif operation == Opcodes.imu_report:
-            process_save_deploy_data(result)
-        elif operation == Opcodes.camera_report:
-            process_save_camera_data(result)
-        else:  # error_report
-            print('Error Report')
+            operation = result['telemetry_report_type']
+            rockblock_report['telemetry_report_type'] = operation
+            if operation == Opcodes.normal_report:
+                elastic.index(cubesat_db_index, result)
+            elif operation == Opcodes.imu_report:
+                process_save_deploy_data(result)
+            elif operation == Opcodes.camera_report:
+                process_save_camera_data(result)
+            else: # Opcodes.error_report
+                # either empty data attribute or unknown opcode
+                rockblock_report.update(decoded_report)
+        except Exception as e:
+            print(e)
+            # update report to indicate error occurred during processing
+            rockblock_report.update(error_data(traceback.format_exc()))
     else:
-        print('Rockblock report has no "data" attribute')
+        rockblock_report.update(error_data('Rockblock report has not "data" attribute'))
+
+    # store rockblock report along with opcode and error message (if error occurred)
+    elastic.index(rockblock_db_index, rockblock_report)
