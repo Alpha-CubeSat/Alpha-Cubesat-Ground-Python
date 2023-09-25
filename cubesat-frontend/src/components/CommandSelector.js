@@ -15,7 +15,7 @@ const SFR_Type = Object.freeze({
   Multi: "MULTI",
   Float: "FLOAT",
   Bool: "BOOL",
-  Int: "INT"
+  Int: "INT",
 });
 
 // Allowed opcodes
@@ -79,12 +79,12 @@ export default function CommandSelector() {
   const [inputError, setInputError] = useState();
   const fieldInputRef = useRef();
   const [eepromFields, setEepromFields] = useState({
-    bootCount: '',
-    sfrAddress: '',
-    dataAddress: '',
-    sfrWriteAge: '',
-    dataWriteAge: '',
-    lightSwitch: false
+    bootCount: "",
+    sfrAddress: "",
+    dataAddress: "",
+    sfrWriteAge: "",
+    dataWriteAge: "",
+    lightSwitch: false,
   });
 
   // Command title and description
@@ -137,9 +137,9 @@ export default function CommandSelector() {
 
   const handleEepromChange = (event) => {
     const { name, value } = event.target;
-    setEepromFields(prevFields => ({
+    setEepromFields((prevFields) => ({
       ...prevFields,
-      [name]: value
+      [name]: value,
     }));
   };
 
@@ -150,11 +150,14 @@ export default function CommandSelector() {
     let input_value = "";
     if (selectedOpCode === OpCodes.SFR_Override) {
       if (fieldData.type === SFR_Type.Multi) {
-        input_value = String(eepromFields['bootCount']) + String(eepromFields['lightSwitch'])
-          + String(eepromFields['sfrAddress']) + String(eepromFields['dataAddress']) +
-          String(eepromFields['sfrWriteAge']) + String(eepromFields['dataWriteAge'])
-      }
-      else {
+        input_value =
+          String(eepromFields["bootCount"]) +
+          String(eepromFields["lightSwitch"]) +
+          String(eepromFields["sfrAddress"]) +
+          String(eepromFields["dataAddress"]) +
+          String(eepromFields["sfrWriteAge"]) +
+          String(eepromFields["dataWriteAge"]);
+      } else {
         input_value =
           fieldData.type !== SFR_Type.Bool
             ? fieldInputRef.current.value
@@ -189,10 +192,12 @@ export default function CommandSelector() {
     }
 
     // convert minutes and hours to seconds
-    if (fieldData.type === SFR_Type.Minute) {
-      input_value *= 60;
+    if (fieldData.type === SFR_Type.Second) {
+      input_value *= 1000;
+    } else if (fieldData.type === SFR_Type.Minute) {
+      input_value *= 60 * 1000;
     } else if (fieldData.type === SFR_Type.Hour) {
-      input_value *= 3600;
+      input_value *= 3600 * 1000;
     }
 
     // add to command builder
@@ -314,25 +319,26 @@ export default function CommandSelector() {
                   <span style={{ fontWeight: "bold" }}>Argument</span>
                 )}
                 {console.log(fieldData.type)}
-                {(fieldData.type === SFR_Type.Minute || fieldData.type === SFR_Type.Hour
-                  || fieldData.type === SFR_Type.Float || fieldData.type === SFR_Type.Int
-                  || fieldData.type === SFR_Type.Second)
-                  && (
-                    <InputField
-                      name="sfr_override"
-                      type="number"
-                      className="mt-1"
-                      placeholder={
-                        fieldData.type === SFR_Type.Minute
-                          ? "Minutes"
-                          : fieldData.type === SFR_Type.Hour
-                            ? "Hours"
-                            : "Value"
-                      }
-                      error={inputError}
-                      fieldRef={fieldInputRef}
-                    />
-                  )}
+                {(fieldData.type === SFR_Type.Minute ||
+                  fieldData.type === SFR_Type.Hour ||
+                  fieldData.type === SFR_Type.Float ||
+                  fieldData.type === SFR_Type.Int ||
+                  fieldData.type === SFR_Type.Second) && (
+                  <InputField
+                    name="sfr_override"
+                    type="number"
+                    className="mt-1"
+                    placeholder={
+                      fieldData.type === SFR_Type.Minute
+                        ? "Minutes"
+                        : fieldData.type === SFR_Type.Hour
+                        ? "Hours"
+                        : "Value"
+                    }
+                    error={inputError}
+                    fieldRef={fieldInputRef}
+                  />
+                )}
                 {fieldData.type === SFR_Type.Bool && (
                   <div className="mt-2">
                     <Form.Check
@@ -354,7 +360,9 @@ export default function CommandSelector() {
 
                 {fieldData.type === SFR_Type.Multi && (
                   <>
-                    <Row className="mb-2">  {/* 1st Row */}
+                    <Row className="mb-2">
+                      {" "}
+                      {/* 1st Row */}
                       <Col>
                         <InputField
                           name="bootCount"
@@ -385,7 +393,9 @@ export default function CommandSelector() {
                         </div>
                       </Col>
                     </Row>
-                    <Row className="mb-2">  {/* 2nd Row */}
+                    <Row className="mb-2">
+                      {" "}
+                      {/* 2nd Row */}
                       <Col>
                         <InputField
                           name="sfrAddress"
@@ -407,7 +417,9 @@ export default function CommandSelector() {
                         />
                       </Col>
                     </Row>
-                    <Row className="mb-2">  {/* 3rd Row */}
+                    <Row className="mb-2">
+                      {" "}
+                      {/* 3rd Row */}
                       <Col>
                         <InputField
                           name="sfrWriteAge"
@@ -429,7 +441,8 @@ export default function CommandSelector() {
                         />
                       </Col>
                     </Row>
-                  </>)}
+                  </>
+                )}
                 {/* Submit disabled if no opcode selected or SFR override selected but no namespace or field selected */}
                 <Button
                   style={{ position: "absolute", left: "30px", bottom: "30px" }}
@@ -438,7 +451,8 @@ export default function CommandSelector() {
                   disabled={
                     selectedOpCode === "None" ||
                     (selectedOpCode === OpCodes.SFR_Override &&
-                      (selectedNamespace === "None" || selectedField === "None"))
+                      (selectedNamespace === "None" ||
+                        selectedField === "None"))
                   }
                   className="mt-2"
                 >
@@ -448,7 +462,7 @@ export default function CommandSelector() {
             </Col>
           </Row>
         </Col>
-      </Row >
-    </Container >
+      </Row>
+    </Container>
   );
 }
