@@ -11,7 +11,8 @@ class SFR_T(str, Enum):
     SECOND = 'SECOND',
     MINUTE = 'MINUTE',
     HOUR = 'HOUR',
-    MULTI = 'MULTI'
+    MULTI = 'MULTI',
+    INT = "INT"
 
 BURNWIRE_OPCODES = {
     'Deploy': '3333',
@@ -61,9 +62,11 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
         'max_downlink_hard_faults': {
             'hex': '1601',
+            'type': SFR_T.INT
         },
         'num_hard_faults': {
             'hex': '1602',
+            'type': SFR_T.INT
         },
         'max_time': {
             'hex': '1603',
@@ -87,41 +90,52 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
         'mission_mode_hist_length': {
             'hex': '1802',
+            'type': SFR_T.INT
         },
         'cycle_no': {
             'hex': '1803',
+            'type': SFR_T.INT
         },
         'cycle_dur': {
             'hex': '1804',
+            'type': SFR_T.INT
         },
         'mission_time': {
             'hex': '1805',
+            'type': SFR_T.INT
         },
         'boot_time': {
             'hex': '1806',
+            'type': SFR_T.INT
         },
     },
     'burnwire': {
         'attempts': {
             'hex': '1900',
+            'type': SFR_T.INT
         },
         'mode': {
             'hex': '1901',
             'min': 0,
             'max': 2,
+            'type': SFR_T.INT
         },
         'attempts_limit': {
             'hex': '1902',
+            'type': SFR_T.INT
         },
         'mandatory_attempts_limit': {
             'hex': '1903',
+            'type': SFR_T.INT
         },
         'start_time': {
             'hex': '1904',
+            'type': SFR_T.INT
         },
         'burn_time': {
             'hex': '1905',
-            'type': 'SECONDS',
+            'type': SFR_T.SECOND,
+
         },
         'armed_time': {
             'hex': '1906',
@@ -129,6 +143,7 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
         'delay_time': {
             'hex': '1907',
+            'type': SFR_T.INT
         },
     },
     'camera': {
@@ -162,52 +177,67 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
         'start_progress': {
             'hex': '2007',
+            'type': SFR_T.INT
         },
         'serial_requested': {
             'hex': '2008',
+            'type': SFR_T.INT
         },
         'mode': {
             'hex': '2009',
             'min': 0,
             'max': 2,
+            'type': SFR_T.INT
         },
         'failed_times': {
             'hex': '2010',
+            'type': SFR_T.INT
         },
         'failed_limit': {
             'hex': '2011',
+            'type': SFR_T.INT
         },
         'init_mode': {
             'hex': '2012',
             'min': 0,
             'max': 3,
+            'type': SFR_T.INT
         },
         'step_time': {
             'hex': '2013',
+            'type': SFR_T.INT
         },
         'init_start_time': {
             'hex': '2014',
+            'type': SFR_T.INT
         },
         'init_timeout': {
             'hex': '2015',
+            'type': SFR_T.INT
         },
         'resolution_set_delay': {
             'hex': '2016',
+            'type': SFR_T.INT
         },
         'resolution_get_delay': {
             'hex': '2017',
+            'type': SFR_T.INT
         },
         'images_written': {
             'hex': '2018',
+            'type': SFR_T.INT
         },
         'fragments_written': {
             'hex': '2019',
+            'type': SFR_T.INT
         },
         'set_res': {
             'hex': '2020',
+            'type': SFR_T.INT
         },
         'fragment_number_requested': {
             'hex': '2021',
+            'type': SFR_T.INT
         },
     },
     'rockblock': {
@@ -233,22 +263,27 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
         'max_commands_count': {
             'hex': '2105',
+            'type': SFR_T.INT
         },
         'imu_max_fragments': {
             'hex': '2106',
+            'type': SFR_T.INT
         },
         'downlink_report_type': {
             'hex': '2107',
             'min': 0,
             'max': 2,
+            'type': SFR_T.INT
         },
         'mode': {
             'hex': '2108',
             'min': 0,
             'max': 22,
+            'type': SFR_T.INT
         },
         'last_downlink': {
             'hex': '2109',
+            'type': SFR_T.INT
         },
         'downlink_period': {
             'hex': '2110',
@@ -256,9 +291,11 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
         'conseq_reads': {
             'hex': '2111',
+            'type': SFR_T.INT
         },
         'start_time_check_signal': {
             'hex': '2112',
+            'type': SFR_T.INT
         },
         'max_check_signal_time': {
             'hex': '2113',
@@ -298,26 +335,33 @@ SFR_OVERRIDE_OPCODES_MAP = {
             'hex': '2206',
             'min': 0,
             'max': 2,
+            'type': SFR_T.INT
         },
         'init_mode': {
             'hex': '2207',
             'min': 0,
             'max': 3,
+            'type': SFR_T.INT
         },
         'failed_times': {
             'hex': '2208',
+            'type': SFR_T.INT
         },
         'failed_limit': {
             'hex': '2209',
+            'type': SFR_T.INT
         },
         'imu_boot_collection_start_time': {
             'hex': '2210',
+            'type': SFR_T.INT
         },
         'door_open__collection_start_time': {
             'hex': '2211',
+            'type': SFR_T.INT
         },
         'max_fragments': {
             'hex': '2212',
+            'type': SFR_T.INT
         },
     },
     'temperature': {
@@ -341,6 +385,7 @@ SFR_OVERRIDE_OPCODES_MAP = {
             'hex': '2501',
             'min': 0,
             'max': 2,
+            'type': SFR_T.INT
         },
         'simple_mag': {
             'hex': '2502',
@@ -358,21 +403,25 @@ SFR_OVERRIDE_OPCODES_MAP = {
             'hex': '2505',
             'min': 0,
             'max': 1,
+            'type': SFR_T.INT
         },
         'Kd_index': {
             'hex': '2506',
             'min': 0,
             'max': 1,
+            'type': SFR_T.INT
         },
         'Kp_index': {
             'hex': '2507',
             'min': 0,
             'max': 1,
+            'type': SFR_T.INT
         },
         'c_index': {
             'hex': '2508',
             'min': 0,
             'max': 1,
+            'type': SFR_T.INT
         },
     },
     'battery': {
@@ -382,6 +431,7 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
         'min_battery': {
             'hex': '2601',
+            'type': SFR_T.INT
         },
     },
     'button': {
@@ -409,21 +459,27 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
         'boot_counter': {
             'hex': '2804',
+            'type': SFR_T.INT
         },
         'dynamic_data_addr': {
             'hex': '2805',
+            'type': SFR_T.INT
         },
         'sfr_data_addr': {
             'hex': '2806',
+            'type': SFR_T.INT
         },
         'time_alive': {
             'hex': '2807',
+            'type': SFR_T.INT
         },
         'dynamic_data_age': {
             'hex': '2808',
+            'type': SFR_T.INT
         },
         'sfr_data_age': {
             'hex': '2809',
+            'type': SFR_T.INT
         },
         'eeprom_reset': {
             'hex': '2810',
