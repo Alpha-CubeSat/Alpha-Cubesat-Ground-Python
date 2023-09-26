@@ -152,7 +152,7 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
     data = rockblock_report['data'][2:]
 
     # Reads data from a packet based on its opcode
-    if opcode == Opcodes.normal_report:
+    if opcode not in [Opcodes.normal_report, Opcodes.imu_report, Opcodes.camera_report]:
         result = compute_normal_report_values(
             parser.read_structure(normal_report_structure))
         # print(result)

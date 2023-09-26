@@ -26,6 +26,7 @@ fault_fields = [['mag_x_value_fault','mag_x_average_fault'], ['mag_y_value_fault
                 ['light_val_fault', 'hardware_faults'], ['solar_current_average_fault', eeprom_bools]]
 
 normal_report_structure = [
+    ('boot_time_mins', BinaryTypes.uint8),
     ('burn_time', BinaryTypes.uint8),
     ('armed_time', BinaryTypes.uint8),
     ('lp_downlink_period', BinaryTypes.uint8),
