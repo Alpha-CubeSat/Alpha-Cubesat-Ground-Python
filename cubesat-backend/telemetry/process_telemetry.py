@@ -135,7 +135,7 @@ def handle_report(rockblock_report: dict):
                 **decoded_report
             }
             print('result', result)
-
+        
             operation = result['telemetry_report_type']
             rockblock_report['telemetry_report_type'] = operation
             if operation == Opcodes.normal_report:
