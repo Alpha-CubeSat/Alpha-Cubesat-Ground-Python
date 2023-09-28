@@ -32,12 +32,13 @@ def compute_normal_report_values(data: dict) -> dict:
         'Kp_index': map_range(float(data['Kp_index']), 0, 255, 0, 1),
         'c_index': map_range(float(data['c_index']), 0, 255, 0, 1),
         'dynamic_data_addr': map_range(float(data['c_index']), 0, 255, 10, 89),
-        'sfr_data_addr': map_range(float(data['c_index']), 0, 255, 90, 4085),
-        'time_alive': map_range(float(data['c_index']), 0, 255, 0, pow(2,32)-1),
-        'dynamic_data_age': map_range(float(data['c_index']), 0, 255, 0, pow(2,32)-1),
-        'sfr_data_age': map_range(float(data['c_index']), 0, 255, 0, pow(2,32)-1),
+        'sfr_data_addr': map_range(float(data['sfr_data_addr']), 0, 255, 90, 4085),
+        "acs_on_time" : map_range(float(data['acs_on_time']), 0, 255, 0, 5400000),
+        "rockblock_on_time" : map_range(float(data['rockblock_on_time']), 0, 255, 0, 5400000),
+        'time_alive': map_range(float(data['time_alive']), 0, 255, 0, pow(2,32)-1),
+        'dynamic_data_age': map_range(float(data['dynamic_data_age']), 0, 255, 0, pow(2,32)-1),
+        'sfr_data_age': map_range(float(data['sfr_data_age']), 0, 255, 0, pow(2,32)-1),
         'light_val_average_standby' : map_range(float(data['light_val_average_standby']), 0, 255, 0, 1023),
-        'light_val_average_deployment' : map_range(float(data['light_val_average_deployment']), 0, 255, 0, 1023),
         'mag_x_average' : map_range(float(data['mag_x_average']), 0, 255, -150, 150),
         'mag_y_average' : map_range(float(data['mag_y_average']), 0, 255, -150, 150),
         'mag_z_average' : map_range(float(data['mag_z_average']), 0, 255, -150, 150),
@@ -148,17 +149,19 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
         else:
             opcode = opcode_val
 
+    result = {}
     # Extract data from report (strip away opcode [0:2])
     data = rockblock_report['data'][2:]
     # Reads data from a packet based on its opcode
     if opcode not in [Opcodes.normal_report, Opcodes.imu_report, Opcodes.camera_report]:
         result = compute_normal_report_values(
             parser.read_structure(normal_report_structure))
+        result['boot_time_mins'] = opcode
         result['telemetry_report_type'] = 99
-    elif opcode == Opcodes.imu_report:
-        result = read_imu_hex_fragment(data)
-        result['telemetry_report_type'] = opcode
-    else:  # opcode == camera_report
-        result = read_img_hex_fragment(data)
+    else:
+        if opcode == Opcodes.imu_report:
+            result = read_imu_hex_fragment(data)
+        elif opcode == Opcodes.camera_report:
+            result = read_img_hex_fragment(data)
         result['telemetry_report_type'] = opcode
     return result
