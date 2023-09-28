@@ -26,7 +26,6 @@ fault_fields = [['mag_x_value_fault','mag_x_average_fault'], ['mag_y_value_fault
                 ['light_val_fault', 'hardware_faults'], ['solar_current_average_fault', eeprom_bools]]
 
 normal_report_structure = [
-    ('boot_time_mins', BinaryTypes.uint8),
     ('burn_time', BinaryTypes.uint8),
     ('armed_time', BinaryTypes.uint8),
     ('lp_downlink_period', BinaryTypes.uint8),
@@ -41,9 +40,10 @@ normal_report_structure = [
     ('time_alive', BinaryTypes.uint8),
     ('dynamic_data_age', BinaryTypes.uint8),
     ('sfr_data_age', BinaryTypes.uint8),
+    ('acs_on_time', BinaryTypes.uint8),
+    ("rockblock_on_time", BinaryTypes.uint8),
     (bool_fields, BinaryTypes.uint8_bools),
     ('light_val_average_standby', BinaryTypes.uint8),
-    ('light_val_average_deployment', BinaryTypes.uint8),
     ('mag_x_average', BinaryTypes.uint8),
     ('mag_y_average', BinaryTypes.uint8),
     ('mag_z_average', BinaryTypes.uint8),
