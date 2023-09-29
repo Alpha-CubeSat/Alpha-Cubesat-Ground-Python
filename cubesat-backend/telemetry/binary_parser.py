@@ -2,7 +2,7 @@ from enum import Enum
 
 from binary_reader import BinaryReader
 
-from util.opcode_map import opcode_map
+from control.control_constants import COMMAND_OPCODE_MAP
 
 
 class BinaryTypes(Enum):
@@ -81,8 +81,7 @@ class BinaryParser:
         """
         while self.remaining()-self.pos() > 2:
             opcode = str(self.read_uint16())
-            if opcode in opcode_map:
-                decoded[name].append(opcode_map[opcode])
+            decoded[name].append(COMMAND_OPCODE_MAP.get(opcode, opcode))
     
     def read_structure(self, structure: list[tuple[str, BinaryTypes]]) -> dict:
         """

@@ -20,6 +20,8 @@ BURNWIRE_OPCODES = {
     'Fire': '5555'
 }
 
+EEPROM_RESET_OPCODE = '7777'
+
 SFR_OVERRIDE_OPCODES_MAP = {
     'stabilization': {
         'max_time': {
@@ -88,24 +90,20 @@ SFR_OVERRIDE_OPCODES_MAP = {
             'hex': '1801',
             'type': SFR_T.BOOL,
         },
-        'mission_mode_hist_length': {
+        'boot_time': {
             'hex': '1802',
             'type': SFR_T.INT
         },
-        'cycle_no': {
+        'mission_mode_hist_length': {
             'hex': '1803',
             'type': SFR_T.INT
         },
-        'cycle_dur': {
+        'cycle_no': {
             'hex': '1804',
             'type': SFR_T.INT
         },
-        'mission_time': {
+        'cycle_dur': {
             'hex': '1805',
-            'type': SFR_T.INT
-        },
-        'boot_time': {
-            'hex': '1806',
             'type': SFR_T.INT
         },
     },
@@ -206,40 +204,28 @@ SFR_OVERRIDE_OPCODES_MAP = {
             'max': 3,
             'type': SFR_T.INT
         },
-        'step_time': {
+        'init_start_time': {
             'hex': '2013',
             'type': SFR_T.INT
         },
-        'init_start_time': {
+        'init_timeout': {
             'hex': '2014',
             'type': SFR_T.INT
         },
-        'init_timeout': {
+        'images_written': {
             'hex': '2015',
             'type': SFR_T.INT
         },
-        'resolution_set_delay': {
+        'fragments_written': {
             'hex': '2016',
             'type': SFR_T.INT
         },
-        'resolution_get_delay': {
+        'set_res': {
             'hex': '2017',
             'type': SFR_T.INT
         },
-        'images_written': {
-            'hex': '2018',
-            'type': SFR_T.INT
-        },
-        'fragments_written': {
-            'hex': '2019',
-            'type': SFR_T.INT
-        },
-        'set_res': {
-            'hex': '2020',
-            'type': SFR_T.INT
-        },
         'fragment_number_requested': {
-            'hex': '2021',
+            'hex': '2018',
             'type': SFR_T.INT
         },
     },
@@ -248,80 +234,66 @@ SFR_OVERRIDE_OPCODES_MAP = {
             'hex': '2100',
             'type': SFR_T.BOOL,
         },
-        'waiting_message': {
+        'waiting_command': {
             'hex': '2101',
             'type': SFR_T.BOOL,
         },
-        'waiting_command': {
+        'flush_status': {
             'hex': '2102',
             'type': SFR_T.BOOL,
         },
-        'flush_status': {
+        'sleep_mode': {
             'hex': '2103',
             'type': SFR_T.BOOL,
         },
-        'sleep_mode': {
-            'hex': '2104',
-            'type': SFR_T.BOOL,
-        },
         'max_commands_count': {
-            'hex': '2105',
-            'type': SFR_T.INT
-        },
-        'imu_max_fragments': {
-            'hex': '2106',
+            'hex': '2104',
             'type': SFR_T.INT
         },
         'downlink_report_type': {
-            'hex': '2107',
+            'hex': '2105',
             'min': 0,
             'max': 2,
             'type': SFR_T.INT
         },
         'mode': {
-            'hex': '2108',
+            'hex': '2106',
             'min': 0,
             'max': 22,
             'type': SFR_T.INT
         },
         'last_downlink': {
-            'hex': '2109',
+            'hex': '2107',
             'type': SFR_T.INT
         },
         'downlink_period': {
-            'hex': '2110',
+            'hex': '2108',
             'min': 1,
             'max': 86400000*2,
             'type': SFR_T.SECOND,
         },
         'lp_downlink_period': {
-            'hex': '2111',
+            'hex': '2109',
             'min': 1,
             'max': 86400000*2,
             'type': SFR_T.SECOND,
         },
         'transmit_downlink_period': {
-            'hex': '2112',
+            'hex': '2110',
             'min': 1,
             'max': 86400000*2,
             'type': SFR_T.SECOND,
         },
-        'conseq_reads': {
-            'hex': '2113',
-            'type': SFR_T.INT
+        'on_time': {
+            'hex': '2111',
+            'min': 0,
+            'max': 5400000,
+            'type': SFR_T.MINUTE,
         },
         'start_time_check_signal': {
-            'hex': '2114',
+            'hex': '2112',
             'type': SFR_T.INT
         },
-        'max_check_signal_time': {
-            'hex': '2115',
-            'type': SFR_T.MINUTE,
-        },
-        'on_time': {
-            'hex': '2116',
-            'type': SFR_T.MINUTE,
-        }
     },
     'imu': {
         'sample_gyro': {
@@ -414,6 +386,8 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
         'on_time': {
             'hex': '2504',
+            'min': 0,
+            'max': 5400000,
             'type': SFR_T.MINUTE,
         },
         'Id_index': {
@@ -448,7 +422,7 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
         'min_battery': {
             'hex': '2601',
-            'type': SFR_T.INT
+            'type': SFR_T.FLOAT
         },
     },
     'button': {
@@ -462,49 +436,64 @@ SFR_OVERRIDE_OPCODES_MAP = {
             'hex': '2800',
             'type': SFR_T.BOOL,
         },
-        'error_mode': {
+        'boot_restarted': {
             'hex': '2801',
             'type': SFR_T.BOOL,
         },
-        'light_switch': {
+        'error_mode': {
             'hex': '2802',
             'type': SFR_T.BOOL,
         },
-        'sfr_save_completed': {
+        'light_switch': {
             'hex': '2803',
             'type': SFR_T.BOOL,
         },
-        'boot_counter': {
+        'sfr_save_completed': {
             'hex': '2804',
+            'type': SFR_T.BOOL,
+        },
+        'boot_counter': {
+            'hex': '2805',
             'type': SFR_T.INT
         },
         'dynamic_data_addr': {
-            'hex': '2805',
+            'hex': '2806',
             'min': 10,
             'max': 89,
             'type': SFR_T.INT
         },
         'sfr_data_addr': {
-            'hex': '2806',
+            'hex': '2807',
             'min': 90,
             'max': 4085,
             'type': SFR_T.INT
         },
         'time_alive': {
-            'hex': '2807',
-            'type': SFR_T.INT
-        },
-        'dynamic_data_age': {
             'hex': '2808',
             'type': SFR_T.INT
         },
-        'sfr_data_age': {
+        'dynamic_data_age': {
             'hex': '2809',
             'type': SFR_T.INT
         },
-        'eeprom_reset': {
+        'sfr_data_age': {
             'hex': '2810',
+            'type': SFR_T.INT
+        },
+        # not really sfr but here for convenience
+        'eeprom_reset': {
+            'hex': '2811',
             'type': SFR_T.MULTI
         }
     },
 }
+
+COMMAND_OPCODE_MAP = {}
+COMMAND_OPCODE_MAP['7777'] = 'EEROM Reset'
+for (k, v) in BURNWIRE_OPCODES.items():
+    COMMAND_OPCODE_MAP[v] = k
+
+for namespace in SFR_OVERRIDE_OPCODES_MAP:
+    for field in SFR_OVERRIDE_OPCODES_MAP[namespace]:
+        hex_val = SFR_OVERRIDE_OPCODES_MAP[namespace][field]['hex']
+        COMMAND_OPCODE_MAP[hex_val] = namespace + '::' + field
