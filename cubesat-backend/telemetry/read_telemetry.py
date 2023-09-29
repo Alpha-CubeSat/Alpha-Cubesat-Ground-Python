@@ -2,17 +2,10 @@ from telemetry.telemetry_constants import *
 from util.binary_parser import BinaryParser
 
 
-def map_range(x, in_min, in_max, out_min, out_max):
+def map_range(x, out_min=0, out_max=pow(2, 32)-1, in_min=0, in_max=255):
     """
     Recreation of Arduino map() function used in flight code
     https://www.arduino.cc/reference/en/language/functions/math/map/
-
-    :param x: the number to map
-    :param in_min: the lower bound of the value’s current range
-    :param in_max: the upper bound of the value’s current range
-    :param out_min: the lower bound of the value’s target range
-    :param out_max: the upper bound of the value’s target range
-    :return: the mapped value
     """
     return out_min + (((out_max - out_min) / (in_max - in_min)) * (x - in_min))
 
@@ -23,32 +16,34 @@ def compute_normal_report_values(data: dict) -> dict:
     :return: fully processed normal report
     """
     fixed_data = {
-        'burn_time': map_range(float(data['burn_time']), 0, 255, 0, 5000),
-        'armed_time': map_range(float(data['armed_time']), 0, 255, 0, 12*360000),
-        'lp_downlink_period': map_range(float(data['downlink_period']), 0, 255, 1000, 2*86400000),
-        'transmit_downlink_period': map_range(float(data['downlink_period']), 0, 255, 1000, 2*86400000),
-        'Id_index': map_range(float(data['Id_index']), 0, 255, 0, 1),
-        'Kd_index': map_range(float(data['Kd_index']), 0, 255, 0, 1),
-        'Kp_index': map_range(float(data['Kp_index']), 0, 255, 0, 1),
-        'c_index': map_range(float(data['c_index']), 0, 255, 0, 1),
-        'dynamic_data_addr': map_range(float(data['c_index']), 0, 255, 10, 89),
-        'sfr_data_addr': map_range(float(data['c_index']), 0, 255, 90, 4085),
-        'time_alive': map_range(float(data['c_index']), 0, 255, 0, pow(2,32)-1),
-        'dynamic_data_age': map_range(float(data['c_index']), 0, 255, 0, pow(2,32)-1),
-        'sfr_data_age': map_range(float(data['c_index']), 0, 255, 0, pow(2,32)-1),
-        'light_val_average_standby' : map_range(float(data['light_val_average_standby']), 0, 255, 0, 1023),
-        'light_val_average_deployment' : map_range(float(data['light_val_average_deployment']), 0, 255, 0, 1023),
-        'mag_x_average' : map_range(float(data['mag_x_average']), 0, 255, -150, 150),
-        'mag_y_average' : map_range(float(data['mag_y_average']), 0, 255, -150, 150),
-        'mag_z_average' : map_range(float(data['mag_z_average']), 0, 255, -150, 150),
-        'gyro_x_average' : map_range(float(data['gyro_x_average']), 0, 255, -5, 5),
-        'gyro_y_average' : map_range(float(data['gyro_y_average']), 0, 255, -5, 5),
-        'gyro_z_average' : map_range(float(data['gyro_z_average']), 0, 255, -5, 5),
-        'temp_c_value' : map_range(float(data['temp_c_value']), 0, 255, -100, 200),
-        'temp_c_average' : map_range(float(data['temp_c_average']), 0, 255, -100, 200),
-        'solar_current_average' : map_range(float(data['solar_current_average']), 0, 255, -100, 200),
-        'voltage_value' : map_range(float(data['voltage_value']), 0, 255, 0, 5.5),
-        'voltage_average' : map_range(float(data['voltage_average']), 0, 255, 0, 5.5),
+        'boot_time_mins': map_range(float(data['boot_time_mins'])),
+        'burn_time': map_range(float(data['burn_time']), 0, 5000),
+        'armed_time': map_range(float(data['armed_time']), 0, 12 * 360000),
+        'lp_downlink_period': map_range(float(data['downlink_period']), 1000, 2 * 86400000),
+        'transmit_downlink_period': map_range(float(data['downlink_period']), 1000, 2 * 86400000),
+        'Id_index': map_range(float(data['Id_index']), 0, 1),
+        'Kd_index': map_range(float(data['Kd_index']), 0, 1),
+        'Kp_index': map_range(float(data['Kp_index']), 0, 1),
+        'c_index': map_range(float(data['c_index']), 0, 1),
+        'dynamic_data_addr': map_range(float(data['c_index']), 10, 89),
+        'sfr_data_addr': map_range(float(data['c_index']), 90, 4085),
+        'time_alive': map_range(float(data['c_index'])),
+        'dynamic_data_age': map_range(float(data['c_index'])),
+        'sfr_data_age': map_range(float(data['c_index'])),
+        'acs_on_time': map_range(float(data['c_index']), 0, 5400000),
+        'rockblock_on_time': map_range(float(data['c_index']), 0, 5400000),
+        'light_val_average_standby' : map_range(float(data['light_val_average_standby']), 0, 1023),
+        'mag_x_average' : map_range(float(data['mag_x_average']), -150, 150),
+        'mag_y_average' : map_range(float(data['mag_y_average']), -150, 150),
+        'mag_z_average' : map_range(float(data['mag_z_average']), -150, 150),
+        'gyro_x_average' : map_range(float(data['gyro_x_average']), -5, 5),
+        'gyro_y_average' : map_range(float(data['gyro_y_average']), -5, 5),
+        'gyro_z_average' : map_range(float(data['gyro_z_average']), -5, 5),
+        'temp_c_value' : map_range(float(data['temp_c_value']), -100, 200),
+        'temp_c_average' : map_range(float(data['temp_c_average']), -100, 200),
+        'solar_current_average' : map_range(float(data['solar_current_average']), -75, 500),
+        'voltage_value' : map_range(float(data['voltage_value']), 0, 6),
+        'voltage_average' : map_range(float(data['voltage_average']), 0, 6),
     }
     data.update(fixed_data)
     return data
