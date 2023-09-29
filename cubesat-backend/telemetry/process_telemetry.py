@@ -137,7 +137,6 @@ def handle_report(rockblock_report: dict):
             print('result', result)
         
             operation = result['telemetry_report_type']
-            rockblock_report['telemetry_report_type'] = operation
             if operation == Opcodes.normal_report:
                 elastic.index(cubesat_db_index, result)
             elif operation == Opcodes.imu_report:
