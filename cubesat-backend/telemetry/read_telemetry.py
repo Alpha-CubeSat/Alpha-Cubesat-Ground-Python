@@ -134,26 +134,25 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
 
     # Read opcode of report
     parser = BinaryParser(binary_data)
-    if parser.remaining() == 0:
-        return error_data('Empty packet')
+    opcode_val = parser.read_uint8()
+    if opcode_val in list(map(int, Opcodes)):
+        opcode = Opcodes(opcode_val)
     else:
-        opcode_val = parser.read_uint8()
-        if opcode_val in list(map(int, Opcodes)):
-            opcode = Opcodes(opcode_val)
-        else:
-            return error_data('Invalid opcode: ' + str(opcode_val))
-
-    # Extract data from report (strip away opcode [0:2])
-    data = rockblock_report['data'][2:]
-
+        opcode = 99 # normal_report
+    
     # Reads data from a packet based on its opcode
-    if opcode not in [Opcodes.normal_report, Opcodes.imu_report, Opcodes.camera_report]:
+    result = {}
+    if opcode == Opcodes.normal_report:
         result = compute_normal_report_values(
             parser.read_structure(normal_report_structure))
-        # print(result)
-    elif opcode == Opcodes.imu_report:
-        result = read_imu_hex_fragment(data)
-    else:  # opcode == camera_report
-        result = read_img_hex_fragment(data)
+    else:
+        # Extract data from report (strip away opcode [0:2])
+        data = rockblock_report['data'][2:]
+
+        if opcode == Opcodes.imu_report:
+            result = read_imu_hex_fragment(data)
+        elif opcode == Opcodes.camera_report:
+            result = read_img_hex_fragment(data)
+    
     result['telemetry_report_type'] = opcode
     return result
