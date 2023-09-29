@@ -13,17 +13,23 @@ class Opcodes(int, Enum):
     camera_report = 42
     error = -1
 
-bool_fields = ["button_pressed", "current_in_sun", "temp_in_sun", 
-               "waiting_command", "waiting_message", "camera_powered", 
-               "possible_uncovered", "photo_resistor_covered"]
 
-eeprom_bools = ["boot_mode", "error_mode", "light_switch", "sfr_save_completed"]
+bool_fields = ["photoresistor_covered", "possible_uncovered", "camera_powered",
+               "deployed", "waiting_command",
+               "temp_in_sun", "current_in_sun", "button_pressed"]
 
-fault_fields = [['mag_x_value_fault','mag_x_average_fault'], ['mag_y_value_fault','mag_y_average_fault'], 
-                ['mag_z_value_fault','mag_z_average_fault'], ['gyro_x_value_fault','gyro_x_average_fault'], 
-                ['gyro_y_value_fault','gyro_y_average_fault'], ['gyro_z_value_fault','gyro_z_average_fault'],
-                ['temp_c_value_fault','temp_c_average_fault'], ['voltage_value_fault','voltage_average_fault'],
-                ['light_val_fault', 'hardware_faults'], ['solar_current_average_fault', eeprom_bools]]
+eeprom_bools = ["boot_restarted", "error_mode", "light_switch", "sfr_save_completed"]
+
+fault_fields = [['mag_x_value_fault', 'mag_x_average_fault'],
+                ['mag_y_value_fault', 'mag_y_average_fault'],
+                ['mag_z_value_fault', 'mag_z_average_fault'],
+                ['gyro_x_value_fault', 'gyro_x_average_fault'],
+                ['gyro_y_value_fault', 'gyro_y_average_fault'],
+                ['gyro_z_value_fault', 'gyro_z_average_fault'],
+                ['temp_c_value_fault', 'temp_c_average_fault'],
+                ['voltage_value_fault', 'voltage_average_fault'],
+                ['light_val_fault', 'hardware_faults'],
+                ['solar_current_average_fault', eeprom_bools]]
 
 normal_report_structure = [
     ('boot_time_mins', BinaryTypes.uint8),
@@ -41,9 +47,10 @@ normal_report_structure = [
     ('time_alive', BinaryTypes.uint8),
     ('dynamic_data_age', BinaryTypes.uint8),
     ('sfr_data_age', BinaryTypes.uint8),
+    ('acs_on_time', BinaryTypes.uint8),
+    ('rockblock_on_time', BinaryTypes.uint8),
     (bool_fields, BinaryTypes.uint8_bools),
     ('light_val_average_standby', BinaryTypes.uint8),
-    ('light_val_average_deployment', BinaryTypes.uint8),
     ('mag_x_average', BinaryTypes.uint8),
     ('mag_y_average', BinaryTypes.uint8),
     ('mag_z_average', BinaryTypes.uint8),
