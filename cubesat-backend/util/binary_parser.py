@@ -8,14 +8,6 @@ from util.opcode_map import opcode_map
 class BinaryTypes(Enum):
     """Types of binary numbers which can be read by the ``BinaryParser`` class"""
 
-    # int64 = 0
-    # int32 = 1
-    # uint32 = 2
-    # int16 = 3
-    # uint16 = 4
-    # int8 = 5
-    # float64 = 6
-    # float32 = 7
     uint16_list = 8
     uint8 = 9
     uint8_split = 10
@@ -47,7 +39,7 @@ class BinaryParser:
         """Reads and returns the next unsigned 16-bit integer from the buffer"""
         return self.reader.read_uint16()
     
-    def read_uint8_split(self, name_list, decoded) -> int:
+    def read_uint8_split(self, name_list, decoded):
         """Reads and returns two 4-bit integers from the next unsigned 
         8-bit integer w/ the format (4-bit int + 4-bit int) from the buffer. 
         Written specifically for reading faults."""
@@ -63,9 +55,11 @@ class BinaryParser:
                 for i, bool in enumerate(entry[1]):
                     decoded[bool] = (sec_4bit >> i) & 1 == 1
 
-    def read_uint8_bools(self, name_list, decoded) -> int:
+    def read_uint8_bools(self, name_list, decoded):
         """Reads and returns 8 bools from the next unsigned 8-bit integer.
         Written specifically for reading packaged bools."""
+
+        name_list.reverse()
         byte_value = self.read_uint8()
         for i, entry in enumerate(name_list):
             decoded[entry] = (byte_value >> i) & 1 == 1
@@ -74,34 +68,19 @@ class BinaryParser:
         """Reads and returns 5-bit integers from 10 bytes worth of binary data. 
         Written specifically for decoding the mission-mode history.
         """
-        bit_buffer = 0
-        bits_in_buffer = 0
-        accum = 0
-        while len(decoded[name]) < 16:
-            # If the buffer has less than 5 bits, read more.
-            if bits_in_buffer < 5:
-                accum+=1 
-                byte_value = self.read_uint8()
-                bit_buffer = (bit_buffer << 8) | byte_value
-                bits_in_buffer += 8
 
-            # If the buffer has 5 or more bits, extract the leftmost 5 bits for a mission mode.
-            mission_mode = (bit_buffer >> (bits_in_buffer - 5)) & 0x1F
-            decoded[name].append(mission_mode)
-            
-            # Remove the leftmost 5 bits
-            bit_buffer <<= 5
-            bits_in_buffer -= 5
-
+        # convert bytes to string of bits and convert every 5 bits to an integer
+        history_bytes = self.reader.read_bytes(10)
+        bits = format(int.from_bytes(history_bytes, byteorder="big"), '080b')
+        for i in range(0, len(bits), 5):
+            decoded[name].append(int(bits[i:i+5], 2))
 
     def read_uint16_list(self, name, decoded):
         """Reads and returns unsigned 16-bit integers until the end flag. 
-        Written specifically for processing processed opcode history.
+        Written specifically for decoding processed opcode history.
         """
         while self.remaining()-self.pos() > 2:
             opcode = str(self.read_uint16())
-            if opcode == "65279":
-                break
             if opcode in opcode_map:
                 decoded[name].append(opcode_map[opcode])
     
