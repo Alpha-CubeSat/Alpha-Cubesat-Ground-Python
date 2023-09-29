@@ -133,8 +133,7 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
     binary_data = bytearray.fromhex(rockblock_report['data'])
 
     # Read opcode of report
-    parser = BinaryParser(binary_data)
-    opcode_val = parser.read_uint8()
+    opcode_val = int(rockblock_report['data'][:2], 16)
     if opcode_val in list(map(int, Opcodes)):
         opcode = Opcodes(opcode_val)
     else:
@@ -143,8 +142,8 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
     # Reads data from a packet based on its opcode
     result = {}
     if opcode == Opcodes.normal_report:
-        result = compute_normal_report_values(
-            parser.read_structure(normal_report_structure))
+        parsed = BinaryParser(binary_data).read_structure(normal_report_structure)
+        result = compute_normal_report_values(parsed)
     else:
         # Extract data from report (strip away opcode [0:2])
         data = rockblock_report['data'][2:]
