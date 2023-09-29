@@ -1,5 +1,5 @@
+from telemetry.binary_parser import BinaryParser
 from telemetry.telemetry_constants import *
-from util.binary_parser import BinaryParser
 
 
 def map_range(x, out_min=0, out_max=pow(2, 32)-1, in_min=0, in_max=255):
@@ -25,13 +25,13 @@ def compute_normal_report_values(data: dict) -> dict:
         'Kd_index': map_range(float(data['Kd_index']), 0, 1),
         'Kp_index': map_range(float(data['Kp_index']), 0, 1),
         'c_index': map_range(float(data['c_index']), 0, 1),
-        'dynamic_data_addr': map_range(float(data['c_index']), 10, 89),
-        'sfr_data_addr': map_range(float(data['c_index']), 90, 4085),
-        'time_alive': map_range(float(data['c_index'])),
-        'dynamic_data_age': map_range(float(data['c_index'])),
-        'sfr_data_age': map_range(float(data['c_index'])),
-        'acs_on_time': map_range(float(data['c_index']), 0, 5400000),
-        'rockblock_on_time': map_range(float(data['c_index']), 0, 5400000),
+        'dynamic_data_addr': map_range(float(data['dynamic_data_addr']), 10, 89),
+        'sfr_data_addr': map_range(float(data['sfr_data_addr']), 90, 4085),
+        'time_alive': map_range(float(data['time_alive'])),
+        'dynamic_data_age': map_range(float(data['dynamic_data_age'])),
+        'sfr_data_age': map_range(float(data['sfr_data_age'])),
+        'acs_on_time': map_range(float(data['acs_on_time']), 0, 5400000),
+        'rockblock_on_time': map_range(float(data['rockblock_on_time']), 0, 5400000),
         'light_val_average_standby' : map_range(float(data['light_val_average_standby']), 0, 1023),
         'mag_x_average' : map_range(float(data['mag_x_average']), -150, 150),
         'mag_y_average' : map_range(float(data['mag_y_average']), -150, 150),
