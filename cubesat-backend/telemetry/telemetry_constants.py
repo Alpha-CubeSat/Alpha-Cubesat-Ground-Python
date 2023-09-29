@@ -1,6 +1,6 @@
 from enum import Enum
 
-from util.binary_parser import BinaryTypes
+from telemetry.binary_parser import BinaryTypes
 
 
 # Constants related to cubesat telemetry
