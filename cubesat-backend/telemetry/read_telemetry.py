@@ -1,8 +1,11 @@
 from telemetry.binary_parser import BinaryParser
 from telemetry.telemetry_constants import *
 
+uint8_max = pow(2, 8)-1
+uint16_max = pow(2, 16)-1
+uint32_max = pow(2, 32)-1
 
-def map_range(x, out_min=0, out_max=pow(2, 32)-1, in_min=0, in_max=255):
+def map_range(x, out_min, out_max, in_min=0, in_max=255):
     """
     Recreation of Arduino map() function used in flight code
     https://www.arduino.cc/reference/en/language/functions/math/map/
@@ -16,20 +19,21 @@ def compute_normal_report_values(data: dict) -> dict:
     :return: fully processed normal report
     """
     fixed_data = {
-        'boot_time_mins': map_range(float(data['boot_time_mins'])),
+        'boot_time_mins': map_range(float(data['boot_time_mins']), 0, uint8_max),
         'burn_time': map_range(float(data['burn_time']), 0, 5000),
         'armed_time': map_range(float(data['armed_time']), 0, 12 * 360000),
         'lp_downlink_period': map_range(float(data['lp_downlink_period']), 1000, 2 * 86400000),
         'transmit_downlink_period': map_range(float(data['transmit_downlink_period']), 1000, 2 * 86400000),
-        'Id_index': map_range(float(data['Id_index']), 0, 1),
-        'Kd_index': map_range(float(data['Kd_index']), 0, 1),
-        'Kp_index': map_range(float(data['Kp_index']), 0, 1),
-        'c_index': map_range(float(data['c_index']), 0, 1),
-        'dynamic_data_addr': map_range(float(data['dynamic_data_addr']), 10, 89),
-        'sfr_data_addr': map_range(float(data['sfr_data_addr']), 90, 4085),
-        'time_alive': map_range(float(data['time_alive'])),
-        'dynamic_data_age': map_range(float(data['dynamic_data_age'])),
-        'sfr_data_age': map_range(float(data['sfr_data_age'])),
+        'Id_index': map_range(float(data['Id_index']), 0, 0),
+        'Kd_index': map_range(float(data['Kd_index']), 0, 0),
+        'Kp_index': map_range(float(data['Kp_index']), 0, 0),
+        'c_index': map_range(float(data['c_index']), 0, 0),
+        'boot_counter': map_range(float(data['boot_counter']), 0, uint8_max),
+        'dynamic_data_addr': map_range(float(data['dynamic_data_addr']), 10, 459),
+        'sfr_data_addr': map_range(float(data['sfr_data_addr']), 460, 4085),
+        'time_alive': map_range(float(data['time_alive']), 0, uint32_max),
+        'dynamic_data_age': map_range(float(data['dynamic_data_age']), 0, uint32_max),
+        'sfr_data_age': map_range(float(data['sfr_data_age']), 0, uint32_max),
         'acs_on_time': map_range(float(data['acs_on_time']), 0, 5400000),
         'rockblock_on_time': map_range(float(data['rockblock_on_time']), 0, 5400000),
         'light_val_average_standby' : map_range(float(data['light_val_average_standby']), 0, 1023),
