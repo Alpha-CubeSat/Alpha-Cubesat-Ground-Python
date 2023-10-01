@@ -20,18 +20,19 @@ export default function DownlinkHistory() {
     setHistory(response.status === 200 ? response.data : []);
   }, [api]);
 
-  // Checks whether a command has appeared in the command log of the downlinked normal report
+  // Fetch downlink history and update periodically
   useEffect(() => {
-    (async () => checkHistory())();
-    //   // Poll every 10000 milliseconds (10 seconds)
-    //   const interval = setInterval(() => {
-    //     checkProcessed();
-    //   }, 10000);
-    //
-    //   // Cleanup: clear the interval when the component is unmounted or the effect re - runs
-    //   return () => {
-    //     clearInterval(interval);
-    //   };
+    // Poll every 5000 milliseconds (5 seconds)
+    const interval = setInterval(async () => {
+      console.log("updating history");
+      setHistory(undefined);
+      await checkHistory();
+    }, 5000);
+
+    // Cleanup: clear the interval when the component is unmounted or the effect reruns
+    return () => {
+      clearInterval(interval);
+    };
   }, [checkHistory]);
 
   return (
