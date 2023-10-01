@@ -21,9 +21,9 @@ def compute_normal_report_values(data: dict) -> dict:
     fixed_data = {
         'boot_time_mins': map_range(float(data['boot_time_mins']), 0, uint8_max),
         'burn_time': map_range(float(data['burn_time']), 0, 5000),
-        'armed_time': map_range(float(data['armed_time']), 0, 12 * 360000),
-        'lp_downlink_period': map_range(float(data['lp_downlink_period']), 1000, 2 * 86400000),
-        'transmit_downlink_period': map_range(float(data['transmit_downlink_period']), 1000, 2 * 86400000),
+        'armed_time': map_range(float(data['armed_time']), 0, 43200000),
+        'lp_downlink_period': map_range(float(data['lp_downlink_period']), 1000, 172800000),
+        'transmit_downlink_period': map_range(float(data['transmit_downlink_period']), 1000, 172800000),
         'Id_index': map_range(float(data['Id_index']), 0, 0),
         'Kd_index': map_range(float(data['Kd_index']), 0, 0),
         'Kp_index': map_range(float(data['Kp_index']), 0, 0),
