@@ -152,4 +152,6 @@ def get_downlink_history():
     Gets transmit type, opcode, and error message of all downlinks previously processed
     by the ground station
     """
-    return elastic.get_es_data(config.rockblock_db_index, ['telemetry_report_type', 'transmit_time', 'error'])
+    # https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html
+    return elastic.get_es_data(config.rockblock_db_index, ['telemetry_report_type', 'transmit_time', 'error'],
+                               sort=[{"transmit_time": {"order": "desc"}}])
