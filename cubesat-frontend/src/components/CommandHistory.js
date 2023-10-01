@@ -7,7 +7,7 @@ import { useApi } from "../contexts/ApiProvider";
 // Command History Log
 // Shows a log of all previously sent commands to the CubeSat with each command's status, name,
 // submission time, and API response message.
-export default function CommandLog() {
+export default function CommandHistory() {
   const { commandLog, setCommandLog } = useDashboard();
 
   const api = useApi();

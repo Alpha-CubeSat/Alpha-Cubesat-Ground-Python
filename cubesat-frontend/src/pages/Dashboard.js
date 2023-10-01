@@ -1,9 +1,10 @@
 import { Col, Container, Row } from "react-bootstrap";
 import CommandBuilder from "../components/CommandBuilder";
 import ImageViewer from "../components/ImageViewer";
-import CommandLog from "../components/CommandLog";
+import CommandHistory from "../components/CommandHistory";
 import WidgetCard from "../components/WidgetCard";
 import CommandSelector from "../components/CommandSelector";
+import DownlinkHistory from "../components/DownlinkHistory";
 
 // Main CubeSat Control Dashboard
 // Contains widgets for command building, command creation, image viewing, and a command history log.
@@ -28,8 +29,14 @@ export default function Dashboard() {
           </Row>
         </Col>
         <Col className="dash_height" sm="5">
-          <Row className="h-100 py-2">
-            <WidgetCard title="Command History" children={<CommandLog />} />
+          <Row className="h-50 pt-2">
+            <WidgetCard title="Command History" children={<CommandHistory />} />
+          </Row>
+          <Row className="h-50 pt-3 pb-2">
+            <WidgetCard
+              title="Recent Downlinks"
+              children={<DownlinkHistory />}
+            />
           </Row>
         </Col>
       </Row>

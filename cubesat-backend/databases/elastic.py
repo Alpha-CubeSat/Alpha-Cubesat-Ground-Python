@@ -26,14 +26,14 @@ def index(index_base_name: str, content: dict):
     es.index(index=index_base_name, body=content)
 
 # Returns the data corresponding to the supplied index and a list of input fields
-def get_es_data(idx: str, cols: list):
+def get_es_data(idx: str, cols: list, query: dict = None) -> list:
     result = []
+    if not query:
+        query = {"match_all": {}}
     response = get_connection().search(
         index=idx,
         source=cols,
-        query={
-            "match_all": {}
-        }
+        query=query
     )
     for hit in response['hits']['hits']:
         result.append(hit['_source'])
