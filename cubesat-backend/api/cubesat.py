@@ -141,7 +141,7 @@ def get_processed_commands():
     that have been confirmed in the command log of the normal report.
     """
     query = elastic.get_es_data(config.cubesat_db_index, ["command_log"])
-    return map(lambda x: x["command_log"], query)
+    return list(map(lambda x: x["command_log"], query))
 
 @cubesat.get('/downlink_history')
 @authenticate(token_auth)
