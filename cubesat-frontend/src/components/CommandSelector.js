@@ -79,6 +79,7 @@ export default function CommandSelector() {
   const [inputError, setInputError] = useState();
   const fieldInputRef = useRef();
   const [eepromFields, setEepromFields] = useState({
+    byteCount: "112211",
     bootCount: "",
     sfrAddress: "",
     dataAddress: "",
@@ -150,13 +151,15 @@ export default function CommandSelector() {
     let input_value = "";
     if (selectedOpCode === OpCodes.SFR_Override) {
       if (fieldData.type === SFR_Type.Multi) {
-        input_value =
-          String(eepromFields["bootCount"]) +
-          String(eepromFields["lightSwitch"]) +
-          String(eepromFields["sfrAddress"]) +
-          String(eepromFields["dataAddress"]) +
-          String(eepromFields["sfrWriteAge"]) +
-          String(eepromFields["dataWriteAge"]);
+        input_value = {
+          "byteCount": eepromFields["byteCount"],
+          "bootCount": eepromFields["bootCount"],
+          "lightSwitch": eepromFields["lightSwitch"],
+          "sfrAddress": eepromFields["sfrAddress"],
+          "dataAddress": eepromFields["dataAddress"],
+          "sfrWriteAge": Math.floor(parseInt(eepromFields["sfrWriteAge"]) / 373),
+          "dataWriteAge": Math.floor(parseInt(eepromFields["dataWriteAge"]) / 373)
+        };
       } else {
         input_value =
           fieldData.type !== SFR_Type.Bool
@@ -318,27 +321,26 @@ export default function CommandSelector() {
                 {fieldData.type && (
                   <span style={{ fontWeight: "bold" }}>Argument</span>
                 )}
-                {console.log(fieldData.type)}
                 {(fieldData.type === SFR_Type.Minute ||
                   fieldData.type === SFR_Type.Hour ||
                   fieldData.type === SFR_Type.Float ||
                   fieldData.type === SFR_Type.Int ||
                   fieldData.type === SFR_Type.Second) && (
-                  <InputField
-                    name="sfr_override"
-                    type="number"
-                    className="mt-1"
-                    placeholder={
-                      fieldData.type === SFR_Type.Minute
-                        ? "Minutes"
-                        : fieldData.type === SFR_Type.Hour
-                        ? "Hours"
-                        : "Value"
-                    }
-                    error={inputError}
-                    fieldRef={fieldInputRef}
-                  />
-                )}
+                    <InputField
+                      name="sfr_override"
+                      type="number"
+                      className="mt-1"
+                      placeholder={
+                        fieldData.type === SFR_Type.Minute
+                          ? "Minutes"
+                          : fieldData.type === SFR_Type.Hour
+                            ? "Hours"
+                            : "Value"
+                      }
+                      error={inputError}
+                      fieldRef={fieldInputRef}
+                    />
+                  )}
                 {fieldData.type === SFR_Type.Bool && (
                   <div className="mt-2">
                     <Form.Check
@@ -379,6 +381,7 @@ export default function CommandSelector() {
                             name="lightSwitch"
                             label="Light 1"
                             type="radio"
+                            value="true"
                             inline
                             defaultChecked
                             onChange={handleEepromChange}
@@ -387,6 +390,7 @@ export default function CommandSelector() {
                             name="lightSwitch"
                             label="Light 0"
                             type="radio"
+                            value="false"
                             inline
                             onChange={handleEepromChange}
                           />
