@@ -4,16 +4,39 @@ from config import rockblock_config
 from control.control_constants import *
 
 
-def format_arg(n: int) -> str:
+def format_single_arg(n: int, arg_length) -> str:
     """
     Helper function that translates the decimal number n into an all uppercase
     hexadecimal string without '0x' header, then pads hexadecimal string with '0's
     at the beginning until it has the length of ARG_LENGTH.
     """
     arg = (hex(n)[2:]).upper()
-    while len(arg) < ARG_LENGTH:
+    while len(arg) < arg_length:
         arg = "0" + arg
     return arg
+
+def format_dict_args(args : dict) -> (int,int):
+    """
+    Helper function that translates dictionary values into all uppercase 
+    hexadecimal string without the '0x' header. The string is passed in order
+    of the dictionary keys; there must be a key 'byteCount' that specifies the 
+    size of each of the dictionary values.
+    """
+    arg1 = ""
+    arg2 = ""
+    for iteration, key in enumerate(args):
+        if key == "byteCount":
+            continue
+        else:
+            bytes = int(args["byteCount"][iteration-1])
+            value = args[key]
+            if value in ['true', 'false']:
+                value = bool(value)
+            if bytes*2 + len(arg1) <= 8: 
+                arg1 += format_single_arg(int(value), bytes*2)
+            else:
+                arg2 += format_single_arg(int(value), bytes*2)
+    return arg1, arg2
 
 def format_flag(n: int) -> str:
     """
@@ -38,13 +61,16 @@ def parse_command(command: dict) -> str:
         value = command['value']
         if value in ['true', 'false']:
             value = bool(value)
+        if isinstance(value, dict):
+            arg1, arg2 = format_dict_args(value)
+        else:
+            arg1 = format_single_arg(int(value), ARG_LENGTH)
+            arg2 = format_single_arg(0, ARG_LENGTH)
         opcode = SFR_OVERRIDE_OPCODES_MAP[namespace][field]['hex']
-        arg1 = format_arg(int(value))
-        arg2 = format_arg(0)
     else:
         opcode = BURNWIRE_OPCODES[selected_opcode]
-        arg1 = format_arg(0)
-        arg2 = format_arg(0)
+        arg1 = format_single_arg(0, ARG_LENGTH)
+        arg2 = format_single_arg(0, ARG_LENGTH)
     return opcode + arg1 + arg2
 
 def handle_command(commands: list) -> str:
