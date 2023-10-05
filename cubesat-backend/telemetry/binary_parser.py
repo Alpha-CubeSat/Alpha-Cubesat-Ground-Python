@@ -80,7 +80,7 @@ class BinaryParser:
         Written specifically for decoding processed opcode history.
         """
         while self.remaining()-self.pos() > 2:
-            opcode = str(self.read_uint16())
+            opcode = hex(self.read_uint16())[2:] # strip 0x
             decoded[name].append(COMMAND_OPCODE_MAP.get(opcode, opcode))
     
     def read_structure(self, structure: list[tuple[str, BinaryTypes]]) -> dict:
