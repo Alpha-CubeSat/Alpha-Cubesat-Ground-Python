@@ -9,13 +9,11 @@ import { useApi } from "../contexts/ApiProvider";
 // SFR field types
 // defaults to Int unless type attribute is set
 const SFR_Type = Object.freeze({
-  Second: "SECOND",
-  Minute: "MINUTE",
-  Hour: "HOUR",
-  Multi: "MULTI",
-  Float: "FLOAT",
-  Bool: "BOOL",
   Int: "INT",
+  Float: "FLOAT",
+  Time: "TIME",
+  Bool: "BOOL",
+  Multi: "MULTI",
 });
 
 // Allowed opcodes
@@ -73,6 +71,9 @@ export default function CommandSelector() {
   const [fieldList, setFieldList] = useState([]);
   const namespaceRef = useRef();
   const fieldRef = useRef();
+  const secondsUnitRef = useRef();
+  const minutesUnitRef = useRef();
+  const hoursUnitRef = useRef();
 
   // Input field data and form error
   const [fieldData, setFieldData] = useState({});
@@ -158,6 +159,7 @@ export default function CommandSelector() {
           String(eepromFields["sfrWriteAge"]) +
           String(eepromFields["dataWriteAge"]);
       } else {
+        // extract value from text field or boolean value from radios
         input_value =
           fieldData.type !== SFR_Type.Bool
             ? fieldInputRef.current.value
@@ -170,10 +172,7 @@ export default function CommandSelector() {
       if (!input_value) {
         error = "Field cannot be empty.";
       } else if (
-        (fieldData.type === undefined ||
-          fieldData.type === SFR_Type.Second ||
-          fieldData.type === SFR_Type.Minute ||
-          fieldData.type === SFR_Type.Hour) &&
+        (fieldData.type === SFR_Type.Int || fieldData.type === SFR_Type.Time) &&
         !int_check.test(input_value)
       ) {
         error = "Not a valid integer.";
@@ -192,12 +191,14 @@ export default function CommandSelector() {
     }
 
     // convert minutes and hours to seconds
-    if (fieldData.type === SFR_Type.Second) {
-      input_value *= 1000;
-    } else if (fieldData.type === SFR_Type.Minute) {
-      input_value *= 60 * 1000;
-    } else if (fieldData.type === SFR_Type.Hour) {
-      input_value *= 3600 * 1000;
+    if (fieldData.type === SFR_Type.Time) {
+      if (secondsUnitRef.current.checked) {
+        input_value *= 1000;
+      } else if (minutesUnitRef.current.checked) {
+        input_value *= 60 * 1000;
+      } else if (hoursUnitRef.current.checked) {
+        input_value *= 3600 * 1000;
+      }
     }
 
     // add to command builder
@@ -318,26 +319,48 @@ export default function CommandSelector() {
                 {fieldData.type && (
                   <span style={{ fontWeight: "bold" }}>Argument</span>
                 )}
-                {console.log(fieldData.type)}
-                {(fieldData.type === SFR_Type.Minute ||
-                  fieldData.type === SFR_Type.Hour ||
+                {(fieldData.type === SFR_Type.Time ||
                   fieldData.type === SFR_Type.Float ||
-                  fieldData.type === SFR_Type.Int ||
-                  fieldData.type === SFR_Type.Second) && (
-                  <InputField
-                    name="sfr_override"
-                    type="number"
-                    className="mt-1"
-                    placeholder={
-                      fieldData.type === SFR_Type.Minute
-                        ? "Minutes"
-                        : fieldData.type === SFR_Type.Hour
-                        ? "Hours"
-                        : "Value"
-                    }
-                    error={inputError}
-                    fieldRef={fieldInputRef}
-                  />
+                  fieldData.type === SFR_Type.Int) && (
+                  <>
+                    <InputField
+                      name="sfr_override"
+                      type="number"
+                      className="mt-1"
+                      placeholder="Value"
+                      error={inputError}
+                      fieldRef={fieldInputRef}
+                    />
+                    {/* Time unit selector */}
+                    {fieldData.type === SFR_Type.Time && (
+                      <div className="mt-2">
+                        <Form.Check
+                          name="time_unit"
+                          label="seconds"
+                          type="radio"
+                          inline
+                          defaultChecked
+                          ref={secondsUnitRef}
+                        />
+                        <Form.Check
+                          name="time_unit"
+                          label="minutes"
+                          id="unit_minutes"
+                          type="radio"
+                          ref={minutesUnitRef}
+                          inline
+                        />
+                        <Form.Check
+                          name="time_unit"
+                          label="hours"
+                          id="unit_hours"
+                          type="radio"
+                          ref={hoursUnitRef}
+                          inline
+                        />
+                      </div>
+                    )}
+                  </>
                 )}
                 {fieldData.type === SFR_Type.Bool && (
                   <div className="mt-2">
