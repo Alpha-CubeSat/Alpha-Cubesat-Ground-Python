@@ -9,9 +9,7 @@ class SFR_T(str, Enum):
     BOOL = 'BOOL',
     FLOAT = 'FLOAT',
     INT = 'INT',
-    SECOND = 'SECOND',
-    MINUTE = 'MINUTE',
-    HOUR = 'HOUR',
+    TIME = 'TIME',
     MULTI = 'MULTI'
 
 BURNWIRE_OPCODES = {
@@ -26,13 +24,13 @@ SFR_OVERRIDE_OPCODES_MAP = {
     'stabilization': {
         'max_time': {
             'hex': '1100',
-            'type': SFR_T.MINUTE,
+            'type': SFR_T.TIME,
         }
     },
     'boot': {
         'max_time': {
             'hex': '1200',
-            'type': SFR_T.HOUR,
+            'type': SFR_T.TIME,
         },
     },
     'detumble': {
@@ -72,7 +70,7 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
         'max_time': {
             'hex': '1603',
-            'type': SFR_T.HOUR,
+            'type': SFR_T.TIME,
         },
     },
     'photoresistor': {
@@ -134,13 +132,13 @@ SFR_OVERRIDE_OPCODES_MAP = {
             'hex': '1905',
             'min': 0,
             'max': 5000,
-            'type': SFR_T.SECOND,
+            'type': SFR_T.TIME,
         },
         'armed_time': {
             'hex': '1906',
             'min': 0,
             'max': 12*360000,
-            'type': SFR_T.SECOND,
+            'type': SFR_T.TIME,
         },
         'delay_time': {
             'hex': '1907',
@@ -270,25 +268,25 @@ SFR_OVERRIDE_OPCODES_MAP = {
             'hex': '2108',
             'min': 1,
             'max': 86400000*2,
-            'type': SFR_T.SECOND,
+            'type': SFR_T.TIME,
         },
         'lp_downlink_period': {
             'hex': '2109',
             'min': 1,
             'max': 86400000*2,
-            'type': SFR_T.SECOND,
+            'type': SFR_T.TIME,
         },
         'transmit_downlink_period': {
             'hex': '2110',
             'min': 1,
             'max': 86400000*2,
-            'type': SFR_T.SECOND,
+            'type': SFR_T.TIME,
         },
         'on_time': {
             'hex': '2111',
             'min': 0,
             'max': 5400000,
-            'type': SFR_T.MINUTE,
+            'type': SFR_T.TIME,
         },
         'start_time_check_signal': {
             'hex': '2112',
@@ -388,7 +386,7 @@ SFR_OVERRIDE_OPCODES_MAP = {
             'hex': '2504',
             'min': 0,
             'max': 5400000,
-            'type': SFR_T.MINUTE,
+            'type': SFR_T.TIME,
         },
         'Id_index': {
             'hex': '2505',
