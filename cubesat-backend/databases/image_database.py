@@ -1,12 +1,10 @@
 import base64
 import os
+import shutil
 from os.path import exists
 
 import config as cfg
 
-# TODO: will not work if multiple images received
-# list of all image fragment numbers received
-fragment_list = []
 # keeps track of various stats regarding the received image fragments
 img_display_info = {'image_serial': 0, 'latest_fragment': 0, 'missing_fragments': [],
                     'fragment_count': '?/?', 'highest_fragment': 0}
@@ -23,6 +21,7 @@ def save_fragment(image_sn: int, fragment_number: int, binary_fragment_data: byt
     :param fragment_number: id number of the fragment
     :param binary_fragment_data: byte array containing the image fragment data
     """
+    # create images/serial # folders if they don't exist
     if not exists(cfg.image_root_dir):
         os.makedirs(cfg.image_root_dir)
 
@@ -32,11 +31,10 @@ def save_fragment(image_sn: int, fragment_number: int, binary_fragment_data: byt
     with open(f'{cfg.image_root_dir}/{image_sn}/{fragment_number}.csfrag', 'wb') as frag_file:
         frag_file.write(binary_fragment_data)
 
-    global img_display_info, fragment_list
+    global img_display_info
     img_display_info['image_serial'] = image_sn
     img_display_info['latest_fragment'] = fragment_number
     img_display_info['missing_fragments'] = []
-    fragment_list = []
 
 
 def sort_files_numeric(files: list) -> list:
@@ -83,17 +81,15 @@ def try_save_image(image_sn: int, total_fragments: int):
     :param total_fragments: the total # of fragments needed to assemble the image
     """
     # Get all currently received fragments
-    fragment_map = {}
+    fragment_map = {} # maps fragment file path to fragment #
     for file in sort_files_numeric(get_saved_fragments(image_sn)):
         fragment_map[int(os.path.splitext(os.path.basename(file))[0])] = file
 
-    global fragment_list
+    # Update fragment status dictionary
     fragment_list = list(fragment_map.keys())
-
-    # Generate blank fragments if a fragment is missing and update counters
     generate_missing_fragments(fragment_list)
-    img_display_info['fragment_count'] = f'{len(fragment_list)}/' + str(
-        total_fragments) if total_fragments != 1 else '?'
+    img_display_info['fragment_count'] = \
+        f'{len(fragment_list)}/{total_fragments if total_fragments != -1 else "?"}'
 
     # Build final image with currently received fragments (filling in missing ones with blanks)
     if not exists(f'{cfg.image_root_dir}/img'):
@@ -107,6 +103,9 @@ def try_save_image(image_sn: int, total_fragments: int):
                 print(f'fragment {i} missing')
                 image_file.write(bytearray.fromhex('f'*128))
 
+    # if last received fragment has end flag, the image is complete so we can delete its fragments folder
+    if total_fragments != -1:
+        shutil.rmtree(f'{cfg.image_root_dir}/{image_sn}')
 
 def get_img_display_info() -> dict:
     """Returns the contents of img_display_info"""
