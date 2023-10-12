@@ -28,7 +28,7 @@ export default function CommandHistory() {
         for (let command of logEntry.commands) {
           if (
             !("processed" in command) &&
-            (dataList.includes(command["opcode"].toLowerCase()) ||
+            (dataList.includes(command["opcode"]) ||
               (sfrList.includes(command["namespace"]) &&
                 sfrList.includes(command["field"])))
           ) {
@@ -45,7 +45,7 @@ export default function CommandHistory() {
     // Poll every 10000 milliseconds (10 seconds)
     const interval = setInterval(() => {
       checkProcessed();
-    }, 10000);
+    }, 5000);
 
     // Cleanup: clear the interval when the component is unmounted or the effect re - runs
     return () => {

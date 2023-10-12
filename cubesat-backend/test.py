@@ -1,6 +1,11 @@
 from telemetry.process_telemetry import handle_report
 
 normal_report = "281ffc0502000000000100000100001c55810288888873737366662fa4a499999999999900000000314c5314c5314c5314610000000000000000000000000000000000000000"
+normal_report2 = "911ffc0502000000000100000500001c558124f9f9f9b5b5b56d6c2aa5a5cccccccccccc0000000062d284a0c5314c5314c54444000000000000000000000000000000000000"
+normal_report3 = "911ffc0502000000000100000500001c558124f9f9f9b5b5b56d6c2aa5a5cccccccccccc0000000062d284a0c5314c5314c53333000000000000000000000000000000000000"
+
+
+normal_reports = [normal_report, normal_report2, normal_report3]
 
 imu1 = "18007d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d"
 imu2 = "18017d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d"
@@ -83,7 +88,8 @@ metadata = {'transmit_time': '2023-09-04T00:00:00Z', 'imei': 300234064326340,
             }
 
 # normal report
-handle_report({**metadata, 'data': normal_report})
+for normal_report in normal_reports:
+    handle_report({**metadata, 'data': normal_report})
 
 # imu reports
 # for fragment in imu_fragments:
