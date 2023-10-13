@@ -11,32 +11,36 @@ export default function CommandHistory() {
   const { commandLog, setCommandLog } = useDashboard();
 
   const api = useApi();
+
   const checkProcessed = useCallback(async () => {
     await api.get("/cubesat/processed_commands").then((response) => {
-      const dataList = response["data"][response["data"].length - 1];
-      const sfrList = [];
-      for (let item of dataList) {
-        if (item.includes(":")) {
-          sfrList.push(
-            item.substr(0, item.indexOf(" :")),
-            item.substr(item.indexOf(":") + 2)
-          );
+      const dataList = response["data"];
+      for (let data in dataList) {
+        const sfrList = [];
+        for (let item of dataList[data]) {
+          if (item.includes("::")) {
+            sfrList.push(
+              item.substr(0, item.indexOf(":")),
+              item.substr(item.indexOf(":") + 2)
+            );
+
+          }
         }
-      }
-      const newCommandLog = JSON.parse(JSON.stringify(commandLog));
-      for (let logEntry of newCommandLog) {
-        for (let command of logEntry.commands) {
-          if (
-            !("processed" in command) &&
-            (dataList.includes(command["opcode"]) ||
-              (sfrList.includes(command["namespace"]) &&
-                sfrList.includes(command["field"])))
-          ) {
-            command["processed"] = "true";
+        const newCommandLog = JSON.parse(JSON.stringify(commandLog));
+        for (let logEntry of newCommandLog) {
+          for (let command of logEntry.commands) {
+            if (
+              !("processed" in command) &&
+              (dataList[data].includes(command["opcode"]) ||
+                (sfrList.includes(command["namespace"]) &&
+                  sfrList.includes(command["field"])))
+            ) {
+              command["processed"] = "true";
+              setCommandLog(newCommandLog);
+            }
           }
         }
       }
-      setCommandLog(newCommandLog);
     });
   }, [api, commandLog, setCommandLog]);
 
