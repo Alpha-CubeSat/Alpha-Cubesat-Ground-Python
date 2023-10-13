@@ -1,9 +1,10 @@
 from telemetry.binary_parser import BinaryParser
 from telemetry.telemetry_constants import *
 
-uint8_max = pow(2, 8)-1
-uint16_max = pow(2, 16)-1
-uint32_max = pow(2, 32)-1
+uint8_max = pow(2, 8) - 1
+uint16_max = pow(2, 16) - 1
+uint32_max = pow(2, 32) - 1
+
 
 def map_range(x, out_min, out_max, in_min=0, in_max=255):
     """
@@ -11,6 +12,7 @@ def map_range(x, out_min, out_max, in_min=0, in_max=255):
     https://www.arduino.cc/reference/en/language/functions/math/map/
     """
     return out_min + (((out_max - out_min) / (in_max - in_min)) * (x - in_min))
+
 
 def compute_normal_report_values(data: dict) -> dict:
     """
@@ -36,18 +38,18 @@ def compute_normal_report_values(data: dict) -> dict:
         'sfr_data_age': map_range(float(data['sfr_data_age']), 0, uint32_max),
         'acs_on_time': map_range(float(data['acs_on_time']), 0, 5400000),
         'rockblock_on_time': map_range(float(data['rockblock_on_time']), 0, 5400000),
-        'light_val_average_standby' : map_range(float(data['light_val_average_standby']), 0, 1023),
-        'mag_x_average' : map_range(float(data['mag_x_average']), -150, 150),
-        'mag_y_average' : map_range(float(data['mag_y_average']), -150, 150),
-        'mag_z_average' : map_range(float(data['mag_z_average']), -150, 150),
-        'gyro_x_average' : map_range(float(data['gyro_x_average']), -5, 5),
-        'gyro_y_average' : map_range(float(data['gyro_y_average']), -5, 5),
-        'gyro_z_average' : map_range(float(data['gyro_z_average']), -5, 5),
-        'temp_c_value' : map_range(float(data['temp_c_value']), -100, 200),
-        'temp_c_average' : map_range(float(data['temp_c_average']), -100, 200),
-        'solar_current_average' : map_range(float(data['solar_current_average']), -75, 500),
-        'voltage_value' : map_range(float(data['voltage_value']), 0, 6),
-        'voltage_average' : map_range(float(data['voltage_average']), 0, 6),
+        'light_val_average_standby': map_range(float(data['light_val_average_standby']), 0, 1023),
+        'mag_x_average': map_range(float(data['mag_x_average']), -150, 150),
+        'mag_y_average': map_range(float(data['mag_y_average']), -150, 150),
+        'mag_z_average': map_range(float(data['mag_z_average']), -150, 150),
+        'gyro_x_average': map_range(float(data['gyro_x_average']), -5, 5),
+        'gyro_y_average': map_range(float(data['gyro_y_average']), -5, 5),
+        'gyro_z_average': map_range(float(data['gyro_z_average']), -5, 5),
+        'temp_c_value': map_range(float(data['temp_c_value']), -100, 200),
+        'temp_c_average': map_range(float(data['temp_c_average']), -100, 200),
+        'solar_current_average': map_range(float(data['solar_current_average']), -75, 500),
+        'voltage_value': map_range(float(data['voltage_value']), 0, 6),
+        'voltage_average': map_range(float(data['voltage_average']), 0, 6),
     }
     data.update(fixed_data)
     return data
@@ -65,7 +67,8 @@ def read_imu_hex_fragment(data: str) -> dict:
     end_flag_present = data.count('fe92') != 0
     return {
         'fragment_number': int(data[0:2], 16),
-        'fragment_data': data[2:] if not end_flag_present else data[2:data.index('fe92')]
+        'fragment_data': data[2:] if not end_flag_present else data[2:data.index('fe92')],
+        'end_flag_present': end_flag_present
     }
 
 
@@ -100,17 +103,15 @@ def read_img_hex_fragment(data: str) -> dict:
 
     fragment_number = int(data[8:10], 16)
     end_marker_present = data.count('ffd9') != 0
-    end_marker_index = data.index('ffd9') if end_marker_present else -1
     max_fragments = fragment_number + 1 if end_marker_present else -1
-    end_boundary = end_marker_index + 4 if end_marker_present else 138
-    fragment_data = bytearray.fromhex(data[10:end_boundary])
+    fragment_data = bytearray.fromhex(
+        data[10:] if not end_marker_present else data[10:data.index('ffd9')])
     return {
         'serial_number': int(data[0:2], 16),
         'fragment_number': fragment_number,
         'max_fragments': max_fragments,
         'fragment_data': fragment_data
     }
-
 
 
 def error_data(error_msg: str) -> dict:
@@ -141,8 +142,8 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
     if opcode_val in list(map(int, Opcodes)):
         opcode = Opcodes(opcode_val)
     else:
-        opcode = 99 # normal_report
-    
+        opcode = 99  # normal_report
+
     # Reads data from a packet based on its opcode
     result = {}
     if opcode == Opcodes.normal_report:
@@ -157,6 +158,6 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
             result = read_imu_hex_fragment(data)
         elif opcode == Opcodes.camera_report:
             result = read_img_hex_fragment(data)
-    
+
     result['telemetry_report_type'] = opcode
     return result
