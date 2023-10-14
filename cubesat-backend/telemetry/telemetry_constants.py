@@ -68,7 +68,7 @@ normal_report_structure = [
 ]
 
 # IMU report constants
-MS_PER_CYCLE = 250
+MS_PER_CYCLE = 100
 CYCLES_PER_FRAGMENT = 22
 
 # Public key provided for JWT verification by rockblock web services documentation
