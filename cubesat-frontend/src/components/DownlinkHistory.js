@@ -22,12 +22,12 @@ export default function DownlinkHistory() {
 
   // Fetch downlink history and update periodically
   useEffect(() => {
-    // Poll every 5000 milliseconds (5 seconds)
+    // Poll every 10000 milliseconds (10 seconds)
     const interval = setInterval(async () => {
       console.log("updating history");
       setHistory(undefined);
       await checkHistory();
-    }, 5000);
+    }, 10000);
 
     // Cleanup: clear the interval when the component is unmounted or the effect reruns
     return () => {
