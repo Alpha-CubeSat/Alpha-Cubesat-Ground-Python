@@ -148,7 +148,7 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
     result = {}
     if opcode == Opcodes.normal_report:
         parsed = BinaryParser(binary_data).read_structure(normal_report_structure)
-        print('unmapped', parsed)
+        # print('unmapped', parsed)
         result = compute_normal_report_values(parsed)
     else:
         # Extract data from report (strip away opcode [0:2])

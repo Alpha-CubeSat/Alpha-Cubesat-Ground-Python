@@ -143,7 +143,8 @@ def handle_report(rockblock_report: dict):
                 **report_metadata(rockblock_report),
                 **decoded_report
             }
-            print('result', result)
+            print('decoded report:')
+            print(result)
 
             operation = result['telemetry_report_type']
             rockblock_report['telemetry_report_type'] = operation
