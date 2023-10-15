@@ -27,7 +27,7 @@ def rockblock_telemetry(report):
     Used to receive downlinked data reports sent by the CubeSat from the RockBlock portal.
     Must have a valid JWT token.
     """
-    print("report received")
+    print('report received')
     print(report)
 
     # Verifies the JWT token sent in a rockblock report
@@ -45,8 +45,8 @@ def rockblock_telemetry(report):
     report['transmit_time'] = f"20{report['transmit_time'].replace(' ', 'T')}Z"
 
     # Decode/process rockblock report and save it in elasticsearch
-    process_telemetry.handle_report(report)  # wrap with try/catch in case of error?
-    print("report processed")
+    process_telemetry.handle_report(report)
+    print('report processed')
 
     return '', 200 # Successful downlink code
 
