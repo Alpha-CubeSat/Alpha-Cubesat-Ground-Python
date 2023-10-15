@@ -8,8 +8,8 @@ from flask import Blueprint
 
 import config
 from api.auth import token_auth
-from api.schemas import ImageNameSchema, ImageCountSchema, ImageDataSchema, CommandSchema, \
-    CommandResponseSchema, RockblockReportSchema
+from api.schemas import ImageNameSchema, ImageCountSchema, ImageDataSchema, \
+    CommandResponseSchema, RockblockReportSchema, CommandUplinkSchema
 from control import control_protocol
 from control.control_constants import SFR_OVERRIDE_OPCODES_MAP
 from databases import image_database, elastic
@@ -75,22 +75,23 @@ def get_image(name: 'Name of the image'):
 
 @cubesat.post('/command')
 @authenticate(token_auth)
-@body(CommandSchema(many=True))
+@body(CommandUplinkSchema)
 @response(CommandResponseSchema)
 @other_responses({401: 'Invalid access token'})
-def uplink_command(command):
+def uplink_command(uplink):
     """
     Uplink Command
     Process a command to be sent to the CubeSat via the RockBlock portal.
     Opcode, namespace, field, and value fields must be valid per the Alpha flight SW documentation.
     """
-    print(command)
-    uplink_response = control_protocol.handle_command(command)
+    print(uplink)
+    uplink_response = control_protocol.handle_command(uplink['imei'], uplink['commands'])
 
     api_response = {
         'status': 'success' if uplink_response.find("OK") != -1 else 'failure',
         'timestamp': time.time() * 1000,
-        'commands': command,
+        'imei': uplink['imei'],
+        'commands': uplink['commands'],
         'message': uplink_response
     }
 
