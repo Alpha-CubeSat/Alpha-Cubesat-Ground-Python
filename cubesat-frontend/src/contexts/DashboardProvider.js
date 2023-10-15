@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useApi } from "./ApiProvider";
+import { IMEI_MAP } from "../constants";
 
 const DashboardContext = createContext();
 
@@ -26,8 +27,11 @@ export default function DashboardProvider({ children }) {
       );
   }, [api]);
 
-  // ensure lists have unique keys
+  // ensure commands have unique keys
   const [count, setCount] = useState(0);
+
+  // cubesat imei to send commands to
+  const [imei, setImei] = useState(Object.keys(IMEI_MAP)[0]);
 
   return (
     <DashboardContext.Provider
@@ -40,6 +44,8 @@ export default function DashboardProvider({ children }) {
         setCount,
         disabledOpcodes,
         setDisabledOpcodes,
+        imei,
+        setImei,
       }}
     >
       {children}

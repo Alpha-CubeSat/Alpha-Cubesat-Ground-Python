@@ -22,7 +22,6 @@ users_db = os.path.join(basedir, 'users.db')
 
 gs_admin_password = os.environ.get('GS_ADMIN_PASS', 'admin')
 rockblock_config = {
-    'imei': os.environ.get('ROCKBLOCK_IMEI'),
     'username': os.environ.get('ROCKBLOCK_USER'),
     'password': os.environ.get('ROCKBLOCK_PASS')
 }
