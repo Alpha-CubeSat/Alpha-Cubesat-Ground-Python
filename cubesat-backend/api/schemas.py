@@ -31,9 +31,14 @@ class CommandSchema(ma.Schema):
     field = ma.Str()
     value = ma.Raw()
 
+class CommandUplinkSchema(ma.Schema):
+    imei = ma.Str(required=True)
+    commands = ma.Nested(CommandSchema(many=True), required=True)
+
 class CommandResponseSchema(ma.Schema):
     status = ma.Str(required=True)
     timestamp = ma.Str(required=True)
+    imei = ma.Str(required=True)
     commands = ma.Nested(CommandSchema(many=True), required=True)
     message = ma.Str(required=True)
 

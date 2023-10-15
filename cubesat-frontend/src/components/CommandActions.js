@@ -3,13 +3,20 @@ import { Button } from "react-bootstrap";
 import ConfirmModal from "./ConfirmModal";
 import { useState } from "react";
 import { useApi } from "../contexts/ApiProvider";
+import { IMEI_MAP } from "../constants";
 
 // Command Actions (component of CommandBuilder)
 // Allows user to send commands and clear current commands.
 // Send and clear actions protected by confirmation modal to prevent accidental clicks.
 export default function CommandActions() {
-  const { commandStack, setCommandStack, commandLog, setCommandLog, setDisabledOpcodes } =
-    useDashboard();
+  const {
+    commandStack,
+    setCommandStack,
+    commandLog,
+    setCommandLog,
+    setDisabledOpcodes,
+    imei,
+  } = useDashboard();
   const api = useApi();
 
   // confirmation dialog states
@@ -20,19 +27,22 @@ export default function CommandActions() {
 
   const clearCommands = () => {
     setCommandStack([]);
-    setDisabledOpcodes([])
-  }
+    setDisabledOpcodes([]);
+  };
 
   const sendCommands = async () => {
     // build api request to send commands
-    let request_body = [];
+    let commands = [];
     // remove id field from properties
     for (let { id: omitted, ...rest } of commandStack) {
-      request_body.push(rest);
+      commands.push(rest);
     }
 
     // TODO: show spinner while commands are being sent
-    const response = await api.post("/cubesat/command", request_body);
+    const response = await api.post("/cubesat/command", {
+      imei: imei,
+      commands: commands,
+    });
     console.log(response.data);
 
     // update command log
@@ -77,12 +87,8 @@ export default function CommandActions() {
         Send Commands
       </Button>
       <ConfirmModal
-        heading="Send Commands"
-        body={
-          "Are you sure you want to send " +
-          commandStack.length +
-          " command(s)?"
-        }
+        heading={"Send Commands to " + IMEI_MAP[imei]}
+        body={`Are you sure you want to send ${commandStack.length} command(s) to ${IMEI_MAP[imei]}?`}
         show={sendShow}
         setShow={setSendShow}
         onConfirm={sendCommands}

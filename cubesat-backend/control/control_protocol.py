@@ -73,7 +73,7 @@ def parse_command(command: dict) -> str:
         arg2 = format_single_arg(0, ARG_LENGTH)
     return opcode + arg1 + arg2
 
-def handle_command(commands: list) -> str:
+def handle_command(imei: str, commands: list) -> str:
     """
     Handles a list of commands created by a ground system to send to
     the satellite. Authenticates with rockblock web services using credentials
@@ -85,9 +85,9 @@ def handle_command(commands: list) -> str:
         uplink += parse_command(command)
 
     uplink += format_flag(0) + format_flag(250)
-    return send_uplink(uplink)
+    return send_uplink(imei, uplink)
 
-def send_uplink(data: str) -> str:
+def send_uplink(imei: str, data: str) -> str:
     """
     Sends an uplink request to the satellite via the Rockblock API.
     Requires the string data to uplink.
@@ -96,7 +96,7 @@ def send_uplink(data: str) -> str:
     The possible responses are documented at https://www.rock7.com/downloads/RockBLOCK-Web-Services-User-Guide.pdf
     """
     request = {
-        "imei": rockblock_config['imei'],
+        "imei": imei,
         "username": rockblock_config['username'],
         "password": rockblock_config['password'],
         "data": data,
