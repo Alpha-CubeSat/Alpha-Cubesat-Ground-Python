@@ -26,6 +26,7 @@ def compute_normal_report_values(data: dict) -> dict:
         'armed_time': map_range(float(data['armed_time']), 0, 43200000),
         'lp_downlink_period': map_range(float(data['lp_downlink_period']), 1000, 172800000),
         'transmit_downlink_period': map_range(float(data['transmit_downlink_period']), 1000, 172800000),
+        'acs_mode' : map_range(float(data['acs_mode']), 0, uint8_max),
         'Id_index': map_range(float(data['Id_index']), 0, 0),
         'Kd_index': map_range(float(data['Kd_index']), 0, 0),
         'Kp_index': map_range(float(data['Kp_index']), 0, 0),
@@ -137,27 +138,27 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
     # Convert hex encoded data into a python byte array
     binary_data = bytearray.fromhex(rockblock_report['data'])
 
-    # Read opcode of report
-    opcode_val = int(rockblock_report['data'][:2], 16)
-    if opcode_val in list(map(int, Opcodes)):
-        opcode = Opcodes(opcode_val)
+    parser = BinaryParser(binary_data)
+    if parser.remaining() == 0:
+        return error_data('Empty packet')
     else:
-        opcode = 99  # normal_report
+        opcode_val = parser.read_uint8()
+        if opcode_val in list(map(int, Opcodes)):
+            opcode = Opcodes(opcode_val)
+        else:
+            return error_data('Invalid opcode: ' + str(opcode_val))
+
+    # Extract data from report (strip away opcode [0:2])
+    data = rockblock_report['data'][2:]
 
     # Reads data from a packet based on its opcode
-    result = {}
     if opcode == Opcodes.normal_report:
-        parsed = BinaryParser(binary_data).read_structure(normal_report_structure)
-        # print('unmapped', parsed)
-        result = compute_normal_report_values(parsed)
-    else:
-        # Extract data from report (strip away opcode [0:2])
-        data = rockblock_report['data'][2:]
-
-        if opcode == Opcodes.imu_report:
-            result = read_imu_hex_fragment(data)
-        elif opcode == Opcodes.camera_report:
-            result = read_img_hex_fragment(data)
-
+        result = compute_normal_report_values(
+            parser.read_structure(normal_report_structure))
+        # print(result)
+    elif opcode == Opcodes.imu_report:
+        result = read_imu_hex_fragment(data)
+    elif opcode == Opcodes.camera_report:
+        result = read_img_hex_fragment(data)
     result['telemetry_report_type'] = opcode
     return result
