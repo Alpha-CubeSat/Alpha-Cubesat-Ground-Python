@@ -9,3 +9,4 @@ rockblock_config.json
 users.db
 creds.py
 command_log.txt
+clearelastic.py

@@ -33,7 +33,7 @@ def get_es_data(idx: str, cols: list, query: dict = None, sort: list = None) -> 
     if not sort: sort = []
     response = get_connection().search(
         index=idx,
-        size=25,
+        size=100,
         source=cols,
         sort=sort,
         query=query
