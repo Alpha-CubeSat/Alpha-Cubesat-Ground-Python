@@ -1,5 +1,6 @@
 import json
 import time
+import datetime
 from os.path import exists
 
 import jwt
@@ -86,9 +87,8 @@ def uplink_command(uplink):
     """
     print(uplink)
     uplink_response = control_protocol.handle_command(uplink['imei'], uplink['commands'])
-
     api_response = {
-        'status': 'success' if uplink_response.find("OK") != -1 else 'failure',
+        'status':  'success' if uplink_response.find("OK") != -1 else 'failure',
         'timestamp': time.time() * 1000,
         'imei': uplink['imei'],
         'commands': uplink['commands'],
@@ -138,11 +138,30 @@ def get_command_history():
 def get_processed_commands():
     """
     Get Processed Commands
-    Get all previously sent commands to the CubeSat via the Rockblock portal
-    that have been confirmed in the command log of the normal report.
+    Get previously sent commands to the CubeSat via the Rockblock portal
+    that have been confirmed in the command log of the normal report. Only 
+    retrives command logs in normal reports that have timestamps after the 
+    timestamp of the first command sent. 
     """
-    query = elastic.get_es_data(config.cubesat_db_index, ["command_log"])
-    return list(map(lambda x: x["command_log"], query))
+    epoch = 0
+    with open("command_log.txt", 'r') as file:
+        first_line = file.readline()
+        if first_line:
+            first_entry = json.loads(first_line.strip())
+            epoch = first_entry.get('timestamp')
+        else:
+            print("Error: The file is empty (no commands sent)")
+    first_timestamp = datetime.datetime.utcfromtimestamp(int(epoch)/1000).isoformat()
+    query = {
+            "range": {
+                "transmit_time": {
+                    "gte": first_timestamp,
+                    "lte": "now"
+                }
+            }
+    }
+    res = elastic.get_es_data(config.cubesat_db_index, ["command_log"], query=query)
+    return list(map(lambda x: x["command_log"], res))
 
 @cubesat.get('/downlink_history')
 @authenticate(token_auth)
