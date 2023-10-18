@@ -37,6 +37,7 @@ normal_report_structure = [
     ('armed_time', BinaryTypes.uint8),
     ('lp_downlink_period', BinaryTypes.uint8),
     ('transmit_downlink_period', BinaryTypes.uint8),
+    ('acs_mode', BinaryTypes.uint8),
     ('Id_index', BinaryTypes.uint8),
     ('Kd_index', BinaryTypes.uint8),
     ('Kp_index', BinaryTypes.uint8),
