@@ -1,20 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import Dropdown from "react-bootstrap/Dropdown";
-import { Button, Col, Container, Form, Row } from "react-bootstrap";
+import { Button, Col, Container, Row } from "react-bootstrap";
 import { useDashboard } from "../contexts/DashboardProvider";
-import InputField from "./InputField";
-import { Typeahead } from "react-bootstrap-typeahead";
 import { useApi } from "../contexts/ApiProvider";
-
-// SFR field types
-// defaults to Int unless type attribute is set
-const SFR_Type = Object.freeze({
-  Int: "INT",
-  Float: "FLOAT",
-  Time: "TIME",
-  Bool: "BOOL",
-  Multi: "MULTI",
-});
+import { EEPROM_Reset, SFR_Override } from "./CommandForms";
 
 // Allowed opcodes
 export const OpCodes = Object.freeze({
@@ -22,6 +11,7 @@ export const OpCodes = Object.freeze({
   Deploy: "Deploy",
   Arm: "Arm",
   Fire: "Fire",
+  EEPROM_Reset: "EEPROM_Reset",
 });
 
 export const opcodeDesc = {
@@ -29,6 +19,7 @@ export const opcodeDesc = {
   Deploy: "Move the CubeSat into the Deployment phase.",
   Arm: "Move the CubeSat into the Armed phase.",
   Fire: "Move the CubeSat into the In Sun phase.",
+  EEPROM_Reset: "Reset the EEPROM metadata with the provided values.",
 };
 
 // Command Selector
@@ -48,176 +39,83 @@ export default function CommandSelector() {
 
   const api = useApi();
 
-  // SFR namspaces
-  const [namespaces, setNamespaces] = useState({});
+  /*
+  Command selector: title, description, opcode selector, command add button
+  also manages the currently selected opcode, displays the corresponding form and passes in its command data,
+  calls the form's onSubmit function when "add command" is pressed
 
-  // fetch metadata for all SFR override opcodes
+  Command forms:
+  command-specific html (like namespace/field dropdowns for sfr)
+  command-specific onSubmit logic that verifies command validity when "add command" pressed
+   */
+
+  const [allCommandMetadata, setAllCommandMetadata] = useState({});
+
+  // fetch metadata for all commands
   useEffect(() => {
     api
-      .get("/cubesat/sfr_opcodes")
+      .get("/cubesat/command_data")
       .then((response) =>
-        setNamespaces(response.status === 200 ? response.data : {})
+        setAllCommandMetadata(response.status === 200 ? response.data : {})
       );
   }, [api]);
-  // console.log(namespaces);
 
-  // Selected dropdown values
   const [selectedOpCode, setOpCode] = useState("None");
-  const [selectedNamespace, setNamespace] = useState("None");
-  const [selectedField, setField] = useState("None");
 
-  // Dropdown item lists for namespaces and fields
-  const [namespaceList, setNamespaceList] = useState([]);
-  const [fieldList, setFieldList] = useState([]);
-  const namespaceRef = useRef();
-  const fieldRef = useRef();
-  const secondsUnitRef = useRef();
-  const minutesUnitRef = useRef();
-  const hoursUnitRef = useRef();
+  const [currentForm, setCurrentForm] = useState(<div></div>);
 
-  // Input field data and form error
-  const [fieldData, setFieldData] = useState({});
-  const [inputError, setInputError] = useState();
-  const fieldInputRef = useRef();
-  const [eepromFields, setEepromFields] = useState({
-    byteCount: "112211",
-    bootCount: "",
-    sfrAddress: "",
-    dataAddress: "",
-    sfrWriteAge: "",
-    dataWriteAge: "",
-    lightSwitch: false,
-  });
+  const childRef = useRef();
 
   // Command title and description
   const [title, setTitle] = useState("No command selected");
   const [desc, setDesc] = useState("Select a command");
 
+  const isDeploymentOpcode = (opcode) =>
+    opcode === OpCodes.Deploy ||
+    opcode === OpCodes.Arm ||
+    opcode === OpCodes.Fire;
+
   // Updates dropdown menus based on selected opcode
   const handleOpCodeSelect = (opcode) => () => {
     setOpCode(opcode);
 
-    setNamespaceList(
-      opcode === OpCodes.SFR_Override ? Object.keys(namespaces) : []
-    );
-    setFieldList([]);
-    setNamespace("None");
-    setField("None");
-    setFieldData({});
-    setInputError();
+    if (opcode === OpCodes.SFR_Override) {
+      setCurrentForm(
+        <SFR_Override
+          sfr_data={allCommandMetadata["SFR_Override"]}
+          setTitle={setTitle}
+          ref={childRef}
+        />
+      );
+    } else if (opcode === OpCodes.EEPROM_Reset) {
+      setCurrentForm(<EEPROM_Reset ref={childRef} />);
+    } else if (isDeploymentOpcode(opcode)) {
+      setCurrentForm(<div></div>);
+    }
+
     setTitle(opcode !== OpCodes.SFR_Override ? opcode : "No command selected");
     setDesc(opcodeDesc[opcode]);
-    namespaceRef.current.clear();
-    fieldRef.current.clear();
-  };
-
-  // Updates dropdown menus based on selected SFR namespace
-  const handleNamespaceSelect = (namespace) => {
-    setNamespace(namespace);
-    if (namespace in namespaces) {
-      setFieldList(Object.keys(namespaces[namespace]));
-    } else {
-      setFieldList([]);
-    }
-    setField("None");
-    setFieldData({});
-    setInputError();
-    setTitle("No command selected");
-    fieldRef.current.clear();
-  };
-
-  // Updates input field based on selected SFR field
-  const handleFieldSelect = (field) => {
-    if (field in namespaces[selectedNamespace]) {
-      setField(field);
-      setFieldData(namespaces[selectedNamespace][field]);
-      setInputError();
-      setTitle("sfr::" + selectedNamespace + "::" + field);
-      // setDesc();
-    }
-  };
-
-  const handleEepromChange = (event) => {
-    const { name, value } = event.target;
-    setEepromFields((prevFields) => ({
-      ...prevFields,
-      [name]: value,
-    }));
   };
 
   // Validates input field before adding command to the command builder
-  function handleSubmit(event) {
-    event.preventDefault();
-
-    let input_value = "";
-    if (selectedOpCode === OpCodes.SFR_Override) {
-      if (fieldData.type === SFR_Type.Multi) {
-        input_value = {
-          "byteCount": eepromFields["byteCount"],
-          "bootCount": eepromFields["bootCount"],
-          "lightSwitch": eepromFields["lightSwitch"],
-          "sfrAddress": eepromFields["sfrAddress"],
-          "dataAddress": eepromFields["dataAddress"],
-          "sfrWriteAge": Math.floor(parseInt(eepromFields["sfrWriteAge"]) / 373),
-          "dataWriteAge": Math.floor(parseInt(eepromFields["dataWriteAge"]) / 373)
-        };
-      } else {
-        // extract value from text field or boolean value from radios
-        input_value =
-          fieldData.type !== SFR_Type.Bool
-            ? fieldInputRef.current.value
-            : fieldInputRef.current.checked.toString();
-      }
-      // validate input: make sure field is not empty, ints and floats are valid, input within min and max values
-      let error = "";
-      let int_check = new RegExp("^-?\\d+$");
-      let float_check = new RegExp("^-?\\d+(\\.\\d+)?$");
-      if (!input_value) {
-        error = "Field cannot be empty.";
-      } else if (
-        (fieldData.type === SFR_Type.Int || fieldData.type === SFR_Type.Time) &&
-        !int_check.test(input_value)
-      ) {
-        error = "Not a valid integer.";
-      } else if (
-        fieldData.type === SFR_Type.Float &&
-        !float_check.test(input_value)
-      ) {
-        error = "Not a valid float.";
-      } else if (fieldData.min !== undefined && input_value < fieldData.min) {
-        error = "Minimum value is " + fieldData.min;
-      } else if (fieldData.max !== undefined && input_value > fieldData.max) {
-        error = "Maximum value is " + fieldData.max;
-      }
-      setInputError(error);
-      if (error.length > 0) return;
-    }
-
-    // convert minutes and hours to seconds
-    if (fieldData.type === SFR_Type.Time) {
-      if (secondsUnitRef.current.checked) {
-        input_value *= 1000;
-      } else if (minutesUnitRef.current.checked) {
-        input_value *= 60 * 1000;
-      } else if (hoursUnitRef.current.checked) {
-        input_value *= 3600 * 1000;
-      }
+  const handleSubmit = () => {
+    let data;
+    if (!isDeploymentOpcode(selectedOpCode)) {
+      // call child on submit
+      data = childRef.current.handleSubmit();
+      if (data === undefined) return;
     }
 
     // add to command builder
     let new_command = {
       id: count,
       opcode: selectedOpCode,
-      ...(selectedOpCode === OpCodes.SFR_Override && {
-        namespace: selectedNamespace + "",
-        field: selectedField + "",
-        value: input_value,
-      }),
+      ...(!isDeploymentOpcode(selectedOpCode) && data),
     };
     setCommandStack([...commandStack, new_command]);
     setCount(count + 1);
 
-    //Allows only one command--deploy, arm, or fire to be sent at a time
+    // Allows only one command--deploy, arm, or fire to be sent at a time
     if (
       new_command["opcode"] === "Deploy" ||
       new_command["opcode"] === "Arm" ||
@@ -226,19 +124,12 @@ export default function CommandSelector() {
       setDisabledOpcodes(["Deploy", "Arm", "Fire"]);
     }
 
-    // reset dropdowns
+    // reset
     setOpCode("None");
-    setNamespaceList([]);
-    setFieldList([]);
-    setNamespace("None");
-    setField("None");
-    setFieldData({});
-    setInputError();
     setTitle("No command selected");
     setDesc("Select a command");
-    fieldRef.current.clear();
-    namespaceRef.current.clear();
-  }
+    setCurrentForm(<div></div>);
+  };
 
   return (
     <Container>
@@ -273,222 +164,18 @@ export default function CommandSelector() {
           </Dropdown>
         </Col>
         <Col>
-          <Row>
-            {/* Namespace dropdown selection */}
-            <Col>
-              <span style={{ fontWeight: "bold" }}>Namespace</span>
-              <Form>
-                <Typeahead
-                  id="namespace-dropdown"
-                  labelKey="namespace"
-                  options={namespaceList}
-                  disabled={selectedOpCode !== OpCodes.SFR_Override}
-                  placeholder="Select"
-                  ref={namespaceRef}
-                  onChange={(selected) => handleNamespaceSelect(selected)}
-                  onInputChange={(selected) => handleNamespaceSelect(selected)}
-                  renderMenuItemChildren={(option, { text }) => <>{option}</>}
-                />
-              </Form>
-            </Col>
-
-            {/* SFR field dropdown selection */}
-            <Col>
-              <span style={{ fontWeight: "bold" }}>Field</span>
-              <Typeahead
-                id="field-dropdown"
-                labelKey="field"
-                options={fieldList}
-                ref={fieldRef}
-                disabled={
-                  selectedOpCode !== OpCodes.SFR_Override ||
-                  !(selectedNamespace in namespaces)
-                }
-                placeholder="Select"
-                onChange={(select) => handleFieldSelect(select)}
-                onInputChange={(select) => handleFieldSelect(select)}
-                renderMenuItemChildren={(option, { text }) => <>{option}</>}
-              />
-            </Col>
-          </Row>
-          <Row>
-            <Col>
-              {/* SFR field input */}
-              <Form
-                onSubmit={handleSubmit}
-                noValidate
-                className="col-lg-12 mt-2"
-              >
-                {fieldData.type && (
-                  <span style={{ fontWeight: "bold" }}>Argument</span>
-                )}
-                {(fieldData.type === SFR_Type.Time ||
-                  fieldData.type === SFR_Type.Float ||
-                  fieldData.type === SFR_Type.Int) && (
-                  <>
-                    <InputField
-                      name="sfr_override"
-                      type="number"
-                      className="mt-1"
-                      placeholder="Value"
-                      error={inputError}
-                      fieldRef={fieldInputRef}
-                    />
-                    {/* Time unit selector */}
-                    {fieldData.type === SFR_Type.Time && (
-                      <div className="mt-2">
-                        <Form.Check
-                          name="time_unit"
-                          label="seconds"
-                          type="radio"
-                          inline
-                          defaultChecked
-                          ref={secondsUnitRef}
-                        />
-                        <Form.Check
-                          name="time_unit"
-                          label="minutes"
-                          id="unit_minutes"
-                          type="radio"
-                          ref={minutesUnitRef}
-                          inline
-                        />
-                        <Form.Check
-                          name="time_unit"
-                          label="hours"
-                          id="unit_hours"
-                          type="radio"
-                          ref={hoursUnitRef}
-                          inline
-                        />
-                      </div>
-                    )}
-                  </>
-                )}
-                {fieldData.type === SFR_Type.Bool && (
-                  <div className="mt-2">
-                    <Form.Check
-                      name="sfr_override"
-                      label="true"
-                      type="radio"
-                      inline
-                      defaultChecked
-                      ref={fieldInputRef}
-                    />
-                    <Form.Check
-                      name="sfr_override"
-                      label="false"
-                      type="radio"
-                      inline
-                    />
-                  </div>
-                )}
-
-                {fieldData.type === SFR_Type.Multi && (
-                  <>
-                    <Row className="mb-2">
-                      {" "}
-                      {/* 1st Row */}
-                      <Col>
-                        <InputField
-                          name="bootCount"
-                          type="number"
-                          className="mt-1"
-                          placeholder={"Boot count"}
-                          error={inputError}
-                          onChange={handleEepromChange}
-                        />
-                      </Col>
-                      <Col className="d-flex flex-column justify-content-center align-items-center">
-                        <div>
-                          <Form.Check
-                            name="lightSwitch"
-                            label="Light 1"
-                            type="radio"
-                            value="true"
-                            inline
-                            defaultChecked
-                            onChange={handleEepromChange}
-                          />
-                          <Form.Check
-                            name="lightSwitch"
-                            label="Light 0"
-                            type="radio"
-                            value="false"
-                            inline
-                            onChange={handleEepromChange}
-                          />
-                        </div>
-                      </Col>
-                    </Row>
-                    <Row className="mb-2">
-                      {" "}
-                      {/* 2nd Row */}
-                      <Col>
-                        <InputField
-                          name="sfrAddress"
-                          type="number"
-                          className="mt-1"
-                          placeholder={"SFR address"}
-                          error={inputError}
-                          onChange={handleEepromChange}
-                        />
-                      </Col>
-                      <Col>
-                        <InputField
-                          name="dataAddress"
-                          type="number"
-                          className="mt-1"
-                          placeholder={"Data address"}
-                          error={inputError}
-                          onChange={handleEepromChange}
-                        />
-                      </Col>
-                    </Row>
-                    <Row className="mb-2">
-                      {" "}
-                      {/* 3rd Row */}
-                      <Col>
-                        <InputField
-                          name="sfrWriteAge"
-                          type="number"
-                          className="mt-1"
-                          placeholder={"SFR write age"}
-                          error={inputError}
-                          onChange={handleEepromChange}
-                        />
-                      </Col>
-                      <Col>
-                        <InputField
-                          name="dataWriteAge"
-                          type="number"
-                          className="mt-1"
-                          placeholder={"Data write age"}
-                          error={inputError}
-                          onChange={handleEepromChange}
-                        />
-                      </Col>
-                    </Row>
-                  </>
-                )}
-                {/* Submit disabled if no opcode selected or SFR override selected but no namespace or field selected */}
-                <Button
-                  style={{ position: "absolute", left: "30px", bottom: "30px" }}
-                  variant="primary"
-                  type="submit"
-                  disabled={
-                    selectedOpCode === "None" ||
-                    (selectedOpCode === OpCodes.SFR_Override &&
-                      (selectedNamespace === "None" ||
-                        selectedField === "None"))
-                  }
-                  className="mt-2"
-                >
-                  + Command
-                </Button>
-              </Form>
-            </Col>
-          </Row>
+          <div>{currentForm}</div>
+          {/* Submit disabled if no opcode selected or SFR override selected but no namespace or field selected */}
+          <Button
+            style={{ position: "absolute", left: "30px", bottom: "30px" }}
+            variant="primary"
+            // call onSubmit of currently selected form
+            onClick={handleSubmit}
+            disabled={selectedOpCode === "None"}
+            className="mt-2"
+          >
+            + Command
+          </Button>
         </Col>
       </Row>
     </Container>
