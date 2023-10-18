@@ -10,7 +10,6 @@ class SFR_T(str, Enum):
     FLOAT = 'FLOAT',
     INT = 'INT',
     TIME = 'TIME',
-    MULTI = 'MULTI'
 
 BURNWIRE_OPCODES = {
     'Deploy': '3333',
@@ -478,11 +477,6 @@ SFR_OVERRIDE_OPCODES_MAP = {
             'hex': '2810',
             'type': SFR_T.INT
         },
-        # not really sfr but here for convenience
-        'eeprom_reset': {
-            'hex': '2811',
-            'type': SFR_T.MULTI
-        }
     },
 }
 

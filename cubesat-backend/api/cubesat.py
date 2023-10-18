@@ -101,7 +101,7 @@ def uplink_command(uplink):
 
     return api_response
 
-@cubesat.get('/sfr_opcodes')
+@cubesat.get('/command_data')
 @authenticate(token_auth)
 def get_sfr_opcodes():
     """
@@ -109,7 +109,9 @@ def get_sfr_opcodes():
     Get list of all SFR namespaces and fields along with their metadata
     such as their type, minimum value, or maximum value.
     """
-    return SFR_OVERRIDE_OPCODES_MAP
+    return {
+        "SFR_Override": SFR_OVERRIDE_OPCODES_MAP
+    }
 
 @cubesat.get('/command_history')
 @authenticate(token_auth)
