@@ -41,11 +41,13 @@ export default function TopBar() {
         </Container>
       </Navbar>
       {/* key prop uses date object to generate random # each time modal is opened to reset state */}
-      <AdminUserManage
-        key={new Date()}
-        show={userManageShow}
-        setShow={setUserManageShow}
-      />
+      {user.is_admin && (
+        <AdminUserManage
+          key={new Date()}
+          show={userManageShow}
+          setShow={setUserManageShow}
+        />
+      )}
       <ImeiManage show={imeiManageShow} setShow={setImeiManageShow} />
     </>
   );

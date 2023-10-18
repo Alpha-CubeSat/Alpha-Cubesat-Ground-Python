@@ -60,7 +60,7 @@ export default function LogRow({ entry }) {
                     }}
                   >
                     {command.namespace +
-                      ":" +
+                      "::" +
                       command.field +
                       "=" +
                       command.value}
