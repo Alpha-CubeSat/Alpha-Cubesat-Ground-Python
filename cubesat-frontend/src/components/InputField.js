@@ -9,7 +9,8 @@ export default function InputField({
   error,
   fieldRef,
   className,
-  onChange
+  disabled,
+  onChange,
 }) {
   return (
     <Form.Group controlId={name} className={className}>
@@ -20,6 +21,7 @@ export default function InputField({
         placeholder={placeholder}
         className={error && "is-invalid"}
         ref={fieldRef}
+        disabled={disabled}
         onChange={onChange}
       />
       <Form.Text className="text-danger">{error}</Form.Text>
