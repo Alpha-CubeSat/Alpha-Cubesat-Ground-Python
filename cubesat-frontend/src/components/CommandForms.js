@@ -10,6 +10,8 @@ const SFR_Type = Object.freeze({
   Time: "TIME",
   Bool: "BOOL",
 });
+
+// forwardRef allows access to the ref prop passed in by the CommandSelector component
 export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
   // Selected dropdown values
   const [selectedNamespace, setNamespace] = useState("None");
@@ -21,10 +23,6 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
   const fieldDropRef = useRef();
 
   // Input field data and form error
-  const [fieldData, setFieldData] = useState({});
-  const [inputError, setInputError] = useState();
-  const [timeUnit, setTimeUnit] = useState("SEC");
-
   const initialFieldData = {
     byteCount: "41111",
     value: "",
@@ -33,67 +31,63 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
     _filler: false, // nothing in byte 3 of f_arg_2
     restoreValue: false,
   };
-
   const [commandFields, setCommandFields] = useState(initialFieldData);
+  const [fieldData, setFieldData] = useState({});
+  const [inputError, setInputError] = useState();
+  const [timeUnit, setTimeUnit] = useState("SEC");
 
-  const handleFieldChange = (event) => {
-    let { name, value } = event.target;
-    if (name === "setValue") value = !commandFields.setValue;
-    else if (name === "setRestore") value = !commandFields.setRestore;
-
-    setCommandFields((prevFields) => ({
-      ...prevFields,
-      [name]: value,
-    }));
-  };
-
+  // useImperativeHandle allows the CommandSelector component to call the handleSubmit() function,
+  // which checks if the command fields are valid and returns the command if so
   useImperativeHandle(ref, () => ({
     // Validates input field before adding command to the command builder
     handleSubmit() {
       if (selectedNamespace === "None" || selectedField === "None") return;
-
-      let inputValue = commandFields.value;
 
       // validate input: make sure field is not empty, ints and floats are valid, input within min and max values
       let error = "";
       let int_check = new RegExp("^-?\\d+$");
       let float_check = new RegExp("^-?\\d+(\\.\\d+)?$");
       if (commandFields.setValue) {
-        if (!inputValue) {
+        if (!commandFields.value) {
           error = "Field cannot be empty.";
         } else if (
           (fieldData.type === SFR_Type.Int ||
             fieldData.type === SFR_Type.Time) &&
-          !int_check.test(inputValue)
+          !int_check.test(commandFields.value)
         ) {
           error = "Not a valid integer.";
         } else if (
           fieldData.type === SFR_Type.Float &&
-          !float_check.test(inputValue)
+          !float_check.test(commandFields.value)
         ) {
           error = "Not a valid float.";
-        } else if (fieldData.min !== undefined && inputValue < fieldData.min) {
+        } else if (
+          fieldData.min !== undefined &&
+          commandFields.value < fieldData.min
+        ) {
           error = "Minimum value is " + fieldData.min;
-        } else if (fieldData.max !== undefined && inputValue > fieldData.max) {
+        } else if (
+          fieldData.max !== undefined &&
+          commandFields.value > fieldData.max
+        ) {
           error = "Maximum value is " + fieldData.max;
         }
       }
       setInputError(error);
       if (error.length > 0) return;
 
-      // convert minutes and hours to seconds
+      // convert seconds, minutes, and hours to milliseconds
       if (fieldData.type === SFR_Type.Time) {
         if (timeUnit === "SEC") {
-          inputValue *= 1000;
+          commandFields.value *= 1000;
         } else if (timeUnit === "MIN") {
-          inputValue *= 60 * 1000;
+          commandFields.value *= 60 * 1000;
         } else if (timeUnit === "HOUR") {
-          inputValue *= 3600 * 1000;
+          commandFields.value *= 3600 * 1000;
         }
       }
 
-      // add to command builder
-      commandFields.value = inputValue;
+      // send to CommandSelector component
       return {
         namespace: selectedNamespace[0],
         field: selectedField[0],
@@ -120,16 +114,31 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
       setField(field);
       setFieldData(SFR_Data[selectedNamespace][field]);
       setInputError();
+      setTitle("sfr::" + selectedNamespace + "::" + field);
+
+      // by default boolean radio is set to true for boolean type SFR fields
       if (SFR_Data[selectedNamespace][field].type === SFR_Type.Bool) {
         setCommandFields((prevFields) => ({
           ...prevFields,
           value: true,
         }));
       }
-      setTitle("sfr::" + selectedNamespace + "::" + field);
     }
   };
 
+  // Update the command argument dictionary when a form element is changed
+  const handleFieldChange = (event) => {
+    let { name, value } = event.target;
+    if (name === "setValue") value = !commandFields.setValue;
+    else if (name === "setRestore") value = !commandFields.setRestore;
+
+    setCommandFields((prevFields) => ({
+      ...prevFields,
+      [name]: value,
+    }));
+  };
+
+  // reset states relating to the currently selected SFR field only
   const resetFieldState = () => {
     setField("None");
     setFieldData({});
@@ -193,6 +202,7 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
                 fieldData.type === SFR_Type.Float ||
                 fieldData.type === SFR_Type.Int) && (
                 <>
+                  {/* Numerical SFR field input */}
                   <InputField
                     name="value"
                     type="number"
@@ -241,6 +251,7 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
               )}
               {fieldData.type === SFR_Type.Bool && (
                 <div className="mt-2">
+                  {/* Boolean SFR field input */}
                   <Form.Check
                     name="value"
                     type="radio"
@@ -265,6 +276,7 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
             </div>
           </Col>
           <Col className="mt-2">
+            {/* SFR Restore options */}
             <div>
               <div className="mb-2">
                 <span style={{ fontWeight: "bold" }}>Set Restore</span>

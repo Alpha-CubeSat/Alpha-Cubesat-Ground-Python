@@ -40,7 +40,7 @@ export default function CommandSelector() {
   const api = useApi();
 
   /*
-  Command selector: title, description, opcode selector, command add button
+  Command selector: title, description, opcode selector, "add command" button
   also manages the currently selected opcode, displays the corresponding form and passes in its command data,
   calls the form's onSubmit function when "add command" is pressed
 
@@ -62,9 +62,9 @@ export default function CommandSelector() {
 
   const [selectedOpCode, setOpCode] = useState("None");
 
+  // Argument input form for currently selected command opcode
   const [currentForm, setCurrentForm] = useState(<div></div>);
-
-  const childRef = useRef();
+  const formRef = useRef();
 
   // Command title and description
   const [title, setTitle] = useState("No command selected");
@@ -75,7 +75,7 @@ export default function CommandSelector() {
     opcode === OpCodes.Arm ||
     opcode === OpCodes.Fire;
 
-  // Updates dropdown menus based on selected opcode
+  // Updates command form based on selected opcode
   const handleOpCodeSelect = (opcode) => () => {
     setOpCode(opcode);
 
@@ -84,11 +84,11 @@ export default function CommandSelector() {
         <SfrOverride
           SFR_Data={allCommandMetadata["SFR_Override"]}
           setTitle={setTitle}
-          ref={childRef}
+          ref={formRef}
         />
       );
     } else if (opcode === OpCodes.EEPROM_Reset) {
-      setCurrentForm(<EepromReset ref={childRef} />);
+      setCurrentForm(<EepromReset ref={formRef} />);
     } else if (isDeploymentOpcode(opcode)) {
       setCurrentForm(<div></div>);
     }
@@ -101,8 +101,8 @@ export default function CommandSelector() {
   const handleSubmit = () => {
     let data;
     if (!isDeploymentOpcode(selectedOpCode)) {
-      // call child on submit
-      data = childRef.current.handleSubmit();
+      // call child onSubmit to validate input, if it is valid the command will be returned
+      data = formRef.current.handleSubmit();
       if (data === undefined) return;
     }
 
@@ -115,7 +115,7 @@ export default function CommandSelector() {
     setCommandStack([...commandStack, new_command]);
     setCount(count + 1);
 
-    // Allows only one command--deploy, arm, or fire to be sent at a time
+    // Allows only one deployment command to be sent at a time
     if (
       new_command["opcode"] === "Deploy" ||
       new_command["opcode"] === "Arm" ||
@@ -164,8 +164,9 @@ export default function CommandSelector() {
           </Dropdown>
         </Col>
         <Col>
+          {/* Command form for selected opcode */}
           <div>{currentForm}</div>
-          {/* Submit disabled if no opcode selected or SFR override selected but no namespace or field selected */}
+          {/* Submit disabled if no opcode selected */}
           <Button
             style={{ position: "absolute", left: "30px", bottom: "30px" }}
             variant="primary"
