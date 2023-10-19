@@ -10,56 +10,73 @@ const SFR_Type = Object.freeze({
   Time: "TIME",
   Bool: "BOOL",
 });
-export const SFR_Override = forwardRef(({ sfr_data, setTitle }, ref) => {
+export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
   // Selected dropdown values
   const [selectedNamespace, setNamespace] = useState("None");
   const [selectedField, setField] = useState("None");
 
   // Dropdown item lists for namespaces and fields
   const [fieldList, setFieldList] = useState([]);
-  const namespaceRef = useRef();
-  const fieldRef = useRef();
+  const namespaceDropRef = useRef();
+  const fieldDropRef = useRef();
 
   // Input field data and form error
   const [fieldData, setFieldData] = useState({});
   const [inputError, setInputError] = useState();
-  const fieldInputRef = useRef();
   const [timeUnit, setTimeUnit] = useState("SEC");
+
+  const initialFieldData = {
+    byteCount: "41111",
+    value: "",
+    setValue: true,
+    setRestore: false,
+    _filler: false, // nothing in byte 3 of f_arg_2
+    restoreValue: false,
+  };
+
+  const [commandFields, setCommandFields] = useState(initialFieldData);
+
+  const handleFieldChange = (event) => {
+    let { name, value } = event.target;
+    if (name === "setValue") value = !commandFields.setValue;
+    else if (name === "setRestore") value = !commandFields.setRestore;
+
+    setCommandFields((prevFields) => ({
+      ...prevFields,
+      [name]: value,
+    }));
+  };
 
   useImperativeHandle(ref, () => ({
     // Validates input field before adding command to the command builder
     handleSubmit() {
-      console.log("hi");
-
       if (selectedNamespace === "None" || selectedField === "None") return;
 
-      let input_value = "";
-      // extract value from text field or boolean value from radios
-      input_value =
-        fieldData.type !== SFR_Type.Bool
-          ? fieldInputRef.current.value
-          : fieldInputRef.current.checked.toString();
+      let inputValue = commandFields.value;
 
       // validate input: make sure field is not empty, ints and floats are valid, input within min and max values
       let error = "";
       let int_check = new RegExp("^-?\\d+$");
       let float_check = new RegExp("^-?\\d+(\\.\\d+)?$");
-      if (!input_value) {
-        error = "Field cannot be empty.";
-      } else if (
-        (fieldData.type === SFR_Type.Int || fieldData.type === SFR_Type.Time) &&
-        !int_check.test(input_value)
-      ) {
-        error = "Not a valid integer.";
-      } else if (
-        fieldData.type === SFR_Type.Float &&
-        !float_check.test(input_value)
-      ) {
-        error = "Not a valid float.";
-      } else if (fieldData.min !== undefined && input_value < fieldData.min) {
-        error = "Minimum value is " + fieldData.min;
-      } else if (fieldData.max !== undefined && input_value > fieldData.max) {
-        error = "Maximum value is " + fieldData.max;
+      if (commandFields.setValue) {
+        if (!inputValue) {
+          error = "Field cannot be empty.";
+        } else if (
+          (fieldData.type === SFR_Type.Int ||
+            fieldData.type === SFR_Type.Time) &&
+          !int_check.test(inputValue)
+        ) {
+          error = "Not a valid integer.";
+        } else if (
+          fieldData.type === SFR_Type.Float &&
+          !float_check.test(inputValue)
+        ) {
+          error = "Not a valid float.";
+        } else if (fieldData.min !== undefined && inputValue < fieldData.min) {
+          error = "Minimum value is " + fieldData.min;
+        } else if (fieldData.max !== undefined && inputValue > fieldData.max) {
+          error = "Maximum value is " + fieldData.max;
+        }
       }
       setInputError(error);
       if (error.length > 0) return;
@@ -67,29 +84,20 @@ export const SFR_Override = forwardRef(({ sfr_data, setTitle }, ref) => {
       // convert minutes and hours to seconds
       if (fieldData.type === SFR_Type.Time) {
         if (timeUnit === "SEC") {
-          input_value *= 1000;
+          inputValue *= 1000;
         } else if (timeUnit === "MIN") {
-          input_value *= 60 * 1000;
+          inputValue *= 60 * 1000;
         } else if (timeUnit === "HOUR") {
-          input_value *= 3600 * 1000;
+          inputValue *= 3600 * 1000;
         }
       }
 
-      // reset dropdowns
-      setFieldList([]);
-      setNamespace("None");
-      setField("None");
-      setFieldData({});
-      setInputError();
-
-      fieldRef.current.clear();
-      namespaceRef.current.clear();
-
       // add to command builder
+      commandFields.value = inputValue;
       return {
-        namespace: selectedNamespace + "",
-        field: selectedField + "",
-        value: input_value,
+        namespace: selectedNamespace[0],
+        field: selectedField[0],
+        value: commandFields,
       };
     },
   }));
@@ -97,26 +105,38 @@ export const SFR_Override = forwardRef(({ sfr_data, setTitle }, ref) => {
   // Updates dropdown menus based on selected SFR namespace
   const handleNamespaceSelect = (namespace) => {
     setNamespace(namespace);
-    if (namespace in sfr_data) {
-      setFieldList(Object.keys(sfr_data[namespace]));
+    if (namespace in SFR_Data) {
+      setFieldList(Object.keys(SFR_Data[namespace]));
     } else {
       setFieldList([]);
     }
-    setField("None");
-    setFieldData({});
-    setInputError();
+    resetFieldState();
     setTitle("No command selected");
-    fieldRef.current.clear();
   };
 
   // Updates input field based on selected SFR field
   const handleFieldSelect = (field) => {
-    if (field in sfr_data[selectedNamespace]) {
+    if (field in SFR_Data[selectedNamespace]) {
       setField(field);
-      setFieldData(sfr_data[selectedNamespace][field]);
+      setFieldData(SFR_Data[selectedNamespace][field]);
       setInputError();
+      if (SFR_Data[selectedNamespace][field].type === SFR_Type.Bool) {
+        setCommandFields((prevFields) => ({
+          ...prevFields,
+          value: true,
+        }));
+      }
       setTitle("sfr::" + selectedNamespace + "::" + field);
     }
+  };
+
+  const resetFieldState = () => {
+    setField("None");
+    setFieldData({});
+    setInputError();
+    setCommandFields(initialFieldData);
+    setTimeUnit("SEC");
+    fieldDropRef.current.clear();
   };
 
   return (
@@ -128,9 +148,9 @@ export const SFR_Override = forwardRef(({ sfr_data, setTitle }, ref) => {
           <Typeahead
             id="namespace-dropdown"
             labelKey="namespace"
-            options={Object.keys(sfr_data)}
+            options={Object.keys(SFR_Data)}
             placeholder="Select"
-            ref={namespaceRef}
+            ref={namespaceDropRef}
             onChange={(selected) => handleNamespaceSelect(selected)}
             onInputChange={(selected) => handleNamespaceSelect(selected)}
             renderMenuItemChildren={(option) => <>{option}</>}
@@ -144,8 +164,8 @@ export const SFR_Override = forwardRef(({ sfr_data, setTitle }, ref) => {
             id="field-dropdown"
             labelKey="field"
             options={fieldList}
-            ref={fieldRef}
-            disabled={!(selectedNamespace in sfr_data)}
+            ref={fieldDropRef}
+            disabled={!(selectedNamespace in SFR_Data)}
             placeholder="Select"
             onChange={(select) => handleFieldSelect(select)}
             onInputChange={(select) => handleFieldSelect(select)}
@@ -157,47 +177,63 @@ export const SFR_Override = forwardRef(({ sfr_data, setTitle }, ref) => {
         <Row>
           <Col>
             {/* SFR field input */}
-            <div className="col-lg-12 mt-2">
-              <span style={{ fontWeight: "bold" }}>Argument</span>
+            <div className="mt-2">
+              <div className="mb-2">
+                <span style={{ fontWeight: "bold" }}>Set Value</span>
+                <Form.Check
+                  name="setValue"
+                  className="ms-2"
+                  onChange={handleFieldChange}
+                  defaultChecked
+                  inline
+                />
+              </div>
 
               {(fieldData.type === SFR_Type.Time ||
                 fieldData.type === SFR_Type.Float ||
                 fieldData.type === SFR_Type.Int) && (
                 <>
                   <InputField
-                    name="sfr_override"
+                    name="value"
                     type="number"
                     className="mt-1"
                     placeholder="Value"
                     error={inputError}
-                    fieldRef={fieldInputRef}
+                    onChange={handleFieldChange}
+                    disabled={!commandFields.setValue}
                   />
                   {/* Time unit selector */}
                   {fieldData.type === SFR_Type.Time && (
                     <div className="mt-2">
                       <Form.Check
                         name="time_unit"
-                        label="seconds"
+                        label="sec"
                         type="radio"
+                        disabled={!commandFields.setValue}
+                        onChange={() => setTimeUnit("SEC")}
                         inline
                         defaultChecked
-                        onChange={() => setTimeUnit("SEC")}
+                        className="me-2"
                       />
                       <Form.Check
                         name="time_unit"
-                        label="minutes"
+                        label="min"
                         id="unit_minutes"
                         type="radio"
+                        disabled={!commandFields.setValue}
                         onChange={() => setTimeUnit("MIN")}
                         inline
+                        className="me-2"
                       />
                       <Form.Check
                         name="time_unit"
-                        label="hours"
+                        label="hr"
                         id="unit_hours"
                         type="radio"
+                        disabled={!commandFields.setValue}
                         onChange={() => setTimeUnit("HOUR")}
                         inline
+                        className="me-2"
                       />
                     </div>
                   )}
@@ -206,17 +242,22 @@ export const SFR_Override = forwardRef(({ sfr_data, setTitle }, ref) => {
               {fieldData.type === SFR_Type.Bool && (
                 <div className="mt-2">
                   <Form.Check
-                    name="sfr_override"
-                    label="true"
+                    name="value"
                     type="radio"
-                    ref={fieldInputRef}
+                    label="true"
+                    value="true"
+                    disabled={!commandFields.setValue}
+                    onChange={handleFieldChange}
                     inline
                     defaultChecked
                   />
                   <Form.Check
-                    name="sfr_override"
-                    label="false"
+                    name="value"
                     type="radio"
+                    label="false"
+                    value="false"
+                    disabled={!commandFields.setValue}
+                    onChange={handleFieldChange}
                     inline
                   />
                 </div>
@@ -227,16 +268,32 @@ export const SFR_Override = forwardRef(({ sfr_data, setTitle }, ref) => {
             <div>
               <div className="mb-2">
                 <span style={{ fontWeight: "bold" }}>Set Restore</span>
-                <Form.Check className="ms-2" inline />
+                <Form.Check
+                  name="setRestore"
+                  className="ms-2"
+                  onChange={handleFieldChange}
+                  inline
+                />
               </div>
               <Form.Check
-                name="restore"
-                label="true"
+                name="restoreValue"
                 type="radio"
+                label="true"
+                value="true"
+                disabled={!commandFields.setRestore}
+                onChange={handleFieldChange}
+                inline
+              />
+              <Form.Check
+                name="restoreValue"
+                type="radio"
+                label="false"
+                value="false"
+                disabled={!commandFields.setRestore}
+                onChange={handleFieldChange}
                 inline
                 defaultChecked
               />
-              <Form.Check name="restore" label="false" type="radio" inline />
             </div>
           </Col>
         </Row>
@@ -245,10 +302,10 @@ export const SFR_Override = forwardRef(({ sfr_data, setTitle }, ref) => {
   );
 });
 
-export const EEPROM_Reset = forwardRef(({}, ref) => {
+export const EepromReset = forwardRef(({}, ref) => {
   const [inputError, setInputError] = useState();
   const [eepromFields, setEepromFields] = useState({
-    byteCount: "112211",
+    byteCount: "122111",
     bootCount: "",
     sfrAddress: "",
     dataAddress: "",
@@ -260,13 +317,16 @@ export const EEPROM_Reset = forwardRef(({}, ref) => {
   useImperativeHandle(ref, () => ({
     handleSubmit() {
       return {
-        byteCount: eepromFields["byteCount"],
-        bootCount: eepromFields["bootCount"],
-        lightSwitch: eepromFields["lightSwitch"],
-        sfrAddress: eepromFields["sfrAddress"],
-        dataAddress: eepromFields["dataAddress"],
-        sfrWriteAge: Math.floor(parseInt(eepromFields["sfrWriteAge"]) / 373),
-        dataWriteAge: Math.floor(parseInt(eepromFields["dataWriteAge"]) / 373),
+        value: {
+          byteCount: eepromFields.byteCount,
+          bootCount: eepromFields.bootCount,
+          lightSwitch: eepromFields.lightSwitch,
+          sfrAddress: eepromFields.sfrAddress,
+          dataAddress: eepromFields.dataAddress,
+          // range is 0-95000 and we need to map them to 1 byte
+          sfrWriteAge: Math.floor(parseInt(eepromFields.sfrWriteAge) / 373),
+          dataWriteAge: Math.floor(parseInt(eepromFields.dataWriteAge) / 373),
+        },
       };
     },
   }));

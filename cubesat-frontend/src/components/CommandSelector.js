@@ -3,7 +3,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { useDashboard } from "../contexts/DashboardProvider";
 import { useApi } from "../contexts/ApiProvider";
-import { EEPROM_Reset, SFR_Override } from "./CommandForms";
+import { EepromReset, SfrOverride } from "./CommandForms";
 
 // Allowed opcodes
 export const OpCodes = Object.freeze({
@@ -81,14 +81,14 @@ export default function CommandSelector() {
 
     if (opcode === OpCodes.SFR_Override) {
       setCurrentForm(
-        <SFR_Override
-          sfr_data={allCommandMetadata["SFR_Override"]}
+        <SfrOverride
+          SFR_Data={allCommandMetadata["SFR_Override"]}
           setTitle={setTitle}
           ref={childRef}
         />
       );
     } else if (opcode === OpCodes.EEPROM_Reset) {
-      setCurrentForm(<EEPROM_Reset ref={childRef} />);
+      setCurrentForm(<EepromReset ref={childRef} />);
     } else if (isDeploymentOpcode(opcode)) {
       setCurrentForm(<div></div>);
     }
