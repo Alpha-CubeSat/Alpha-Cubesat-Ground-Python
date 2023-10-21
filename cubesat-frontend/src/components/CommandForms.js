@@ -24,11 +24,9 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
 
   // Input field data and form error
   const initialFieldData = {
-    byteCount: "41111",
     value: "",
     setValue: true,
     setRestore: false,
-    _filler: false, // nothing in byte 3 of f_arg_2
     restoreValue: false,
   };
   const [commandFields, setCommandFields] = useState(initialFieldData);
@@ -201,54 +199,54 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
               {(fieldData.type === SFR_Type.Time ||
                 fieldData.type === SFR_Type.Float ||
                 fieldData.type === SFR_Type.Int) && (
-                <>
-                  {/* Numerical SFR field input */}
-                  <InputField
-                    name="value"
-                    type="number"
-                    className="mt-1"
-                    placeholder="Value"
-                    error={inputError}
-                    onChange={handleFieldChange}
-                    disabled={!commandFields.setValue}
-                  />
-                  {/* Time unit selector */}
-                  {fieldData.type === SFR_Type.Time && (
-                    <div className="mt-2">
-                      <Form.Check
-                        name="time_unit"
-                        label="sec"
-                        type="radio"
-                        disabled={!commandFields.setValue}
-                        onChange={() => setTimeUnit("SEC")}
-                        inline
-                        defaultChecked
-                        className="me-2"
-                      />
-                      <Form.Check
-                        name="time_unit"
-                        label="min"
-                        id="unit_minutes"
-                        type="radio"
-                        disabled={!commandFields.setValue}
-                        onChange={() => setTimeUnit("MIN")}
-                        inline
-                        className="me-2"
-                      />
-                      <Form.Check
-                        name="time_unit"
-                        label="hr"
-                        id="unit_hours"
-                        type="radio"
-                        disabled={!commandFields.setValue}
-                        onChange={() => setTimeUnit("HOUR")}
-                        inline
-                        className="me-2"
-                      />
-                    </div>
-                  )}
-                </>
-              )}
+                  <>
+                    {/* Numerical SFR field input */}
+                    <InputField
+                      name="value"
+                      type="number"
+                      className="mt-1"
+                      placeholder="Value"
+                      error={inputError}
+                      onChange={handleFieldChange}
+                      disabled={!commandFields.setValue}
+                    />
+                    {/* Time unit selector */}
+                    {fieldData.type === SFR_Type.Time && (
+                      <div className="mt-2">
+                        <Form.Check
+                          name="time_unit"
+                          label="sec"
+                          type="radio"
+                          disabled={!commandFields.setValue}
+                          onChange={() => setTimeUnit("SEC")}
+                          inline
+                          defaultChecked
+                          className="me-2"
+                        />
+                        <Form.Check
+                          name="time_unit"
+                          label="min"
+                          id="unit_minutes"
+                          type="radio"
+                          disabled={!commandFields.setValue}
+                          onChange={() => setTimeUnit("MIN")}
+                          inline
+                          className="me-2"
+                        />
+                        <Form.Check
+                          name="time_unit"
+                          label="hr"
+                          id="unit_hours"
+                          type="radio"
+                          disabled={!commandFields.setValue}
+                          onChange={() => setTimeUnit("HOUR")}
+                          inline
+                          className="me-2"
+                        />
+                      </div>
+                    )}
+                  </>
+                )}
               {fieldData.type === SFR_Type.Bool && (
                 <div className="mt-2">
                   {/* Boolean SFR field input */}
@@ -314,7 +312,7 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
   );
 });
 
-export const EepromReset = forwardRef(({}, ref) => {
+export const EepromReset = forwardRef(({ }, ref) => {
   const [inputError, setInputError] = useState();
   const [eepromFields, setEepromFields] = useState({
     byteCount: "122111",
