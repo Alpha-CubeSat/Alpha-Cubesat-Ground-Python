@@ -85,7 +85,7 @@ def read_img_hex_fragment(data: str) -> dict:
     If the image fragment is not last, then the max number of fragments is set
     arbitrarily to -1, and the entirety of the fragment portion in hex string
     must be read. If the image fragment is the last, then the max number of
-    fragments is set to (last fragment number + 1), and the hexadecimal string is
+    fragments is set to (last fragment number), and the hexadecimal string is
     read up to 'ffd9'.
 
     Notes:
@@ -104,9 +104,8 @@ def read_img_hex_fragment(data: str) -> dict:
 
     fragment_number = int(data[8:10], 16)
     end_marker_present = data.count('ffd9') != 0
-    max_fragments = fragment_number + 1 if end_marker_present else -1
-    fragment_data = bytearray.fromhex(
-        data[10:] if not end_marker_present else data[10:data.index('ffd9')])
+    max_fragments = fragment_number if end_marker_present else -1
+    fragment_data = data[10:] if not end_marker_present else data[10:data.index('ffd9')]
     return {
         'serial_number': int(data[0:2], 16),
         'fragment_number': fragment_number,
@@ -139,14 +138,11 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
     binary_data = bytearray.fromhex(rockblock_report['data'])
 
     parser = BinaryParser(binary_data)
-    if parser.remaining() == 0:
-        return error_data('Empty packet')
+    opcode_val = parser.read_uint8()
+    if opcode_val in list(map(int, Opcodes)):
+        opcode = Opcodes(opcode_val)
     else:
-        opcode_val = parser.read_uint8()
-        if opcode_val in list(map(int, Opcodes)):
-            opcode = Opcodes(opcode_val)
-        else:
-            return error_data('Invalid opcode: ' + str(opcode_val))
+        return error_data('Invalid opcode: ' + str(opcode_val))
 
     # Extract data from report (strip away opcode [0:2])
     data = rockblock_report['data'][2:]

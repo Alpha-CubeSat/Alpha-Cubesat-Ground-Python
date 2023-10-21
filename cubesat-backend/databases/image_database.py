@@ -10,7 +10,7 @@ img_fragment_downlink_info = {'image_serial': 0, 'latest_fragment': 0, 'missing_
                               'fragment_count': '?/?', 'highest_fragment': 0}
 
 
-def save_fragment(image_sn: int, fragment_number: int, binary_fragment_data: bytearray):
+def save_fragment(image_sn: int, fragment_number: int, fragment_data: str):
     """
     Saves an image fragment. Creates one if it doesn't exist using the following policy:
         - new file is created under the directory with the serial number of the image
@@ -19,7 +19,7 @@ def save_fragment(image_sn: int, fragment_number: int, binary_fragment_data: byt
         - Fragment 7 of image 23 will be saved as '7.csfrag' under the directory named "23".
     :param image_sn: serial number of the image the fragment belongs to
     :param fragment_number: id number of the fragment
-    :param binary_fragment_data: byte array containing the image fragment data
+    :param fragment_data: hex string containing the image fragment data
     """
     # create images/serial # folders if they don't exist
     if not exists(cfg.image_root_dir):
@@ -29,7 +29,7 @@ def save_fragment(image_sn: int, fragment_number: int, binary_fragment_data: byt
         os.makedirs(f'{cfg.image_root_dir}/{image_sn}')
 
     with open(f'{cfg.image_root_dir}/{image_sn}/{fragment_number}.csfrag', 'wb') as frag_file:
-        frag_file.write(binary_fragment_data)
+        frag_file.write(bytearray.fromhex(fragment_data))
 
     global img_fragment_downlink_info
     img_fragment_downlink_info['image_serial'] = image_sn
@@ -91,7 +91,7 @@ def try_save_image(image_sn: int, total_fragments: int):
     fragment_list = list(fragment_map.keys())
     generate_missing_fragments(fragment_list)
     img_fragment_downlink_info['fragment_count'] = \
-        f'{len(fragment_list)}/{total_fragments if total_fragments != -1 else "?"}'
+        f'{len(fragment_list)-1}/{total_fragments if total_fragments != -1 else "?"}'
 
     # Build final image with currently received fragments (filling in missing ones with blanks)
     if not exists(f'{cfg.image_root_dir}/img'):
@@ -133,3 +133,27 @@ def get_image_data(image_file_name: str) -> dict:
         'timestamp': os.path.getmtime(image_path),
         'base64': base64.b64encode(bin_img)
     }
+
+def replace_image_fragment(image_file_name: str, fragment_number: int, fragment_data: str):
+    """
+    Given the file_name of an existing image file, replaces the fragment with the 0-indexed
+    fragment_number with the provided 64 byte hex fragment_data. Creates empty fragments
+    if fragment_number > # fragments currently in the image
+    """
+    assert len(fragment_data) == 128 # each fragment is 64 bytes => 128 bits
+    with open(f'{cfg.image_root_dir}/img/{image_file_name}.jpg', 'rb') as image_file:
+        current_img = image_file.read().hex()
+
+    # if fragment already exists in image
+    if fragment_number <= len(current_img) // 128:
+        # splice in new fragment data: all fragments before + new fragment data + all fragments after
+        new_img = current_img[:fragment_number * 128] + fragment_data + current_img[(fragment_number+1) * 128:]
+    else:
+        # add empty fragments to fill gap between new and existing fragments
+        diff = fragment_number - len(current_img) // 128
+        print(f'needed to create {diff} empty fragments')
+        new_img = current_img + ('f' * 128 * diff) + fragment_data
+
+    with open(f'{cfg.image_root_dir}/img/{image_file_name}.jpg', 'wb') as image_file:
+        image_file.write(bytearray.fromhex(new_img))
+    print(f'replaced fragment {str(fragment_number)}')
