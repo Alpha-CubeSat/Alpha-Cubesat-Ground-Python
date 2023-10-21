@@ -15,7 +15,7 @@ def format_single_arg(n: int, arg_length) -> str:
         arg = "0" + arg
     return arg
 
-def format_dict_args(args : dict) -> (int,int):
+def format_sfr_args(args : dict) -> (int,int):
     """
     Helper function that translates dictionary values into all uppercase 
     hexadecimal string without the '0x' header. The string is passed in order
@@ -24,19 +24,23 @@ def format_dict_args(args : dict) -> (int,int):
     """
     arg1 = ""
     arg2 = ""
-    for iteration, key in enumerate(args):
-        if key == "byteCount":
-            continue
-        else:
-            bytes = int(args["byteCount"][iteration-1])
-            value = args[key]
-            if value in ['true', 'false']:
-                value = bool(value)
-            if bytes*2 + len(arg1) <= 8: 
-                arg1 += format_single_arg(int(value), bytes*2)
-            else:
-                arg2 += format_single_arg(int(value), bytes*2)
+    value = args["value"]
+    if value in ['true', 'false']:
+        value = bool(value)
+    arg1 += format_single_arg(int(value), ARG_LENGTH)
+    arg2 += format_single_arg(int(args["setValue"] == True), 2)
+    arg2 += format_single_arg(int(args["setRestore"] == True), 2)
+    arg2 += format_single_arg(int(args["restoreValue"] == "true"), 4)
     return arg1, arg2
+
+def format_eeprom_args(args : dict) -> (int, int):
+    """
+    Helper function that translates dictionary values into all uppercase 
+    hexadecimal string without the '0x' header. The string is passed in order
+    of the dictionary keys; there must be a key 'byteCount' that specifies the 
+    size of each of the dictionary values.
+    """
+    pass
 
 def format_flag(n: int) -> str:
     """
@@ -59,18 +63,16 @@ def parse_command(command: dict) -> str:
         namespace = command['namespace']
         field = command['field']
         value = command['value']
-        if value in ['true', 'false']:
-            value = bool(value)
-        if isinstance(value, dict):
-            arg1, arg2 = format_dict_args(value)
-        else:
-            arg1 = format_single_arg(int(value), ARG_LENGTH)
-            arg2 = format_single_arg(0, ARG_LENGTH)
+        arg1, arg2 = format_sfr_args(value)
         opcode = SFR_OVERRIDE_OPCODES_MAP[namespace][field]['hex']
+    elif selected_opcode == 'EEPROM_Reset':
+        arg1, arg2 = format_eeprom_args(value)
+        opcode = EEPROM_RESET_OPCODE
     else:
         opcode = BURNWIRE_OPCODES[selected_opcode]
         arg1 = format_single_arg(0, ARG_LENGTH)
         arg2 = format_single_arg(0, ARG_LENGTH)
+    print(opcode + arg1 + arg2)
     return opcode + arg1 + arg2
 
 def handle_command(imei: str, commands: list) -> str:
