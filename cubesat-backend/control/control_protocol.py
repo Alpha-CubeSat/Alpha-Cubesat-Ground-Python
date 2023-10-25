@@ -17,10 +17,9 @@ def format_single_arg(n: int, arg_length) -> str:
 
 def format_sfr_args(args : dict) -> (int,int):
     """
-    Helper function that translates dictionary values into all uppercase 
-    hexadecimal string without the '0x' header. The string is passed in order
-    of the dictionary keys; there must be a key 'byteCount' that specifies the 
-    size of each of the dictionary values.
+    Helper function that translates sfr override dictionary values into all 
+    uppercase hexadecimal string without the '0x' header. Combines the hex 
+    strings into arg1 and arg2 in the format expected by flight software.
     """
     arg1 = ""
     arg2 = ""
@@ -28,11 +27,14 @@ def format_sfr_args(args : dict) -> (int,int):
     if value in ['true', 'false']:
         value = bool(value)
     arg1 += format_single_arg(int(value), ARG_LENGTH)
-    arg2 += format_single_arg(int(args["setValue"] == True), 2)
-    arg2 += format_single_arg(int(args["setRestore"] == True), 2)
-    arg2 += format_single_arg(int(args["restoreValue"] == "true"), 4)
+    arg2_parts = [
+        (int(args["setValue"]),2),
+        (int(args["setRestore"]),2),
+        (int(args["restoreValue"] == "true"), 4),  
+    ]
+    arg2 = ''.join(format_single_arg(part, length) for part, length in arg2_parts)
     return arg1, arg2
-
+    
 def format_eeprom_args(args : dict) -> (int, int):
     """
     Helper function that translates dictionary values into all uppercase 
@@ -40,7 +42,19 @@ def format_eeprom_args(args : dict) -> (int, int):
     of the dictionary keys; there must be a key 'byteCount' that specifies the 
     size of each of the dictionary values.
     """
-    pass
+    arg1_parts = [
+        [int(args["bootCount"]), 2],
+        [int(args["lightSwitch"] == "true"), 2], 
+        [int(args["sfrAddress"]), 4]
+    ]
+    arg1 = ''.join(format_single_arg(part, length) for part, length in arg1_parts)
+    arg2_parts = [
+        [int(args["sfrWriteAge"]), 2],
+        [int(args["dataWriteAge"]), 2],
+        [int(args["dataAddress"]), 4]
+    ]
+    arg2 = ''.join(format_single_arg(part, length) for part, length in arg2_parts)
+    return arg1, arg2
 
 def format_flag(n: int) -> str:
     """
@@ -66,7 +80,7 @@ def parse_command(command: dict) -> str:
         arg1, arg2 = format_sfr_args(value)
         opcode = SFR_OVERRIDE_OPCODES_MAP[namespace][field]['hex']
     elif selected_opcode == 'EEPROM_Reset':
-        arg1, arg2 = format_eeprom_args(value)
+        arg1, arg2 = format_eeprom_args(command["value"])
         opcode = EEPROM_RESET_OPCODE
     else:
         opcode = BURNWIRE_OPCODES[selected_opcode]
