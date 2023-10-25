@@ -315,7 +315,6 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
 export const EepromReset = forwardRef(({ }, ref) => {
   const [inputError, setInputError] = useState();
   const [eepromFields, setEepromFields] = useState({
-    byteCount: "122111",
     bootCount: "",
     sfrAddress: "",
     dataAddress: "",
@@ -371,7 +370,6 @@ export const EepromReset = forwardRef(({ }, ref) => {
               type="radio"
               value="true"
               inline
-              defaultChecked
               onChange={handleEepromChange}
             />
             <Form.Check
