@@ -1,6 +1,6 @@
+import datetime
 import json
 import time
-import datetime
 from os.path import exists
 
 import jwt
@@ -175,5 +175,5 @@ def get_downlink_history():
     by the ground station
     """
     # https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html
-    return elastic.get_es_data(config.rockblock_db_index, ['telemetry_report_type', 'transmit_time', 'error'],
+    return elastic.get_es_data(config.rockblock_db_index, ['imei', 'telemetry_report_type', 'transmit_time', 'error'],
                                sort=[{"transmit_time": {"order": "desc"}}])
