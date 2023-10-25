@@ -19,6 +19,7 @@ from telemetry.telemetry_constants import ROCKBLOCK_PK
 
 cubesat = Blueprint('cubesat', __name__)
 
+
 @cubesat.post('/telemetry')
 @body(RockblockReportSchema)
 @other_responses({401: 'Invalid JWT token'})
@@ -49,7 +50,8 @@ def rockblock_telemetry(report):
     process_telemetry.handle_report(report)
     print('report processed')
 
-    return '', 200 # Successful downlink code
+    return '', 200  # Successful downlink code
+
 
 @cubesat.get('/img/recent')
 @authenticate(token_auth)
@@ -63,6 +65,7 @@ def get_recent_imgs(args):
     """
     return {'images': image_database.get_recent_images(args['count'])}
 
+
 @cubesat.get('/img/<name>')
 @authenticate(token_auth)
 @response(ImageDataSchema)
@@ -73,6 +76,7 @@ def get_image(name: 'Name of the image'):
     Returns the image file with the given name if it exists.
     """
     return image_database.get_image_data(name)
+
 
 @cubesat.post('/command')
 @authenticate(token_auth)
@@ -88,7 +92,7 @@ def uplink_command(uplink):
     print(uplink)
     uplink_response = control_protocol.handle_command(uplink['imei'], uplink['commands'])
     api_response = {
-        'status':  'success' if uplink_response.find("OK") != -1 else 'failure',
+        'status': 'success' if uplink_response.find("OK") != -1 else 'failure',
         'timestamp': time.time() * 1000,
         'imei': uplink['imei'],
         'commands': uplink['commands'],
@@ -101,6 +105,7 @@ def uplink_command(uplink):
 
     return api_response
 
+
 @cubesat.get('/command_data')
 @authenticate(token_auth)
 def get_sfr_opcodes():
@@ -112,6 +117,7 @@ def get_sfr_opcodes():
     return {
         "SFR_Override": SFR_OVERRIDE_OPCODES_MAP
     }
+
 
 @cubesat.get('/command_history')
 @authenticate(token_auth)
@@ -134,6 +140,7 @@ def get_command_history():
     history.reverse()
     return history
 
+
 @cubesat.get('/processed_commands')
 @authenticate(token_auth)
 @other_responses({401: 'Invalid access token'})
@@ -153,17 +160,18 @@ def get_processed_commands():
             epoch = first_entry.get('timestamp')
         else:
             print("Error: The file is empty (no commands sent)")
-    first_timestamp = datetime.datetime.utcfromtimestamp(int(epoch)/1000).isoformat()
+    first_timestamp = datetime.datetime.utcfromtimestamp(int(epoch) / 1000).isoformat()
     query = {
-            "range": {
-                "transmit_time": {
-                    "gte": first_timestamp,
-                    "lte": "now"
-                }
+        "range": {
+            "transmit_time": {
+                "gte": first_timestamp,
+                "lte": "now"
             }
+        }
     }
     res = elastic.get_es_data(config.cubesat_db_index, ["command_log"], query=query)
     return list(map(lambda x: x["command_log"], res))
+
 
 @cubesat.get('/downlink_history')
 @authenticate(token_auth)
@@ -175,5 +183,6 @@ def get_downlink_history():
     by the ground station
     """
     # https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl-range-query.html
-    return elastic.get_es_data(config.rockblock_db_index, ['imei', 'telemetry_report_type', 'transmit_time', 'error'],
+    return elastic.get_es_data(config.rockblock_db_index,
+                               ['imei', 'telemetry_report_type', 'transmit_time', 'error', 'normal_report_id'],
                                sort=[{"transmit_time": {"order": "desc"}}])
