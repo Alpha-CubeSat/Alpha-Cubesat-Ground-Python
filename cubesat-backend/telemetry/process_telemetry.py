@@ -147,9 +147,11 @@ def handle_report(rockblock_report: dict):
             print(result)
 
             operation = result['telemetry_report_type']
-            rockblock_report['telemetry_report_type'] = operation
+            rockblock_report['telemetry_report_type'] = operation # (needed for downlink history)
             if operation == Opcodes.normal_report:
-                elastic.index(cubesat_db_index, result)
+                response = elastic.index(cubesat_db_index, result)
+                # id of normal report entry in elasticsearch (needed for downlink history)
+                if response: rockblock_report['normal_report_id'] = response.body["_id"]
             elif operation == Opcodes.imu_report:
                 process_save_deploy_data(result)
             elif operation == Opcodes.camera_report:
