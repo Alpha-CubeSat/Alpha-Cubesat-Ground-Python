@@ -18,15 +18,6 @@ export default function DashboardProvider({ children }) {
   // notify command log of API response when user sends command
   const [commandLog, setCommandLog] = useState([]);
 
-  // automatically fetch previous command history when ground station is first loaded
-  useEffect(() => {
-    api
-      .get("/cubesat/command_history")
-      .then((response) =>
-        setCommandLog(response.status === 200 ? response.data : [])
-      );
-  }, [api]);
-
   // ensure commands have unique keys
   const [count, setCount] = useState(0);
 
