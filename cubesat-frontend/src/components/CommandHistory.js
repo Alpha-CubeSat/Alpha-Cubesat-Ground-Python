@@ -9,6 +9,7 @@ import { useApi } from "../contexts/ApiProvider";
 // submission time, and API response message.
 export default function CommandHistory() {
   const { commandLog, setCommandLog } = useDashboard();
+  const { imei } = useDashboard();
 
   const api = useApi();
 
@@ -20,13 +21,40 @@ export default function CommandHistory() {
     );
   }
 
+  function logsEqual(array1, array2) {
+    if (array1.length !== array2.length) {
+      return false
+    }
+    for (let i = 0; i < array1.length; i++) {
+      if (array1[i] !== array2[i]) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  const checkCommandHistory = useCallback(async () => {
+    // automatically fetch previous command history (without processed) 
+    await
+      api.get("/cubesat/command_history" + '/' + imei)
+        .then((response) =>
+          setCommandLog(response.status === 200 ? response.data : [])
+        );
+  }, [api, imei])
+
   const checkProcessed = useCallback(async () => {
     console.log("fetching processed opcodes");
     await api.get("/cubesat/processed_commands").then((response) => {
-      const dataList = response["data"];
+      const dataList = response["data"][0];
+      const prevList = [];
+      console.log(dataList)
       const sfrList = [];
       const opcodeList = [];
       for (let data in dataList) {
+        if (logsEqual(dataList[data], prevList)) {
+          continue;
+        }
+        prevList = dataList[data]
         for (let item of dataList[data]) {
           if (item.includes("::")) {
             sfrList.push([
@@ -38,6 +66,7 @@ export default function CommandHistory() {
           }
         }
       }
+      console.log(commandLog)
       const newCommandLog = JSON.parse(JSON.stringify(commandLog));
       for (let i = newCommandLog.length - 1; i >= 0; i--) {
         let logEntry = newCommandLog[i];
@@ -64,16 +93,17 @@ export default function CommandHistory() {
 
   // Checks whether a command has appeared in the command log of the downlinked normal report
   useEffect(() => {
-    // Poll every 10000 milliseconds (10 seconds)
+    // Poll every 5000 milliseconds (5 seconds)
     const interval = setInterval(() => {
+      checkCommandHistory();
       checkProcessed();
-    }, 10000);
+    }, 5000);
 
     // Cleanup: clear the interval when the component is unmounted or the effect re - runs
     return () => {
       clearInterval(interval);
     };
-  }, [checkProcessed]);
+  }, [checkProcessed, checkCommandHistory]);
 
   return (
     <Table hover>
