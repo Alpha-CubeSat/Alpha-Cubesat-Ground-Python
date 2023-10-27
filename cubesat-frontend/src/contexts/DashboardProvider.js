@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState } from "react";
 import { useApi } from "./ApiProvider";
 import { IMEI_MAP } from "../constants";
 
@@ -16,7 +16,7 @@ export default function DashboardProvider({ children }) {
   const [disabledOpcodes, setDisabledOpcodes] = useState([]);
 
   // notify command log of API response when user sends command
-  const [commandLog, setCommandLog] = useState([]);
+  const [commandLog, setCommandLog] = useState(undefined);
 
   // ensure commands have unique keys
   const [count, setCount] = useState(0);

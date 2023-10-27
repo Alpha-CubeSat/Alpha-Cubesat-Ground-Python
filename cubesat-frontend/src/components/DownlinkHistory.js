@@ -3,6 +3,7 @@ import { Spinner, Table } from "react-bootstrap";
 import { useCallback, useEffect, useState } from "react";
 import { useApi } from "../contexts/ApiProvider";
 import { IMEI_MAP } from "../constants";
+import { FiExternalLink } from "react-icons/fi";
 
 // Downlink History Log
 // Shows a log of all downlinks received from the Rockblock portal and processed by the ground station
@@ -89,8 +90,10 @@ export default function DownlinkHistory() {
                         href={kibanaNRBase + entry["normal_report_id"]}
                         target="_blank"
                         rel="noreferrer"
+                        title="View normal report"
                       >
                         {report_types[entry["telemetry_report_type"]]}
+                        <FiExternalLink className="ms-1" />
                       </a>
                     ) : (
                       report_types[entry["telemetry_report_type"]]
