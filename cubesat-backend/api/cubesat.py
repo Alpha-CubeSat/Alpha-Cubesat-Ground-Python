@@ -98,14 +98,10 @@ def uplink_command(uplink):
         'commands': uplink['commands'],
         'message': uplink_response
     }
-
     # log commands
-    if uplink['imei'] == config.rockblock_imei:    
-        with open('og_command_log.txt', 'a') as f:
-            f.write(json.dumps(api_response) + '\n')
-    else:
-        with open('new_command_log.txt', 'a') as f:
-            f.write(json.dumps(api_response) + '\n')
+    with open(str(uplink['imei']) + ".txt", 'a') as f:
+        f.write(json.dumps(api_response) + '\n')
+
     return api_response
 
 
@@ -133,11 +129,9 @@ def get_command_history(imei=config.rockblock_imei):
     """
     
     history = []
-    path = "og_command_log.txt" if imei == config.rockblock_imei \
-    else "new_command_log.txt"
-    if not exists(path):
+    if not exists(str(imei) + ".txt"):
             return []
-    with open(path) as f:
+    with open(str(imei) + ".txt") as f:
             for entry in f.readlines():
                 history.append(json.loads(entry[:-1]))
 
@@ -145,10 +139,10 @@ def get_command_history(imei=config.rockblock_imei):
     return history
 
 
-@cubesat.get('/processed_commands')
+@cubesat.get('/processed_commands/<imei>')
 @authenticate(token_auth)
 @other_responses({401: 'Invalid access token'})
-def get_processed_commands():
+def get_processed_commands(imei = config.rockblock_imei):
     """
     Get Processed Commands
     Get previously sent commands to the CubeSat via the Rockblock portal
@@ -156,24 +150,28 @@ def get_processed_commands():
     retrives command logs in normal reports that have timestamps after the 
     timestamp of the first command sent. 
     """
-    # epoch = 0
-    # with open("command_log.txt", 'r') as file:
-    #     first_line = file.readline()
-    #     if first_line:
-    #         first_entry = json.loads(first_line.strip())
-    #         epoch = first_entry.get('timestamp')
-    #     else:
-    #         print("Error: The file is empty (no commands sent)")
-    # first_timestamp = datetime.datetime.utcfromtimestamp(int(epoch) / 1000).isoformat()
-    # query = {
-    #     "range": {
-    #         "transmit_time": {
-    #             "gte": first_timestamp,
-    #             "lte": "now"
-    #         }
-    #     }
-    # }
-    # res = elastic.get_es_data(config.cubesat_db_index, ["command_log"], query=query)
+    path = str(imei) + ".txt"
+
+    epoch = 0
+    with open(path) as file:
+        first_line = file.readline()
+        if first_line:
+            first_entry = json.loads(first_line.strip())
+            epoch = first_entry.get('timestamp')
+        else:
+            print("Error: The file is empty (no commands sent)")
+    first_timestamp = datetime.datetime.utcfromtimestamp(int(epoch) / 1000).isoformat()
+    # print(first_timestamp)
+    query = {
+        "range": {
+            "transmit_time": {
+                "gte": first_timestamp,
+                "lte": "now"
+            }
+        }
+    }
+    res = elastic.get_es_data(config.cubesat_db_index, ['imei', 'command_log'], query=query)
+    # print(res)
     # return list(map(lambda x: x["command_log"], res))
     return []
 
