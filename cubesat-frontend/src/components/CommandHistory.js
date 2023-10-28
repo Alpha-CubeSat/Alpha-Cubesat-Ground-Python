@@ -1,4 +1,4 @@
-import { Table } from "react-bootstrap";
+import { Spinner, Table } from "react-bootstrap";
 import { useDashboard } from "../contexts/DashboardProvider";
 import { useCallback, useEffect } from "react";
 import LogRow from "./LogRow";
@@ -34,14 +34,14 @@ export default function CommandHistory() {
   // }
 
   const checkCommandHistory = useCallback(async () => {
-    // automatically fetch previous command history (without processed) 
-    console.log("fetching command history")
-    await
-      api.get("/cubesat/command_history/" + imei)
-        .then((response) =>
-          setCommandLog(response.status === 200 ? response.data : [])
-        );
-  }, [api, imei, setCommandLog])
+    // automatically fetch previous command history (without processed)
+    console.log("fetching command history");
+    await api
+      .get("/cubesat/command_history/" + imei)
+      .then((response) =>
+        setCommandLog(response.status === 200 ? response.data : [])
+      );
+  }, [api, imei, setCommandLog]);
 
   const checkProcessed = useCallback(async () => {
     console.log("fetching processed opcodes");
@@ -52,8 +52,8 @@ export default function CommandHistory() {
       for (let item of dataList) {
         if (item.includes("::")) {
           sfrList.push([
-            item.substr(0, item.indexOf(":")),
-            item.substr(item.indexOf(":") + 2),
+            item.substring(0, item.indexOf(":")),
+            item.substring(item.indexOf(":") + 2),
           ]);
         } else {
           opcodeList.push(item);
@@ -95,21 +95,27 @@ export default function CommandHistory() {
   }, [checkProcessed, checkCommandHistory]);
 
   return (
-    <Table hover>
-      <thead>
-        <tr className="table-secondary">
-          <th>Status</th>
-          <th>Command(s)</th>
-          <th>Processed</th>
-          <th>Sent</th>
-          <th>Message</th>
-        </tr>
-      </thead>
-      <tbody>
-        {commandLog.map((entry, i) => (
-          <LogRow key={i} entry={entry} />
-        ))}
-      </tbody>
-    </Table>
+    <>
+      {commandLog === undefined ? (
+        <Spinner animation="border" />
+      ) : (
+        <Table hover>
+          <thead>
+            <tr className="table-secondary">
+              <th>Status</th>
+              <th>Command(s)</th>
+              <th>Processed</th>
+              <th>Sent</th>
+              <th>Message</th>
+            </tr>
+          </thead>
+          <tbody>
+            {commandLog.map((entry, i) => (
+              <LogRow key={i} entry={entry} />
+            ))}
+          </tbody>
+        </Table>
+      )}
+    </>
   );
 }
