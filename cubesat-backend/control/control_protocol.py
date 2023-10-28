@@ -100,7 +100,9 @@ def handle_command(imei: str, commands: list) -> str:
     for command in commands:
         uplink += parse_command(command)
 
-    uplink += format_flag(0) + format_flag(250)
+    # add end flags
+    uplink += format_flag(250) + format_flag(250)
+    print(uplink)
     return send_uplink(imei, uplink)
 
 def send_uplink(imei: str, data: str) -> str:
