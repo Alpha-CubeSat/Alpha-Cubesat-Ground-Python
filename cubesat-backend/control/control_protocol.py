@@ -96,7 +96,8 @@ def handle_command(imei: str, commands: list) -> str:
     provided in the config file
     """
     print("Processing commands!")
-    uplink = ""
+    # add start flags
+    uplink = format_flag(254) + format_flag(254)
     for command in commands:
         uplink += parse_command(command)
 
