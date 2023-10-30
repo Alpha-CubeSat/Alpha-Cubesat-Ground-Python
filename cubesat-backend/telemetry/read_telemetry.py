@@ -142,7 +142,7 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
     if opcode_val in list(map(int, Opcodes)):
         opcode = Opcodes(opcode_val)
     else:
-        return error_data('Invalid opcode: ' + str(opcode_val))
+        return error_data('Invalid opcode: ' + str(opcode_val) + '\n')
 
     # Extract data from report (strip away opcode [0:2])
     data = rockblock_report['data'][2:]
