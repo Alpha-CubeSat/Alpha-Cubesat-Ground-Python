@@ -53,29 +53,29 @@ def rockblock_telemetry(report):
     return '', 200  # Successful downlink code
 
 
-@cubesat.get('/img/recent')
+@cubesat.get('/img/<imei>/recent')
 @authenticate(token_auth)
 @arguments(ImageCountSchema)
 @response(ImageNameSchema)
 @other_responses({401: 'Invalid access token'})
-def get_recent_imgs(args):
+def get_recent_imgs(args, imei):
     """
     Get Recent Images
     Returns a list of names of all the fully downlinked image files received by the ground station.
     """
-    return {'images': image_database.get_recent_images(args['count'])}
+    return {'images': image_database.get_recent_images(imei, args['count'])}
 
 
-@cubesat.get('/img/<name>')
+@cubesat.get('/img/<imei>/<name>')
 @authenticate(token_auth)
 @response(ImageDataSchema)
 @other_responses({401: 'Invalid access token'})
-def get_image(name: 'Name of the image'):
+def get_image(imei, name: 'Name of the image'):
     """
     Get Image By Name
     Returns the image file with the given name if it exists.
     """
-    return image_database.get_image_data(name)
+    return image_database.get_image_data(imei, name)
 
 
 @cubesat.post('/command')
@@ -122,7 +122,7 @@ def get_sfr_opcodes():
 @authenticate(token_auth)
 @response(CommandResponseSchema(many=True))
 @other_responses({401: 'Invalid access token'})
-def get_command_history(imei=config.rockblock_imei):
+def get_command_history(imei):
     """
     Get Command History
     Get all previously sent commands to the CubeSat via the RockBlock portal.
@@ -142,7 +142,7 @@ def get_command_history(imei=config.rockblock_imei):
 @cubesat.get('/processed_commands/<imei>')
 @authenticate(token_auth)
 @other_responses({401: 'Invalid access token'})
-def get_processed_commands(imei = config.rockblock_imei):
+def get_processed_commands(imei):
     """
     Get Processed Commands
     Get previously sent commands to the CubeSat via the Rockblock portal
@@ -150,10 +150,9 @@ def get_processed_commands(imei = config.rockblock_imei):
     retrives command logs in normal reports that have timestamps after the 
     timestamp of the first command sent. 
     """
-    path = str(imei) + ".txt"
 
     epoch = 0
-    with open(path) as file:
+    with open(str(imei) + ".txt") as file:
         first_line = file.readline()
         if first_line:
             first_entry = json.loads(first_line.strip())

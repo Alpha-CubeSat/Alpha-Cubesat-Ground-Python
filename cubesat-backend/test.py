@@ -79,7 +79,7 @@ image_fragments = [a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a
                    a34, a35, a36, a37, a38, a39, a40, a41, a42, a43, a44, a45, a46, a47, a48, a49,
                    a50, a51, a52, a53, a54, a55, a56]
 
-metadata = {'transmit_time': '2019-10-16T11:12:00Z', 'imei': 300234064326340,
+metadata = {'transmit_time': '2019-10-16T11:12:00Z', 'imei': 300534061570670,
             'JWT': 'eyJhbGciOiJSUzI1NiJ9.eyJpc3MiOiJSb2NrIDciLCJpYXQiOjE2OTUzMDk2ODIsImRhdGEiOiI2MzFmZmYwMDAwMDAwMDAwMDAwMDAwMDAwMDAwODEwMGU1OGM4YzhjZjFmMWYxNjU2NTJhYmJiYTAwMDAwMDAwMDAwMDAwMDAwZDMwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwMDAwIiwiZGV2aWNlX3R5cGUiOiJST0NLQkxPQ0siLCJpbWVpIjoiMzAwMjM0MDY0MzI2MzQwIiwiaXJpZGl1bV9jZXAiOiI3LjAiLCJpcmlkaXVtX2xhdGl0dWRlIjoiNDIuNDI4MiIsImlyaWRpdW1fbG9uZ2l0dWRlIjoiLTc2LjUwNjIiLCJpcmlkaXVtX3Nlc3Npb25fc3RhdHVzIjoiMCIsIm1vbXNuIjoiMTAzIiwic2VyaWFsIjoiMTA1OTgiLCJ0cmFuc21pdF90aW1lIjoiMjMtMDktMjEgMTU6MjE6MjAifQ.dhUHeYSyXHqPVao7VwHpiTbduLISXGCfRuyNFtS19QtKBu_PTtavf7hfOcg7BK-pO55_zeabOqltT-5cpQIvETXCf_rczU-1xARhugN-k9Ya6XWfajGUNKgzJ7WgbR2SNgtOv1FjT_nANoawNE18WmIywNwx_DR-Ui6WtCX8J9idp1wUtP7Tl9N6fq9-nHDicW2sUXhQbZwNDpsm534abI7SbdpuIWxnhaL-kBq4brNFRtm1mSC3046F_KmmHnNMGL8ND4uq8HcK2DKiCkmUUq-zvaGpYpHoYTUHBXiqJbb_acmbpn1iO3FnRgqncgf4hMm8oMJLMJn4gYw2I12qgA',
             'iridium_longitude': -76.5062,
             'iridium_latitude': 42.4282, 'iridium_cep': 7.0,
@@ -87,13 +87,13 @@ metadata = {'transmit_time': '2019-10-16T11:12:00Z', 'imei': 300234064326340,
             }
 
 # normal report
-for normal_report in normal_reports:
-    handle_report({**metadata, 'data': normal_report})
+# for normal_report in normal_reports:
+#     handle_report({**metadata, 'data': normal_report})
 
 # imu reports
 # for fragment in imu_fragments:
 #     handle_report({**metadata, 'data': fragment})
 
 # image fragment reports
-# for fragment in image_fragments:
-    # handle_report({**metadata, 'data': fragment})
+for fragment in image_fragments:
+    handle_report({**metadata, 'data': fragment})
