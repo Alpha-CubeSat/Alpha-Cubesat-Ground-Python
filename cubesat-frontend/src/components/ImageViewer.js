@@ -3,28 +3,32 @@ import { useEffect, useState } from "react";
 import ListGroup from "react-bootstrap/ListGroup";
 import Image from "react-bootstrap/Image";
 import { useApi } from "../contexts/ApiProvider";
+import { useDashboard } from "../contexts/DashboardProvider";
 
 // ImageViewer
 // Allows user to view the latest images from the CubeSat
 export default function ImageViewer() {
+  const { imei } = useDashboard();
   const [imageData, setImageData] = useState();
   const [imageList, setImageList] = useState();
   const api = useApi();
 
   useEffect(() => {
+    setImageList();
+    setImageData();
     (async () => {
       // fetches last 5 images by default
-      const response = await api.get("/cubesat/img/recent");
+      const response = await api.get(`/cubesat/img/${imei}/recent`);
       if (response.status === 200) {
         setImageList(response.data["images"]);
       } else {
         setImageList([]);
       }
     })();
-  }, [api]);
+  }, [api, imei]);
 
   const handleImageSelection = async (file) => {
-    const response = await api.get("/cubesat/img/" + file);
+    const response = await api.get(`/cubesat/img/${imei}/${file}`);
     if (response.status === 200) {
       setImageData(response.data);
     }

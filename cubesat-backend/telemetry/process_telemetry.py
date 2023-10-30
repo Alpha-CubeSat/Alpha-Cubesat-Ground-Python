@@ -114,8 +114,8 @@ def process_save_camera_data(data: dict):
 
     :param data: image fragment report
     """
-    image_database.save_fragment(data['serial_number'], data['fragment_number'], data['fragment_data'])
-    image_database.try_save_image(data['serial_number'], data['max_fragments'])
+    image_database.save_fragment(data['imei'], data['serial_number'], data['fragment_number'], data['fragment_data'])
+    image_database.try_save_image(data['imei'], data['serial_number'], data['max_fragments'])
     elastic.index(image_db_index,
                   {**report_metadata(data), **image_database.img_fragment_downlink_info})
 
