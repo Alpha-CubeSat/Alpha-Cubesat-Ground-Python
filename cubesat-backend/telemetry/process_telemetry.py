@@ -161,7 +161,7 @@ def handle_report(rockblock_report: dict):
             # update report to indicate error occurred during processing
             rockblock_report.update(error_data(traceback.format_exc()))
     else:
-        rockblock_report.update(error_data('Rockblock report has not "data" attribute'))
+        rockblock_report.update(error_data('Rockblock report has not "data" attribute\n'))
 
     # store rockblock report along with opcode and error message (if error occurred)
     elastic.index(rockblock_db_index, rockblock_report)
