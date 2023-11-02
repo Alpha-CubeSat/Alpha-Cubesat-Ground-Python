@@ -105,7 +105,7 @@ def read_img_hex_fragment(data: str) -> dict:
     fragment_number = int(data[8:10], 16)
     end_marker_present = data.count('ffd9') != 0
     max_fragments = fragment_number if end_marker_present else -1
-    fragment_data = data[10:] if not end_marker_present else data[10:data.index('ffd9')]
+    fragment_data = data[10:] if not end_marker_present else data[10:data.index('ffd9')+4]
     return {
         'serial_number': int(data[0:2], 16),
         'fragment_number': fragment_number,
