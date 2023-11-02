@@ -3,7 +3,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { useDashboard } from "../contexts/DashboardProvider";
 import { useApi } from "../contexts/ApiProvider";
-import { EepromReset, SfrOverride } from "./CommandForms";
+import { EepromReset, SfrOverride, Fault } from "./CommandForms";
 
 // Allowed opcodes
 export const OpCodes = Object.freeze({
@@ -12,6 +12,7 @@ export const OpCodes = Object.freeze({
   Arm: "Arm",
   Fire: "Fire",
   EEPROM_Reset: "EEPROM_Reset",
+  Fault: "Fault"
 });
 
 export const opcodeDesc = {
@@ -20,6 +21,7 @@ export const opcodeDesc = {
   Arm: "Move the CubeSat into the Armed phase.",
   Fire: "Move the CubeSat into the In Sun phase.",
   EEPROM_Reset: "Reset the EEPROM metadata with the provided values.",
+  Fault: "Force, suppress, or restore the selected fault"
 };
 
 // Command Selector
@@ -91,6 +93,15 @@ export default function CommandSelector() {
       setCurrentForm(<EepromReset ref={formRef} />);
     } else if (isDeploymentOpcode(opcode)) {
       setCurrentForm(<div></div>);
+    }
+    else if (opcode === OpCodes.Fault) {
+      setCurrentForm(
+        <Fault
+          Fault_Data={allCommandMetadata["Faults"]}
+          setTitle={setTitle}
+          ref={formRef}
+        />
+      )
     }
 
     setTitle(opcode !== OpCodes.SFR_Override ? opcode : "No command selected");
