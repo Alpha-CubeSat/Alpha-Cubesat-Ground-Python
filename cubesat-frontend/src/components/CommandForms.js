@@ -389,7 +389,7 @@ export const Fault = forwardRef(({ Fault_Data, setTitle }, ref) => {
         </Col>
         {/* Fault field dropdown selection */}
         <Col>
-          <span style={{ fontWeight: "bold" }}>Field</span>
+          <span style={{ fontWeight: "bold" }}>Fault</span>
           <Typeahead
             id="field-dropdown"
             labelKey="field"
