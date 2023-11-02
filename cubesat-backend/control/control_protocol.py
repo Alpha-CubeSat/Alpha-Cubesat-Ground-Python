@@ -56,6 +56,20 @@ def format_eeprom_args(args : dict) -> (int, int):
     arg2 = ''.join(format_single_arg(part, length) for part, length in arg2_parts)
     return arg1, arg2
 
+def format_fault_args(args : str) -> (int, int):
+    """
+    Helper function that translates the fault argument "Restore", "Force", or 
+    "Suppress" into the format expected by the flight code.
+    """
+    zero = format_single_arg(0, ARG_LENGTH)
+    one = format_single_arg(1, ARG_LENGTH)
+    if args == "Force":
+        return one, zero
+    elif args == "Suppress":
+        return zero, one
+    elif args == "Restore":
+        return zero, zero
+
 def format_flag(n: int) -> str:
     """
     Helper function that translates the decimal number n into an all uppercase
@@ -74,18 +88,24 @@ def parse_command(command: dict) -> str:
     """
     selected_opcode = command['opcode']
     if selected_opcode == 'SFR_Override':
-        namespace = command['namespace']
-        field = command['field']
-        value = command['value']
-        arg1, arg2 = format_sfr_args(value)
+        namespace, field = command['namespace'], command['field']
+        arg1, arg2 = format_sfr_args(command['value'])
         opcode = SFR_OVERRIDE_OPCODES_MAP[namespace][field]['hex']
+
     elif selected_opcode == 'EEPROM_Reset':
         arg1, arg2 = format_eeprom_args(command["value"])
         opcode = EEPROM_RESET_OPCODE
+
+    elif selected_opcode == 'Fault':
+        namespace, field = command['namespace'], command['field']
+        arg1, arg2 = format_fault_args(command["value"])
+        opcode = FAULT_OPCODE_MAP[namespace][field]['hex']
+
     else:
         opcode = BURNWIRE_OPCODES[selected_opcode]
         arg1 = format_single_arg(0, ARG_LENGTH)
         arg2 = format_single_arg(0, ARG_LENGTH)
+
     print(opcode + arg1 + arg2)
     return opcode + arg1 + arg2
 
