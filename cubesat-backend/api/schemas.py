@@ -42,6 +42,13 @@ class CommandResponseSchema(ma.Schema):
     commands = ma.Nested(CommandSchema(many=True), required=True)
     message = ma.Str(required=True)
 
+class DownlinkHistorySchema(ma.Schema):
+    imei = ma.Str()
+    telemetry_report_type = ma.Int()
+    transmit_time = ma.Str()
+    error = ma.Str()
+    normal_report_id = ma.Str()
+
 class TokenResponseSchema(ma.Schema):
     access_token = ma.Str(required=True)
 
