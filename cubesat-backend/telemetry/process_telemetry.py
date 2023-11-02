@@ -157,7 +157,7 @@ def handle_report(rockblock_report: dict):
             elif operation == Opcodes.camera_report:
                 process_save_camera_data(result)
         except Exception as e:
-            print(e)
+            print(traceback.format_exc())
             # update report to indicate error occurred during processing
             rockblock_report.update(error_data(traceback.format_exc()))
     else:
