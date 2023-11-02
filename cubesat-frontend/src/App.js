@@ -13,7 +13,14 @@ import PrivateRoute from "./components/PrivateRoute";
 export default function App() {
   return (
     <BrowserRouter>
-      <ToastContainer />
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar
+        closeOnClick
+        pauseOnFocusLoss={false}
+        theme="light"
+      />
       <ApiProvider>
         <UserProvider>
           <Routes>
