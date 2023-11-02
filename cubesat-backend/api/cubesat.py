@@ -101,7 +101,7 @@ def uplink_command(uplink):
     }
 
     # log commands
-    with open(str(uplink['imei']) + ".txt", 'a') as f:
+    with open(f"{config.cmd_log_root_dir}/{uplink['imei']}.txt", 'a') as f:
         f.write(json.dumps(api_response) + '\n')
 
     return api_response
@@ -131,9 +131,9 @@ def get_command_history(imei):
     """
     
     history = []
-    if not exists(str(imei) + ".txt"):
+    if not exists(f"{config.cmd_log_root_dir}/{imei}.txt"):
             return []
-    with open(str(imei) + ".txt") as f:
+    with open(f"{config.cmd_log_root_dir}/{imei}.txt") as f:
             for entry in f.readlines():
                 history.append(json.loads(entry[:-1]))
 
@@ -153,7 +153,7 @@ def get_processed_commands(imei):
     """
 
     epoch = 0
-    with open(str(imei) + ".txt") as file:
+    with open(f"{config.cmd_log_root_dir}/{imei}.txt") as file:
         first_line = file.readline()
         if first_line:
             first_entry = json.loads(first_line.strip())

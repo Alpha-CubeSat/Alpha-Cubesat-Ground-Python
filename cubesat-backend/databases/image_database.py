@@ -34,15 +34,6 @@ def save_fragment(imei: int, image_sn: int, fragment_number: int, fragment_data:
     img_fragment_downlink_info['missing_fragments'] = []
 
 
-def sort_files(files: list) -> list:
-    """
-    Sorts fragment files by name, stripping the extensions.
-    They are numerically named, but '2.csfrag' comes before '10.csfrag'
-    :param files: list of all image fragment files
-    """
-    return sorted(files, key=lambda x: os.path.basename(x).split('.')[0])
-
-
 def generate_missing_fragments(frag_list: list):
     """
     Finds the missing fragments and the highest fragment received for an image.
@@ -81,7 +72,9 @@ def try_save_image(imei: int, image_sn: int, total_fragments: int):
     """
     # Get all currently received fragments
     fragment_map = {}  # maps fragment file path to fragment #
-    for file in sort_files(get_saved_fragments(imei, image_sn)):
+    sorted_frag_files = sorted(get_saved_fragments(imei, image_sn),
+                               key=lambda x: int(os.path.basename(x).split('.')[0]))
+    for file in sorted_frag_files:
         fragment_map[int(os.path.splitext(os.path.basename(file))[0])] = file
 
     # Update fragment status dictionary
@@ -114,7 +107,9 @@ def get_recent_images(imei: str, n: int) -> list:
     """
     if not exists(f'{cfg.image_root_dir}/{imei}'):
         return []
-    return sort_files(os.listdir(f'{cfg.image_root_dir}/{imei}/img'))[:n]
+
+    return sorted(os.listdir(f'{cfg.image_root_dir}/{imei}/img'),
+                  key=lambda x: os.path.basename(x))[:n]
 
 
 def get_image_data(imei: str, image_file_name: str) -> dict:
@@ -124,11 +119,13 @@ def get_image_data(imei: str, image_file_name: str) -> dict:
     """
     image_path = f'{cfg.image_root_dir}/{imei}/img/{image_file_name}'
     with open(image_path, 'rb') as image:
-        bin_img = bytearray(image.read())
+        img_hex = bytearray(image.read()).hex()
+    # add end flag for partially downlinked images (needed to display image on frontend)
+    if img_hex.count('ffd9') == 0: img_hex += 'ffd9'
     return {
         'name': os.path.basename(image_path),
         'timestamp': os.path.getmtime(image_path),
-        'base64': base64.b64encode(bin_img)
+        'base64': base64.b64encode(bytearray.fromhex(img_hex))
     }
 
 def replace_image_fragment(imei: str, image_file_name: str, fragment_number: int, fragment_data: str):

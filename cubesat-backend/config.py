@@ -18,6 +18,7 @@ deploy_db_index = 'cubesat_deploy_report'
 image_db_index = 'image_fragment_info'
 
 image_root_dir = os.path.join(basedir, 'cubesat_images')
+cmd_log_root_dir = os.path.join(basedir, 'command_logs')
 users_db = os.path.join(basedir, 'users.db')
 
 gs_admin_password = os.environ.get('GS_ADMIN_PASS', 'admin')
