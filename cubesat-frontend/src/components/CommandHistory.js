@@ -33,16 +33,6 @@ export default function CommandHistory() {
   //   return true;
   // }
 
-  const checkCommandHistory = useCallback(async () => {
-    // automatically fetch previous command history (without processed)
-    console.log("fetching command history");
-    await api
-      .get("/cubesat/command_history/" + imei)
-      .then((response) =>
-        setCommandLog(response.status === 200 ? response.data : [])
-      );
-  }, [api, imei, setCommandLog]);
-
   const checkProcessed = useCallback(async () => {
     console.log("fetching processed opcodes");
     await api.get("/cubesat/processed_commands/" + imei).then((response) => {
@@ -84,7 +74,6 @@ export default function CommandHistory() {
   useEffect(() => {
     // Poll every 5000 milliseconds (5 seconds)
     const interval = setInterval(() => {
-      checkCommandHistory();
       //checkProcessed();
     }, 5000);
 
@@ -92,7 +81,7 @@ export default function CommandHistory() {
     return () => {
       clearInterval(interval);
     };
-  }, [checkProcessed, checkCommandHistory]);
+  }, [checkProcessed]);
 
   return (
     <>
