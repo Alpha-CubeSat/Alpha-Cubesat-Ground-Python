@@ -10,7 +10,7 @@ from flask import Blueprint
 import config
 from api.auth import token_auth
 from api.schemas import ImageNameSchema, ImageCountSchema, ImageDataSchema, \
-    CommandResponseSchema, RockblockReportSchema, CommandUplinkSchema
+    CommandResponseSchema, RockblockReportSchema, CommandUplinkSchema, DownlinkHistorySchema
 from control import control_protocol
 from control.control_constants import SFR_OVERRIDE_OPCODES_MAP, FAULT_OPCODE_MAP
 from databases import image_database, elastic
@@ -57,7 +57,6 @@ def rockblock_telemetry(report):
 @authenticate(token_auth)
 @arguments(ImageCountSchema)
 @response(ImageNameSchema)
-@other_responses({401: 'Invalid access token'})
 def get_recent_imgs(args, imei):
     """
     Get Recent Images
@@ -69,20 +68,22 @@ def get_recent_imgs(args, imei):
 @cubesat.get('/img/<imei>/<name>')
 @authenticate(token_auth)
 @response(ImageDataSchema)
-@other_responses({401: 'Invalid access token'})
+@other_responses({400: 'Image does not exist'})
 def get_image(imei, name: 'Name of the image'):
     """
     Get Image By Name
     Returns the image file with the given name if it exists.
     """
-    return image_database.get_image_data(imei, name)
+    try:
+        return image_database.get_image_data(imei, name)
+    except FileNotFoundError:
+        return '', 400
 
 
 @cubesat.post('/command')
 @authenticate(token_auth)
 @body(CommandUplinkSchema)
 @response(CommandResponseSchema)
-@other_responses({401: 'Invalid access token'})
 def uplink_command(uplink):
     """
     Uplink Command
@@ -98,6 +99,7 @@ def uplink_command(uplink):
         'commands': uplink['commands'],
         'message': uplink_response
     }
+
     # log commands
     with open(str(uplink['imei']) + ".txt", 'a') as f:
         f.write(json.dumps(api_response) + '\n')
@@ -107,10 +109,10 @@ def uplink_command(uplink):
 
 @cubesat.get('/command_data')
 @authenticate(token_auth)
-def get_sfr_opcodes():
+def get_command_meta():
     """
-    Get SFR Opcodes Data
-    Get list of all SFR namespaces and fields along with their metadata
+    Get Command Metadata
+    Get list of all SFR and Fault namespaces and fields along with their metadata
     such as their type, minimum value, or maximum value.
     """
     return {
@@ -122,7 +124,6 @@ def get_sfr_opcodes():
 @cubesat.get('/command_history/<imei>')
 @authenticate(token_auth)
 @response(CommandResponseSchema(many=True))
-@other_responses({401: 'Invalid access token'})
 def get_command_history(imei):
     """
     Get Command History
@@ -142,13 +143,12 @@ def get_command_history(imei):
 
 @cubesat.get('/processed_commands/<imei>')
 @authenticate(token_auth)
-@other_responses({401: 'Invalid access token'})
 def get_processed_commands(imei):
     """
     Get Processed Commands
     Get previously sent commands to the CubeSat via the Rockblock portal
     that have been confirmed in the command log of the normal report. Only 
-    retrives command logs in normal reports that have timestamps after the 
+    retrieves command logs in normal reports that have timestamps after the
     timestamp of the first command sent. 
     """
 
@@ -183,7 +183,7 @@ def get_processed_commands(imei):
 
 @cubesat.get('/downlink_history')
 @authenticate(token_auth)
-@other_responses({401: 'Invalid access token'})
+@response(DownlinkHistorySchema(many=True))
 def get_downlink_history():
     """
     Get Downlink History
