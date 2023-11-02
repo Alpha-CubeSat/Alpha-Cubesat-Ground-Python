@@ -312,6 +312,131 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
   );
 });
 
+export const Fault = forwardRef(({ Fault_Data, setTitle }, ref) => {
+  // Selected dropdown values
+  const [selectedNamespace, setNamespace] = useState("None");
+  const [selectedFault, setFault] = useState("None");
+
+  // Fault list
+  const [faultList, setFaultList] = useState([]);
+
+  const [activeCheckbox, setActiveCheckbox] = useState(null);
+
+  const namespaceDropRef = useRef();
+  const fieldDropRef = useRef();
+
+  // Updates dropdown menus based on selected Fault namespace
+  const handleNamespaceSelect = (namespace) => {
+    setNamespace(namespace);
+    if (namespace in Fault_Data) {
+      setFaultList(Object.keys(Fault_Data[namespace]));
+    } else {
+      setFaultList([]);
+    }
+    resetFieldState();
+    setTitle("No command selected");
+  };
+
+  // Updates input field based on selected SFR field
+  const handleFieldSelect = (field) => {
+    if (field in Fault_Data[selectedNamespace]) {
+      setFault(field);
+      setTitle("fault_groups::" + selectedNamespace + "::" + field);
+    }
+  };
+
+  // reset states relating to the currently selected Fault field only
+  const resetFieldState = () => {
+    setFault("None");
+    fieldDropRef.current.clear();
+  };
+
+  // Update the command argument dictionary when a form element is changed
+  const handleCheckboxChange = (name) => {
+    setActiveCheckbox(name);
+  };
+
+  // useImperativeHandle allows the CommandSelector component to call the handleSubmit() function,
+  // which checks if the command fields are valid and returns the command if so
+  useImperativeHandle(ref, () => ({
+    handleSubmit() {
+      if (selectedNamespace === "None" || selectedFault === "None") return;
+      // send to CommandSelector component
+      return {
+        namespace: selectedNamespace[0],
+        field: selectedFault[0],
+        value: activeCheckbox,
+      };
+    },
+  }));
+  return (
+    <div>
+      <Row>
+        {/* Namespace dropdown selection */}
+        <Col>
+          <span style={{ fontWeight: "bold" }}>Namespace</span>
+          <Typeahead
+            id="namespace-dropdown"
+            labelKey="namespace"
+            options={Object.keys(Fault_Data)}
+            placeholder="Select"
+            ref={namespaceDropRef}
+            onChange={(selected) => handleNamespaceSelect(selected)}
+            onInputChange={(selected) => handleNamespaceSelect(selected)}
+            renderMenuItemChildren={(option) => <>{option}</>}
+          />
+        </Col>
+        {/* Fault field dropdown selection */}
+        <Col>
+          <span style={{ fontWeight: "bold" }}>Field</span>
+          <Typeahead
+            id="field-dropdown"
+            labelKey="field"
+            options={faultList}
+            ref={fieldDropRef}
+            disabled={!(selectedNamespace in Fault_Data)}
+            placeholder="Select"
+            onChange={(select) => handleFieldSelect(select)}
+            onInputChange={(select) => handleFieldSelect(select)}
+            renderMenuItemChildren={(option) => <>{option}</>}
+          />
+        </Col>
+      </Row>
+      {selectedFault !== "None" && (
+        <div className="mt-3">
+          {/* Checkbox for setRestore */}
+          <Form.Check
+            name="Restore"
+            type="checkbox"
+            label="Restore"
+            onChange={() => handleCheckboxChange('Restore')}
+            checked={activeCheckbox === 'Restore'}
+            className="mb-3"
+          />
+          {/* Checkbox for setForce */}
+          <Form.Check
+            name="Force"
+            type="checkbox"
+            label="Force"
+            onChange={() => handleCheckboxChange('Force')}
+            checked={activeCheckbox === 'Force'}
+            className="mb-3"
+          />
+          {/* Checkbox for setSuppress */}
+          <Form.Check
+            name="Suppress"
+            type="checkbox"
+            label="Suppress"
+            onChange={() => handleCheckboxChange('Suppress')}
+            checked={activeCheckbox === 'Suppress'}
+            className="mb-3"
+          />
+        </div>
+      )}
+    </div>
+  )
+})
+
 export const EepromReset = forwardRef(({ }, ref) => {
   const [inputError, setInputError] = useState();
   const [eepromFields, setEepromFields] = useState({

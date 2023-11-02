@@ -12,7 +12,7 @@ from api.auth import token_auth
 from api.schemas import ImageNameSchema, ImageCountSchema, ImageDataSchema, \
     CommandResponseSchema, RockblockReportSchema, CommandUplinkSchema
 from control import control_protocol
-from control.control_constants import SFR_OVERRIDE_OPCODES_MAP
+from control.control_constants import SFR_OVERRIDE_OPCODES_MAP, FAULT_OPCODE_MAP
 from databases import image_database, elastic
 from telemetry import process_telemetry
 from telemetry.telemetry_constants import ROCKBLOCK_PK
@@ -114,7 +114,8 @@ def get_sfr_opcodes():
     such as their type, minimum value, or maximum value.
     """
     return {
-        "SFR_Override": SFR_OVERRIDE_OPCODES_MAP
+        "SFR_Override": SFR_OVERRIDE_OPCODES_MAP,
+        "Faults": FAULT_OPCODE_MAP
     }
 
 
@@ -170,9 +171,14 @@ def get_processed_commands(imei):
         }
     }
     res = elastic.get_es_data(config.cubesat_db_index, ['imei', 'command_log'], query=query)
-    # print(res)
-    # return list(map(lambda x: x["command_log"], res))
-    return []
+    print(res)
+    logs = []
+    for entry in res:
+        if entry['imei'] == int(imei):
+            logs.append(entry['command_log'])
+    print(logs)
+    return logs
+
 
 
 @cubesat.get('/downlink_history')

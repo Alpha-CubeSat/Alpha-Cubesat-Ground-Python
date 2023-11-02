@@ -480,6 +480,72 @@ SFR_OVERRIDE_OPCODES_MAP = {
     },
 }
 
+FAULT_OPCODE_MAP = {
+    'imu_faults' : {
+        'mag_x_value': {
+            'hex': '6000'
+        },
+        'mag_x_average': {
+            'hex': '6001'
+        },
+        'mag_y_value': {
+            'hex': '6002'
+        },
+        'mag_y_average': {
+            'hex': '6003'
+        },
+        'mag_z_value': {
+            'hex': '6004'
+        },
+        'mag_z_average': {
+            'hex': '6005'
+        },
+        'gyro_x_value': {
+            'hex': '6006'
+        },
+        'gyro_x_average': {
+            'hex': '6007'
+        },
+        'gyro_y_value': {
+            'hex': '6008'
+        },
+        'gyro_y_average': {
+            'hex': '6009'
+        },
+        'gyro_z_value': {
+            'hex': '6010'
+        },
+        'gyro_z_average': {
+            'hex': '6011'
+        }},
+    'power_faults': {
+        'temp_c_value': {
+            'hex': '6020'    
+        },
+        'temp_c_average': {
+            'hex': '6021'    
+        },
+        'solar_current_average': {
+            'hex': '6022'    
+        },
+        'voltage_value': {
+            'hex': '6023'    
+        },
+        'voltage_average': {
+            'hex': '6024'    
+        }
+    },
+    'hardware_faults': {
+        'light_val': {
+            'hex': '6030'
+        },
+        'button': {
+            'hex': '6031'
+        }
+    }
+}
+
+
 COMMAND_OPCODE_MAP = {}
 COMMAND_OPCODE_MAP[EEPROM_RESET_OPCODE] = 'EEROM Reset'
 for (k, v) in BURNWIRE_OPCODES.items():
@@ -489,3 +555,9 @@ for namespace in SFR_OVERRIDE_OPCODES_MAP:
     for field in SFR_OVERRIDE_OPCODES_MAP[namespace]:
         hex_val = SFR_OVERRIDE_OPCODES_MAP[namespace][field]['hex']
         COMMAND_OPCODE_MAP[hex_val] = namespace + '::' + field
+
+for fault_group in FAULT_OPCODE_MAP:
+    for field in FAULT_OPCODE_MAP[fault_group]:
+        hex_val = FAULT_OPCODE_MAP[fault_group][field]['hex']
+        COMMAND_OPCODE_MAP[hex_val] = fault_group + '::' + field
+
