@@ -4,6 +4,7 @@ import ConfirmModal from "./ConfirmModal";
 import { useState } from "react";
 import { useApi } from "../contexts/ApiProvider";
 import { IMEI_MAP } from "../constants";
+import { toast } from "react-toastify";
 
 // Command Actions (component of CommandBuilder)
 // Allows user to send commands and clear current commands.
@@ -38,12 +39,18 @@ export default function CommandActions() {
       commands.push(rest);
     }
 
-    // TODO: show spinner while commands are being sent
-    const response = await api.post("/cubesat/command", {
-      imei: imei,
-      commands: commands,
-    });
-    console.log(response.data);
+    // send commands to API and show corresponding toast message
+    const response = await toast.promise(
+      api.post("/cubesat/command", {
+        imei: imei,
+        commands: commands,
+      }),
+      {
+        pending: "Sending commands...",
+        success: "Commands Sent Successfully!",
+        error: "Error Sending Commands.",
+      }
+    );
 
     // update command log
     setCommandLog([response.data, ...commandLog]);
