@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useApi } from "./ApiProvider";
 import { IMEI_MAP } from "../constants";
 
@@ -9,6 +9,9 @@ const DashboardContext = createContext();
 export default function DashboardProvider({ children }) {
   const api = useApi();
 
+  // rockblock imei to send commands to
+  const [imei, setImei] = useState(Object.keys(IMEI_MAP)[0]);
+
   // current list of commands to send
   const [commandStack, setCommandStack] = useState([]);
 
@@ -18,11 +21,18 @@ export default function DashboardProvider({ children }) {
   // notify command log of API response when user sends command
   const [commandLog, setCommandLog] = useState(undefined);
 
+  // automatically fetch previous command history when ground station is first loaded
+  useEffect(() => {
+    setCommandLog(undefined);
+    api
+      .get("/cubesat/command_history/" + imei)
+      .then((response) =>
+        setCommandLog(response.status === 200 ? response.data : [])
+      );
+  }, [api, imei]);
+
   // ensure commands have unique keys
   const [count, setCount] = useState(0);
-
-  // cubesat imei to send commands to
-  const [imei, setImei] = useState(Object.keys(IMEI_MAP)[0]);
 
   return (
     <DashboardContext.Provider
