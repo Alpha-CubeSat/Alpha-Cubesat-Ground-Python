@@ -320,7 +320,8 @@ export const Fault = forwardRef(({ Fault_Data, setTitle }, ref) => {
   // Fault list
   const [faultList, setFaultList] = useState([]);
 
-  const [activeCheckbox, setActiveCheckbox] = useState(null);
+  // Selected value
+  const [activeCheckbox, setActiveCheckbox] = useState("Force");
 
   const namespaceDropRef = useRef();
   const fieldDropRef = useRef();
@@ -388,7 +389,7 @@ export const Fault = forwardRef(({ Fault_Data, setTitle }, ref) => {
         </Col>
         {/* Fault field dropdown selection */}
         <Col>
-          <span style={{ fontWeight: "bold" }}>Field</span>
+          <span style={{ fontWeight: "bold" }}>Fault</span>
           <Typeahead
             id="field-dropdown"
             labelKey="field"
@@ -404,16 +405,7 @@ export const Fault = forwardRef(({ Fault_Data, setTitle }, ref) => {
       </Row>
       {selectedFault !== "None" && (
         <div className="mt-3">
-          {/* Checkbox for setRestore */}
-          <Form.Check
-            name="Restore"
-            type="checkbox"
-            label="Restore"
-            onChange={() => handleCheckboxChange('Restore')}
-            checked={activeCheckbox === 'Restore'}
-            className="mb-3"
-          />
-          {/* Checkbox for setForce */}
+          {/* Checkbox for Force */}
           <Form.Check
             name="Force"
             type="checkbox"
@@ -429,6 +421,15 @@ export const Fault = forwardRef(({ Fault_Data, setTitle }, ref) => {
             label="Suppress"
             onChange={() => handleCheckboxChange('Suppress')}
             checked={activeCheckbox === 'Suppress'}
+            className="mb-3"
+          />
+          {/* Checkbox for Restore */}
+          <Form.Check
+            name="Restore"
+            type="checkbox"
+            label="Restore"
+            onChange={() => handleCheckboxChange('Restore')}
+            checked={activeCheckbox === 'Restore'}
             className="mb-3"
           />
         </div>
