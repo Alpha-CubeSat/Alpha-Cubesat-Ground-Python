@@ -63,7 +63,7 @@ export default function LogRow({ entry }) {
                       "::" +
                       command.field +
                       "=" +
-                      command.value}
+                      command.value.value}
                   </div>
                 )}
               </Overlay>
