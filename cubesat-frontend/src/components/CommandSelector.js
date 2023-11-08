@@ -21,7 +21,7 @@ export const opcodeDesc = {
   Arm: "Move the CubeSat into the Armed phase.",
   Fire: "Move the CubeSat into the In Sun phase.",
   EEPROM_Reset: "Reset the EEPROM metadata with the provided values.",
-  Fault: "Force, suppress, or restore the selected fault"
+  Fault: "Force, suppress, or restore the selected fault."
 };
 
 // Command Selector
