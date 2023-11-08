@@ -36,7 +36,7 @@ export default function LogRow({ entry }) {
                 {command.opcode}
               </p>
               <Overlay
-                target={targets.current[i].current}
+                target={targets.current[i]}
                 show={show[i]}
                 placement="right"
               >
