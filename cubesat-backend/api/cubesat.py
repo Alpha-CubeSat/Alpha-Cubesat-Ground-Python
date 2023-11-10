@@ -132,10 +132,10 @@ def get_command_history(imei):
     
     history = []
     if not exists(f"{config.cmd_log_root_dir}/{imei}.txt"):
-            return []
+        return []
     with open(f"{config.cmd_log_root_dir}/{imei}.txt") as f:
-            for entry in f.readlines():
-                history.append(json.loads(entry[:-1]))
+        for entry in f.readlines():
+            history.append(json.loads(entry[:-1]))
 
     history.reverse()
     return history

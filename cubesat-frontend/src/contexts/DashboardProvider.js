@@ -9,8 +9,12 @@ const DashboardContext = createContext();
 export default function DashboardProvider({ children }) {
   const api = useApi();
 
-  // rockblock imei to send commands to
-  const [imei, setImei] = useState(Object.keys(IMEI_MAP)[0]);
+  // rockblock imei to send commands to (used last value from local storage if it exists)
+  const [imei, setImei] = useState(
+    localStorage.getItem("IMEI")
+      ? localStorage.getItem("IMEI")
+      : Object.keys(IMEI_MAP)[0]
+  );
 
   // current list of commands to send
   const [commandStack, setCommandStack] = useState([]);
