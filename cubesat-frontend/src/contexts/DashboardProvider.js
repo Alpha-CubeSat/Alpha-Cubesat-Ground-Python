@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { useApi } from "./ApiProvider";
 import { IMEI_MAP } from "../constants";
+import ConfirmModal from "../components/ConfirmModal";
+import { toast } from "react-toastify";
 
 const DashboardContext = createContext();
 
@@ -25,7 +27,7 @@ export default function DashboardProvider({ children }) {
   // notify command log of API response when user sends command
   const [commandLog, setCommandLog] = useState(undefined);
 
-  // automatically fetch previous command history when ground station is first loaded
+  // automatically fetch previous command history when first loaded or imei updated
   useEffect(() => {
     setCommandLog(undefined);
     api
@@ -37,6 +39,28 @@ export default function DashboardProvider({ children }) {
 
   // ensure commands have unique keys
   const [count, setCount] = useState(0);
+
+  const [reqNotifShow, setReqNotifShow] = useState(false);
+
+  // show notification permission request modal if permission has not been previously granted
+  useEffect(() => {
+    if ("Notification" in window && Notification.permission !== "granted") {
+      setReqNotifShow(true);
+    }
+  }, []);
+
+  const reqNotificationPermission = () => {
+    Notification.requestPermission().then((res) => {
+      console.log("Notifications: " + res);
+      // res will always be denied if user explicitly blocks notifications, in that case
+      // they will have to go into browser settings to manually allow them
+      if (res === "granted") {
+        new Notification("Notifications have been enabled.");
+      } else {
+        toast.error("Notification permission denied.");
+      }
+    });
+  };
 
   return (
     <DashboardContext.Provider
@@ -53,6 +77,15 @@ export default function DashboardProvider({ children }) {
         setImei,
       }}
     >
+      <ConfirmModal
+        heading="Enable Notifications"
+        body={
+          'Click "Continue" to receive notifications when new reports are received.'
+        }
+        show={reqNotifShow}
+        setShow={setReqNotifShow}
+        onConfirm={reqNotificationPermission}
+      />
       {children}
     </DashboardContext.Provider>
   );
