@@ -1,6 +1,6 @@
 import { BsCheckCircleFill, BsXCircleFill } from "react-icons/bs";
 import { Spinner, Table } from "react-bootstrap";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useApi } from "../contexts/ApiProvider";
 import { IMEI_MAP } from "../constants";
 import { FiExternalLink } from "react-icons/fi";
@@ -21,26 +21,34 @@ export default function DownlinkHistory() {
     "-1": "Error",
   };
 
-  const checkHistory = useCallback(async () => {
+  // Fetch downlink history and update periodically (every 10 seconds)
+  useInterval(async () => {
+    console.log("updating history");
+    // remember last history entry before refreshing
+    const beforeHistory = history
+      ? JSON.parse(JSON.stringify(history[0]))
+      : undefined;
+
+    setAutoRefetchLoading(true);
     const response = await api.get("/cubesat/downlink_history");
-    setHistory(response.status === 200 ? response.data : []);
-  }, [api]);
+    const data = response.status === 200 ? response.data : [];
+    setHistory(data);
+    setAutoRefetchLoading(false);
 
-  // Fetch downlink history and update periodically
-  useEffect(() => {
-    // Poll every 10000 milliseconds (10 seconds)
-    const interval = setInterval(async () => {
-      console.log("updating history");
-      setAutoRefetchLoading(true);
-      await checkHistory();
-      setAutoRefetchLoading(false);
-    }, 10000);
-
-    // Cleanup: clear the interval when the component is unmounted or the effect reruns
-    return () => {
-      clearInterval(interval);
-    };
-  }, [checkHistory]);
+    // if not first time and transmit_time of first history entry is different,
+    // send new report notification
+    if (
+      beforeHistory &&
+      beforeHistory["transmit_time"] !== data[0]["transmit_time"]
+    ) {
+      console.log("new report detected");
+      new Notification(
+        `New ${
+          report_types[data[0]["telemetry_report_type"]]
+        } report received from ${IMEI_MAP[data[0]["imei"]]}`
+      );
+    }
+  }, 10000);
 
   return (
     <>
@@ -48,6 +56,7 @@ export default function DownlinkHistory() {
         <Spinner animation="border" />
       ) : (
         <>
+          {/* show message when auto-refreshing history */}
           {autoRefetchLoading && (
             <div className="mb-2">
               <span>Updating...</span>
@@ -110,4 +119,26 @@ export default function DownlinkHistory() {
       )}
     </>
   );
+}
+
+// Allows setInterval() to work with React useState() and useEffect() hooks
+// https://overreacted.io/making-setinterval-declarative-with-react-hooks/
+function useInterval(callback, delay) {
+  const savedCallback = useRef();
+
+  // Remember the latest callback.
+  useEffect(() => {
+    savedCallback.current = callback;
+  }, [callback]);
+
+  // Set up the interval.
+  useEffect(() => {
+    function tick() {
+      savedCallback.current();
+    }
+    if (delay !== null) {
+      let id = setInterval(tick, delay);
+      return () => clearInterval(id);
+    }
+  }, [delay]);
 }
