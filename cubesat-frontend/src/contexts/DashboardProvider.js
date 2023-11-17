@@ -43,11 +43,11 @@ export default function DashboardProvider({ children }) {
   const [reqNotifShow, setReqNotifShow] = useState(false);
 
   // show notification permission request modal if permission has not been previously granted
-  useEffect(() => {
-    if ("Notification" in window && Notification.permission !== "granted") {
-      setReqNotifShow(true);
-    }
-  }, []);
+  // useEffect(() => {
+  //   if ("Notification" in window && Notification.permission !== "granted") {
+  //     setReqNotifShow(true);
+  //   }
+  // }, []);
 
   const reqNotificationPermission = () => {
     Notification.requestPermission().then((res) => {
