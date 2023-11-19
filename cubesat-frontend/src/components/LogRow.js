@@ -63,7 +63,9 @@ export default function LogRow({ entry }) {
                       "::" +
                       command.field +
                       "=" +
-                      command.value.value}
+                      (command.opcode === "SFR_Override"
+                        ? command.value.value
+                        : command.value)}
                   </div>
                 )}
               </Overlay>
