@@ -3,25 +3,32 @@ import Dropdown from "react-bootstrap/Dropdown";
 import { Button, Col, Container, Row } from "react-bootstrap";
 import { useDashboard } from "../contexts/DashboardProvider";
 import { useApi } from "../contexts/ApiProvider";
-import { EepromReset, SfrOverride, Fault } from "./CommandForms";
+import {
+  EepromReset,
+  Fault,
+  FragmentRequest,
+  SfrOverride,
+} from "./CommandForms";
 
 // Allowed opcodes
 export const OpCodes = Object.freeze({
-  SFR_Override: "SFR_Override",
   Deploy: "Deploy",
   Arm: "Arm",
   Fire: "Fire",
+  SFR_Override: "SFR_Override",
+  Fault: "Fault",
+  Fragment_Request: "Fragment_Request",
   EEPROM_Reset: "EEPROM_Reset",
-  Fault: "Fault"
 });
 
 export const opcodeDesc = {
-  SFR_Override: "Override the selected SFR field with the provided value.",
   Deploy: "Move the CubeSat into the Deployment phase.",
   Arm: "Move the CubeSat into the Armed phase.",
   Fire: "Move the CubeSat into the In Sun phase.",
+  SFR_Override: "Override the selected SFR field with the provided value.",
+  Fault: "Force, suppress, or restore the selected fault.",
+  Fragment_Request: "Request an image or IMU fragment.",
   EEPROM_Reset: "Reset the EEPROM metadata with the provided values.",
-  Fault: "Force, suppress, or restore the selected fault."
 };
 
 // Command Selector
@@ -93,18 +100,19 @@ export default function CommandSelector() {
       setCurrentForm(<EepromReset ref={formRef} />);
     } else if (isDeploymentOpcode(opcode)) {
       setCurrentForm(<div></div>);
-    }
-    else if (opcode === OpCodes.Fault) {
+    } else if (opcode === OpCodes.Fault) {
       setCurrentForm(
         <Fault
           Fault_Data={allCommandMetadata["Faults"]}
           setTitle={setTitle}
           ref={formRef}
         />
-      )
+      );
+    } else if (opcode === OpCodes.Fragment_Request) {
+      setCurrentForm(<FragmentRequest ref={formRef} />);
     }
 
-    setTitle(opcode !== OpCodes.SFR_Override ? opcode : "No command selected");
+    setTitle(opcode);
     setDesc(opcodeDesc[opcode]);
   };
 

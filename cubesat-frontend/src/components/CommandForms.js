@@ -97,11 +97,8 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
   // Updates dropdown menus based on selected SFR namespace
   const handleNamespaceSelect = (namespace) => {
     setNamespace(namespace);
-    if (namespace in SFR_Data) {
-      setFieldList(Object.keys(SFR_Data[namespace]));
-    } else {
-      setFieldList([]);
-    }
+    setFieldList(namespace in SFR_Data ? Object.keys(SFR_Data[namespace]) : []);
+
     resetFieldState();
     setTitle("No command selected");
   };
@@ -199,54 +196,54 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
               {(fieldData.type === SFR_Type.Time ||
                 fieldData.type === SFR_Type.Float ||
                 fieldData.type === SFR_Type.Int) && (
-                  <>
-                    {/* Numerical SFR field input */}
-                    <InputField
-                      name="value"
-                      type="number"
-                      className="mt-1"
-                      placeholder="Value"
-                      error={inputError}
-                      onChange={handleFieldChange}
-                      disabled={!commandFields.setValue}
-                    />
-                    {/* Time unit selector */}
-                    {fieldData.type === SFR_Type.Time && (
-                      <div className="mt-2">
-                        <Form.Check
-                          name="time_unit"
-                          label="sec"
-                          type="radio"
-                          disabled={!commandFields.setValue}
-                          onChange={() => setTimeUnit("SEC")}
-                          inline
-                          defaultChecked
-                          className="me-2"
-                        />
-                        <Form.Check
-                          name="time_unit"
-                          label="min"
-                          id="unit_minutes"
-                          type="radio"
-                          disabled={!commandFields.setValue}
-                          onChange={() => setTimeUnit("MIN")}
-                          inline
-                          className="me-2"
-                        />
-                        <Form.Check
-                          name="time_unit"
-                          label="hr"
-                          id="unit_hours"
-                          type="radio"
-                          disabled={!commandFields.setValue}
-                          onChange={() => setTimeUnit("HOUR")}
-                          inline
-                          className="me-2"
-                        />
-                      </div>
-                    )}
-                  </>
-                )}
+                <>
+                  {/* Numerical SFR field input */}
+                  <InputField
+                    name="value"
+                    type="number"
+                    className="mt-1"
+                    placeholder="Value"
+                    error={inputError}
+                    onChange={handleFieldChange}
+                    disabled={!commandFields.setValue}
+                  />
+                  {/* Time unit selector */}
+                  {fieldData.type === SFR_Type.Time && (
+                    <div className="mt-2">
+                      <Form.Check
+                        name="time_unit"
+                        label="sec"
+                        type="radio"
+                        disabled={!commandFields.setValue}
+                        onChange={() => setTimeUnit("SEC")}
+                        inline
+                        defaultChecked
+                        className="me-2"
+                      />
+                      <Form.Check
+                        name="time_unit"
+                        label="min"
+                        id="unit_minutes"
+                        type="radio"
+                        disabled={!commandFields.setValue}
+                        onChange={() => setTimeUnit("MIN")}
+                        inline
+                        className="me-2"
+                      />
+                      <Form.Check
+                        name="time_unit"
+                        label="hr"
+                        id="unit_hours"
+                        type="radio"
+                        disabled={!commandFields.setValue}
+                        onChange={() => setTimeUnit("HOUR")}
+                        inline
+                        className="me-2"
+                      />
+                    </div>
+                  )}
+                </>
+              )}
               {fieldData.type === SFR_Type.Bool && (
                 <div className="mt-2">
                   {/* Boolean SFR field input */}
@@ -316,26 +313,23 @@ export const Fault = forwardRef(({ Fault_Data, setTitle }, ref) => {
   // Selected dropdown values
   const [selectedNamespace, setNamespace] = useState("None");
   const [selectedFault, setFault] = useState("None");
-
-  // Fault list
-  const [faultList, setFaultList] = useState([]);
-
-  // Selected value
   const [activeCheckbox, setActiveCheckbox] = useState("Force");
 
   const namespaceDropRef = useRef();
   const fieldDropRef = useRef();
 
+  // Fault list
+  const [faultList, setFaultList] = useState([]);
+
   // Updates dropdown menus based on selected Fault namespace
   const handleNamespaceSelect = (namespace) => {
     setNamespace(namespace);
-    if (namespace in Fault_Data) {
-      setFaultList(Object.keys(Fault_Data[namespace]));
-    } else {
-      setFaultList([]);
-    }
-    resetFieldState();
+    setFaultList(
+      namespace in Fault_Data ? Object.keys(Fault_Data[namespace]) : []
+    );
     setTitle("No command selected");
+    setFault("None");
+    fieldDropRef.current.clear();
   };
 
   // Updates input field based on selected SFR field
@@ -344,17 +338,6 @@ export const Fault = forwardRef(({ Fault_Data, setTitle }, ref) => {
       setFault(field);
       setTitle("fault_groups::" + selectedNamespace + "::" + field);
     }
-  };
-
-  // reset states relating to the currently selected Fault field only
-  const resetFieldState = () => {
-    setFault("None");
-    fieldDropRef.current.clear();
-  };
-
-  // Update the command argument dictionary when a form element is changed
-  const handleCheckboxChange = (name) => {
-    setActiveCheckbox(name);
   };
 
   // useImperativeHandle allows the CommandSelector component to call the handleSubmit() function,
@@ -370,6 +353,7 @@ export const Fault = forwardRef(({ Fault_Data, setTitle }, ref) => {
       };
     },
   }));
+
   return (
     <div>
       <Row>
@@ -408,37 +392,115 @@ export const Fault = forwardRef(({ Fault_Data, setTitle }, ref) => {
           {/* Checkbox for Force */}
           <Form.Check
             name="Force"
-            type="checkbox"
+            type="radio"
             label="Force"
-            onChange={() => handleCheckboxChange('Force')}
-            checked={activeCheckbox === 'Force'}
+            onChange={() => setActiveCheckbox("Force")}
+            checked={activeCheckbox === "Force"}
             className="mb-3"
           />
           {/* Checkbox for setSuppress */}
           <Form.Check
             name="Suppress"
-            type="checkbox"
+            type="radio"
             label="Suppress"
-            onChange={() => handleCheckboxChange('Suppress')}
-            checked={activeCheckbox === 'Suppress'}
+            onChange={() => setActiveCheckbox("Suppress")}
+            checked={activeCheckbox === "Suppress"}
             className="mb-3"
           />
           {/* Checkbox for Restore */}
           <Form.Check
             name="Restore"
-            type="checkbox"
+            type="radio"
             label="Restore"
-            onChange={() => handleCheckboxChange('Restore')}
-            checked={activeCheckbox === 'Restore'}
+            onChange={() => setActiveCheckbox("Restore")}
+            checked={activeCheckbox === "Restore"}
             className="mb-3"
           />
         </div>
       )}
     </div>
-  )
-})
+  );
+});
 
-export const EepromReset = forwardRef(({ }, ref) => {
+export const FragmentRequest = forwardRef(({}, ref) => {
+  // Selected values
+  const [fragmentType, setFragmentType] = useState("Image");
+  const [serialNum, setSerialNum] = useState("");
+  const [fragmentNum, setFragmentNum] = useState("");
+  const [inputError, setInputError] = useState();
+
+  // useImperativeHandle allows the CommandSelector component to call the handleSubmit() function,
+  // which checks if the command fields are valid and returns the command if so
+  useImperativeHandle(ref, () => ({
+    handleSubmit() {
+      if (fragmentNum === "" || (fragmentType === "Image" && serialNum === ""))
+        return;
+
+      return {
+        value: {
+          type: fragmentType,
+          fragmentNum: fragmentNum,
+          ...(fragmentType === "Image" && { serialNum: serialNum }),
+        },
+      };
+    },
+  }));
+
+  const handleFieldChange = (event) => {
+    let { name, value } = event.target;
+    if (name === "serialNum") setSerialNum(value);
+    else if (name === "fragmentNum") setFragmentNum(value);
+  };
+
+  return (
+    <div>
+      <Row>
+        <Col>
+          <span style={{ fontWeight: "bold" }}>Type</span>
+          <Form.Check
+            name="fragType"
+            type="radio"
+            label="Image"
+            onChange={() => setFragmentType("Image")}
+            defaultChecked
+          />
+          <Form.Check
+            name="fragType"
+            type="radio"
+            label="IMU"
+            onChange={() => setFragmentType("IMU")}
+          />
+        </Col>
+        {fragmentType === "Image" && (
+          <Col>
+            <span style={{ fontWeight: "bold" }}>Serial #</span>
+            <InputField
+              name="serialNum"
+              type="number"
+              className="mt-1"
+              placeholder="Value"
+              // error={inputError}
+              onChange={handleFieldChange}
+            />
+          </Col>
+        )}
+        <Col>
+          <span style={{ fontWeight: "bold" }}>Fragment #</span>
+          <InputField
+            name="fragmentNum"
+            type="number"
+            className="mt-1"
+            placeholder="Value"
+            // error={inputError}
+            onChange={handleFieldChange}
+          />
+        </Col>
+      </Row>
+    </div>
+  );
+});
+
+export const EepromReset = forwardRef(({}, ref) => {
   const [inputError, setInputError] = useState();
   const [eepromFields, setEepromFields] = useState({
     bootCount: "",
@@ -452,16 +514,7 @@ export const EepromReset = forwardRef(({ }, ref) => {
   useImperativeHandle(ref, () => ({
     handleSubmit() {
       return {
-        value: {
-          byteCount: eepromFields.byteCount,
-          bootCount: eepromFields.bootCount,
-          lightSwitch: eepromFields.lightSwitch,
-          sfrAddress: eepromFields.sfrAddress,
-          dataAddress: eepromFields.dataAddress,
-          // range is 0-95000 and we need to map them to 1 byte
-          sfrWriteAge: Math.floor(parseInt(eepromFields.sfrWriteAge) / 373),
-          dataWriteAge: Math.floor(parseInt(eepromFields.dataWriteAge) / 373),
-        },
+        value: eepromFields,
       };
     },
   }));
