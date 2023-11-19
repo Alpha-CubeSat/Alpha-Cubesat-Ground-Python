@@ -1,5 +1,8 @@
+import math
+
 import requests
 
+from api.errors import failure_response
 from config import rockblock_config
 from control.control_constants import *
 
@@ -15,7 +18,8 @@ def format_single_arg(n: int, arg_length) -> str:
         arg = "0" + arg
     return arg
 
-def format_sfr_args(args : dict) -> (int,int):
+
+def format_sfr_args(args: dict) -> (int, int):
     """
     Helper function that translates sfr override dictionary values into all 
     uppercase hexadecimal string without the '0x' header. Combines the hex 
@@ -28,14 +32,15 @@ def format_sfr_args(args : dict) -> (int,int):
         value = bool(value)
     arg1 += format_single_arg(int(value), ARG_LENGTH)
     arg2_parts = [
-        (int(args["setValue"]),2),
-        (int(args["setRestore"]),2),
-        (int(args["restoreValue"] == "true"), 4),  
+        (int(args["setValue"]), 2),
+        (int(args["setRestore"]), 2),
+        (int(args["restoreValue"] == "true"), 4),
     ]
     arg2 = ''.join(format_single_arg(part, length) for part, length in arg2_parts)
     return arg1, arg2
-    
-def format_eeprom_args(args : dict) -> (int, int):
+
+
+def format_eeprom_args(args: dict) -> (int, int):
     """
     Helper function that translates dictionary values into all uppercase 
     hexadecimal string without the '0x' header. The string is passed in order
@@ -44,19 +49,21 @@ def format_eeprom_args(args : dict) -> (int, int):
     """
     arg1_parts = [
         [int(args["bootCount"]), 2],
-        [int(args["lightSwitch"] == "true"), 2], 
+        [int(args["lightSwitch"] == "true"), 2],
         [int(args["sfrAddress"]), 4]
     ]
     arg1 = ''.join(format_single_arg(part, length) for part, length in arg1_parts)
     arg2_parts = [
-        [int(args["sfrWriteAge"]), 2],
-        [int(args["dataWriteAge"]), 2],
+        # range is 0-95000 and we need to map them to 1 byte
+        [math.floor(int(args["sfrWriteAge"]) / 373), 2],
+        [math.floor(int(args["dataWriteAge"]) / 373), 2],
         [int(args["dataAddress"]), 4]
     ]
     arg2 = ''.join(format_single_arg(part, length) for part, length in arg2_parts)
     return arg1, arg2
 
-def format_fault_args(args : str) -> (int, int):
+
+def format_fault_args(args: str) -> (int, int):
     """
     Helper function that translates the fault argument "Restore", "Force", or 
     "Suppress" into the format expected by the flight code.
@@ -69,6 +76,9 @@ def format_fault_args(args : str) -> (int, int):
         return zero, one
     elif args == "Restore":
         return zero, zero
+    else:
+        failure_response(400, 'Invalid Fault Type')
+
 
 def format_flag(n: int) -> str:
     """
@@ -81,33 +91,51 @@ def format_flag(n: int) -> str:
         flag = "0" + flag
     return flag
 
+
 def parse_command(command: dict) -> str:
     """
     Takes a Command and translates it to a string representation as
     specified in the Alpha documentation
     """
     selected_opcode = command['opcode']
-    if selected_opcode == 'SFR_Override':
-        namespace, field = command['namespace'], command['field']
-        arg1, arg2 = format_sfr_args(command['value'])
-        opcode = SFR_OVERRIDE_OPCODES_MAP[namespace][field]['hex']
-
-    elif selected_opcode == 'EEPROM_Reset':
-        arg1, arg2 = format_eeprom_args(command["value"])
-        opcode = EEPROM_RESET_OPCODE
-
-    elif selected_opcode == 'Fault':
-        namespace, field = command['namespace'], command['field']
-        arg1, arg2 = format_fault_args(command["value"])
-        opcode = FAULT_OPCODE_MAP[namespace][field]['hex']
-
-    else:
+    if selected_opcode in ['Deploy', 'Arm', 'Fire']:
         opcode = BURNWIRE_OPCODES[selected_opcode]
         arg1 = format_single_arg(0, ARG_LENGTH)
         arg2 = format_single_arg(0, ARG_LENGTH)
 
+    elif selected_opcode == 'SFR_Override':
+        namespace, field = command['namespace'], command['field']
+        arg1, arg2 = format_sfr_args(command['value'])
+        opcode = SFR_OVERRIDE_OPCODES_MAP[namespace][field]['hex']
+
+    elif selected_opcode == 'Fault':
+        namespace, field = command['namespace'], command['field']
+        arg1, arg2 = format_fault_args(command['value'])
+        opcode = FAULT_OPCODE_MAP[namespace][field]['hex']
+
+    elif selected_opcode == 'Fragment_Request':
+        commandData = command['value']
+        if commandData['type'] == 'Image':
+            opcode = IMAGE_REQUEST_OPCODE
+            arg1 = format_single_arg(int(commandData['serialNum']), ARG_LENGTH)
+            arg2 = format_single_arg(int(commandData['fragmentNum']), ARG_LENGTH)
+        elif commandData['type'] == 'IMU':
+            opcode = IMU_REQUEST_OPCODE
+            arg1 = format_single_arg(int(commandData['fragmentNum']), ARG_LENGTH)
+            arg2 = format_single_arg(0, ARG_LENGTH)
+        else:
+            return failure_response(400, 'Invalid Fragment Type')
+
+    elif selected_opcode == 'EEPROM_Reset':
+        arg1, arg2 = format_eeprom_args(command['value'])
+        opcode = EEPROM_RESET_OPCODE
+
+    else:
+        return failure_response(400, 'Invalid Command')
+
     print(opcode + arg1 + arg2)
     return opcode + arg1 + arg2
+
 
 def handle_command(imei: str, commands: list) -> str:
     """
@@ -116,12 +144,12 @@ def handle_command(imei: str, commands: list) -> str:
     provided in the config file
     """
     print("Processing commands!")
-    # add start flags
+    # add FEFE start flag
     uplink = format_flag(254) + format_flag(254)
     for command in commands:
         uplink += parse_command(command)
 
-    # add end flags
+    # add FAFA end flag
     uplink += format_flag(250) + format_flag(250)
     print(uplink)
     return send_uplink(imei, uplink)
@@ -141,6 +169,6 @@ def send_uplink(imei: str, data: str) -> str:
         "data": data,
     }
 
-    response = requests.post(ROCKBLOCK_ENDPOINT, data = request)
+    response = requests.post(ROCKBLOCK_ENDPOINT, data=request)
     print(response.text + "\n")
     return response.text
