@@ -151,35 +151,33 @@ def get_processed_commands(imei):
     retrieves command logs in normal reports that have timestamps after the
     timestamp of the first command sent. 
     """
-
-    epoch = 0
+    processed_cmds = []
+    accum = 0
     with open(f"{config.cmd_log_root_dir}/{imei}.txt") as file:
-        first_line = file.readline()
-        if first_line:
-            first_entry = json.loads(first_line.strip())
-            epoch = first_entry.get('timestamp')
-        else:
-            print("Error: The file is empty (no commands sent)")
-    first_timestamp = datetime.datetime.utcfromtimestamp(int(epoch) / 1000).isoformat()
-    # print(first_timestamp)
-    query = {
-        "range": {
-            "transmit_time": {
-                "gte": first_timestamp,
-                "lte": "now"
-            }
-        }
-    }
-    res = elastic.get_es_data(config.cubesat_db_index, ['imei', 'command_log'], query=query)
-    print(res)
-    logs = []
-    for entry in res:
-        if entry['imei'] == int(imei):
-            logs.append(entry['command_log'])
-    print(logs)
-    return logs
-
-
+        for line in file:
+            entry = json.loads(line.strip())
+            epoch = int(entry.get('timestamp')) // 1000
+            new_log = elastic.get_es_data(config.cubesat_db_index, ['command_log'], query=elastic.query_format(imei, epoch + 3600, epoch))
+            old_log = elastic.get_es_data(config.cubesat_db_index, ['command_log'], query=elastic.query_format(imei, epoch, 0))
+            res = []
+            if (new_log and old_log):
+                old_cmds, new_cmds = old_log[-1]["command_log"], new_log[-1]["command_log"]
+                count_dict = {item: count2 for item, count2 in zip(old_cmds, [old_cmds.count(item) for item in old_cmds])}
+                for item in new_cmds:
+                    if item in count_dict and count_dict[item] > 0:
+                        count_dict[item] -= 1
+                    else:
+                        res.append(item)
+            elif (new_log):
+                res = new_log[-1]["command_log"]
+            for cmd in entry.get("commands"):
+                processed_cmds.append(0)
+                if cmd["opcode"] in ["Deploy", "Arm", "Fire"]:
+                    processed_cmds[accum] = 1 if cmd["opcode"] in res else 0
+                elif cmd["opcode"] in ["SFR_Override", "Fault"]:
+                    processed_cmds[accum] = 1 if cmd["namespace"] + "::" + cmd["field"] in new_cmds else 0
+                accum = accum + 1
+    return processed_cmds                
 
 @cubesat.get('/downlink_history')
 @authenticate(token_auth)

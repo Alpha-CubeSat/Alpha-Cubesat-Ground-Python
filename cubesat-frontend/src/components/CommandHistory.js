@@ -13,60 +13,21 @@ export default function CommandHistory() {
 
   const api = useApi();
 
-  function isNested(subArr, parentArr) {
-    return parentArr.some(
-      (innerArr) =>
-        subArr.length === innerArr.length &&
-        subArr.every((elem, idx) => elem === innerArr[idx])
-    );
-  }
-
-  // function logsEqual(array1, array2) {
-  //   if (array1.length !== array2.length) {
-  //     return false
-  //   }
-  //   for (let i = 0; i < array1.length; i++) {
-  //     if (array1[i] !== array2[i]) {
-  //       return false;
-  //     }
-  //   }
-  //   return true;
-  // }
-
   const checkProcessed = useCallback(async () => {
     console.log("fetching processed opcodes");
     await api.get("/cubesat/processed_commands/" + imei).then((response) => {
-      const dataList = response["data"][0][-1];
-      const sfrList = [];
-      const opcodeList = [];
-      for (let item of dataList) {
-        if (item.includes("::")) {
-          sfrList.push([
-            item.substring(0, item.indexOf(":")),
-            item.substring(item.indexOf(":") + 2),
-          ]);
-        } else {
-          opcodeList.push(item);
-        }
-      }
-      for (let i = commandLog.length - 1; i >= 0; i--) {
-        for (let command of commandLog[i].commands) {
-          if (opcodeList.includes(command["opcode"])) {
+      const dataList = response["data"];
+      const newCommandLog = JSON.parse(JSON.stringify(commandLog));
+      let accum = 0;
+      for (let i = newCommandLog.length - 1; i >= 0; i--) {
+        for (let command of newCommandLog[i].commands) {
+          if (dataList[accum] === 1) {
             command["processed"] = "true";
-            let index = opcodeList.indexOf(command["opcode"]);
-            opcodeList.splice(index, 1);
-          } else if (
-            isNested([command["namespace"], command["field"]], sfrList)
-          ) {
-            command["processed"] = "true";
-            let index = sfrList.indexOf(command["namespace"]);
-            sfrList.splice(index, 1);
-            let index2 = sfrList.indexOf(command["field"]);
-            sfrList.splice(index2, 1);
           }
-          setCommandLog(commandLog);
+          accum++;
         }
       }
+      setCommandLog(newCommandLog);
     });
   }, [api, commandLog, setCommandLog, imei]);
 
@@ -74,7 +35,7 @@ export default function CommandHistory() {
   useEffect(() => {
     // Poll every 5000 milliseconds (5 seconds)
     const interval = setInterval(() => {
-      //checkProcessed();
+      checkProcessed();
     }, 5000);
 
     // Cleanup: clear the interval when the component is unmounted or the effect re - runs
