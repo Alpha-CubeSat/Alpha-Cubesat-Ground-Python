@@ -23,6 +23,29 @@ def daily_index_strategy(name):
 def index(index_base_name: str, content: dict) -> ObjectApiResponse:
     return get_connection().index(index=index_base_name, body=content)
 
+# Returns a query that that filters reports with the corresponding imei, and fit 
+# in the specified timeframe.
+def query_format(imei, lte_epoch, gte_epoch):
+    return {
+    "bool": {
+        "must": [
+            {
+                "range": {
+                    "transmit_time": {
+                        "gte": datetime.datetime.utcfromtimestamp(gte_epoch).isoformat(),
+                        "lte": datetime.datetime.utcfromtimestamp(lte_epoch).isoformat()
+                    }
+                }
+            },
+            {
+                "term": {
+                    "imei": imei 
+                        }
+                    }
+                ]
+            }
+        }
+
 # Returns the data corresponding to the supplied index and a list of input fields
 def get_es_data(idx: str, cols: list, query: dict = None, size=50, sort: list = None) -> list:
     result = []
