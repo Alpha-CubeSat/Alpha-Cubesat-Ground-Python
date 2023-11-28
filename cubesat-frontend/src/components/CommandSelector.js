@@ -140,7 +140,7 @@ export default function CommandSelector() {
       <Row className="d-flex flex-wrap">
         <Col className="col-md-4">
           <span style={{ fontWeight: "bold" }}>Opcode</span>
-          <Dropdown>
+          <Dropdown className="position-absolute">
             <Dropdown.Toggle variant="success" id="dropdown-basic">
               {selectedOpCode}
             </Dropdown.Toggle>
