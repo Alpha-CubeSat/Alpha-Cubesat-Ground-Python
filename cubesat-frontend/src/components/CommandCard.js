@@ -1,7 +1,7 @@
 import { Accordion, Button } from "react-bootstrap";
 import { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
-import { OpCodes } from "./CommandSelector";
+import { stringifyCommand } from "../constants";
 
 // Command Card (component of CommandList)
 // Shows the title and arguments of a created command.
@@ -58,15 +58,9 @@ export default function CommandCard({
       <Accordion.Item eventKey="0">
         <Accordion.Header>{index + 1 + ". " + command.opcode}</Accordion.Header>
         <Accordion.Body>
-          <>
+          <div>
             {/* Display command fields */}
-            {command.opcode === OpCodes.SFR_Override &&
-              command.namespace +
-                "::" +
-                command.field +
-                " = " +
-                command.value +
-                "\n"}
+            <p className="m-0">{stringifyCommand(command)}</p>
             <Button
               onClick={() => deleteCommand(index)}
               variant="link"
@@ -75,7 +69,7 @@ export default function CommandCard({
             >
               Delete Command
             </Button>
-          </>
+          </div>
         </Accordion.Body>
       </Accordion.Item>
     </Accordion>

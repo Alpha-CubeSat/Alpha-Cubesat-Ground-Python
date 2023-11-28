@@ -2,14 +2,7 @@ import { forwardRef, useImperativeHandle, useRef, useState } from "react";
 import { Col, Form, Row } from "react-bootstrap";
 import { Typeahead } from "react-bootstrap-typeahead";
 import InputField from "./InputField";
-
-// SFR field types
-const SFR_Type = Object.freeze({
-  Int: "INT",
-  Float: "FLOAT",
-  Time: "TIME",
-  Bool: "BOOL",
-});
+import { SFR_Type } from "../constants";
 
 // forwardRef allows access to the ref prop passed in by the CommandSelector component
 export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
@@ -513,6 +506,15 @@ export const EepromReset = forwardRef(({}, ref) => {
 
   useImperativeHandle(ref, () => ({
     handleSubmit() {
+      if (
+        eepromFields.bootCount === "" ||
+        eepromFields.sfrAddress === "" ||
+        eepromFields.dataAddress === "" ||
+        eepromFields.sfrWriteAge === "" ||
+        eepromFields.dataWriteAge === ""
+      )
+        return;
+
       return {
         value: eepromFields,
       };
@@ -545,7 +547,7 @@ export const EepromReset = forwardRef(({}, ref) => {
           <div>
             <Form.Check
               name="lightSwitch"
-              label="Light 1"
+              label="Light True"
               type="radio"
               value="true"
               inline
@@ -553,10 +555,11 @@ export const EepromReset = forwardRef(({}, ref) => {
             />
             <Form.Check
               name="lightSwitch"
-              label="Light 0"
+              label="Light False"
               type="radio"
               value="false"
               inline
+              defaultChecked
               onChange={handleEepromChange}
             />
           </div>
