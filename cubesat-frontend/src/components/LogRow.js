@@ -1,7 +1,7 @@
 import { BsCheckCircleFill, BsXCircleFill } from "react-icons/bs";
-import { OpCodes } from "./CommandSelector";
 import React, { useRef, useState } from "react";
 import Overlay from "react-bootstrap/Overlay";
+import { isDeploymentOpcode, stringifyCommand } from "../constants";
 
 export default function LogRow({ entry }) {
   const [show, setShow] = useState(() => entry.commands.map(() => false));
@@ -26,7 +26,7 @@ export default function LogRow({ entry }) {
       {/* command(s) */}
       <td>
         {entry.commands.map((command, i) =>
-          command.namespace ? (
+          !isDeploymentOpcode(command.opcode) ? (
             <div key={i}>
               <p
                 className="clickable-text"
@@ -59,13 +59,7 @@ export default function LogRow({ entry }) {
                       ...props.style,
                     }}
                   >
-                    {command.namespace +
-                      "::" +
-                      command.field +
-                      "=" +
-                      (command.opcode === "SFR_Override"
-                        ? command.value.value
-                        : command.value)}
+                    {stringifyCommand(command)}
                   </div>
                 )}
               </Overlay>
@@ -78,14 +72,7 @@ export default function LogRow({ entry }) {
       <td>
         {/* command processed indicator */}
         {entry.commands.map((command, i) => (
-          <p
-            key={i}
-            title={
-              command.opcode === OpCodes.SFR_Override
-                ? `${command.namespace}::${command.field} = ${command.value}`
-                : ""
-            }
-          >
+          <p key={i}>
             {command.processed === "true" ? (
               <BsCheckCircleFill color="green" />
             ) : (

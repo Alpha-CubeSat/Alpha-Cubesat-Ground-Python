@@ -11,7 +11,7 @@
 }
 
 .scrollbar-small::-webkit-scrollbar {
-    width: 5px;
+    width: 4px;
     background-color: #F5F5F5;
 }
 
@@ -28,4 +28,12 @@
 .clickable-text:hover {
     text-decoration: underline;
     color: blue;
+}
+
+.g-x-4\.5 {
+    --bs-gutter-x: 2.5rem
+}
+
+.accordion-button {
+    padding: 0.8rem 1rem
 }
