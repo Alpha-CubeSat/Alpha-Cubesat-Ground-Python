@@ -11,7 +11,7 @@ import DownlinkHistory from "../components/DownlinkHistory";
 export default function Dashboard() {
   return (
     <Container fluid className="overflow-hidden">
-      <Row className="gx-5 px-2 h-100">
+      <Row className="g-x-4.5 px-2 h-100">
         <Col className="dash_height" sm="2">
           <Row className="h-100 py-2">
             <WidgetCard title="Command Builder" children={<CommandBuilder />} />

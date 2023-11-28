@@ -9,27 +9,7 @@ import {
   FragmentRequest,
   SfrOverride,
 } from "./CommandForms";
-
-// Allowed opcodes
-export const OpCodes = Object.freeze({
-  Deploy: "Deploy",
-  Arm: "Arm",
-  Fire: "Fire",
-  SFR_Override: "SFR_Override",
-  Fault: "Fault",
-  Fragment_Request: "Fragment_Request",
-  EEPROM_Reset: "EEPROM_Reset",
-});
-
-export const opcodeDesc = {
-  Deploy: "Move the CubeSat into the Deployment phase.",
-  Arm: "Move the CubeSat into the Armed phase.",
-  Fire: "Move the CubeSat into the In Sun phase.",
-  SFR_Override: "Override the selected SFR field with the provided value.",
-  Fault: "Force, suppress, or restore the selected fault.",
-  Fragment_Request: "Request an image or IMU fragment.",
-  EEPROM_Reset: "Reset the EEPROM metadata with the provided values.",
-};
+import { isDeploymentOpcode, opcodeDesc, OpCodes } from "../constants";
 
 // Command Selector
 // Has dropdown menus for user to build a command to be sent to the CubeSat
@@ -78,11 +58,6 @@ export default function CommandSelector() {
   // Command title and description
   const [title, setTitle] = useState("No command selected");
   const [desc, setDesc] = useState("Select a command");
-
-  const isDeploymentOpcode = (opcode) =>
-    opcode === OpCodes.Deploy ||
-    opcode === OpCodes.Arm ||
-    opcode === OpCodes.Fire;
 
   // Updates command form based on selected opcode
   const handleOpCodeSelect = (opcode) => () => {
