@@ -35,7 +35,7 @@ export default function CommandHistory() {
   useEffect(() => {
     // Poll every 5000 milliseconds (5 seconds)
     const interval = setInterval(() => {
-      checkProcessed();
+      // checkProcessed();
     }, 5000);
 
     // Cleanup: clear the interval when the component is unmounted or the effect re - runs
