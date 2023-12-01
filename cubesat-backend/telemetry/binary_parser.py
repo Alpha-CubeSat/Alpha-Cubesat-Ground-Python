@@ -54,15 +54,17 @@ class BinaryParser:
                 decoded[entry[1]] = sec_4bit
             else: # type(entry[1]) == list
                 for i, bool in enumerate(entry[1]):
-                    decoded[bool] = (sec_4bit >> len(entry[1])-1-i) & 1 == 1
+                    decoded[bool] = (sec_4bit >> i) & 1 == 1
 
     def read_uint8_bools(self, name_list, decoded):
         """Reads and returns 8 bools from the next unsigned 8-bit integer.
         Written specifically for reading packaged bools."""
 
         byte_value = self.read_uint8()
+        # unpacking from least to most significant bit
+        # since FSW packs the first bool as the least significant bit and the last as the most significant bit
         for i, entry in enumerate(name_list):
-            decoded[entry] = (byte_value >> len(name_list)-1-i) & 1 == 1
+            decoded[entry] = (byte_value >> i) & 1 == 1
 
     def read_uint5_list(self, name, decoded):
         """Reads and returns 5-bit integers from 10 bytes worth of binary data. 
