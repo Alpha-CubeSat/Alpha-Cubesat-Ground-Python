@@ -19,18 +19,28 @@ def format_single_arg(n: int, arg_length) -> str:
     return arg
 
 
-def format_sfr_args(args: dict) -> (int, int):
+def format_sfr_args(field_data: dict, args: dict) -> (int, int):
     """
     Helper function that translates sfr override dictionary values into all 
     uppercase hexadecimal string without the '0x' header. Combines the hex 
     strings into arg1 and arg2 in the format expected by flight software.
     """
-    arg1 = ""
-    arg2 = ""
-    value = args["value"]
-    if value in ['true', 'false']:
+    arg1, arg2, value = "", "", args["value"]
+    if field_data['type'] == SFR_T.BOOL:
+        if value not in ['true', 'false']:
+            return failure_response('Boolean expected', 400)
         value = bool(value)
-    arg1 += format_single_arg(int(value), ARG_LENGTH)
+    else:
+        if field_data['type'] in [SFR_T.INT, SFR_T.TIME]:
+            value = int(value)
+        else: # field_data['type'] == SFR_T.FLOAT
+            value = int(float(value) * field_data['resolution'])
+
+        if ((field_data.get('min') is not None and value < field_data['min']) or
+                (field_data.get('max') is not None and value > field_data['max'])):
+            return failure_response('Min/Max Bounds Violated', 400)
+
+    arg1 += format_single_arg(value, ARG_LENGTH)
     arg2_parts = [
         (int(args["setValue"]), 2),
         (int(args["setRestore"]), 2),
@@ -105,23 +115,27 @@ def parse_command(command: dict) -> str:
 
     elif selected_opcode == 'SFR_Override':
         namespace, field = command['namespace'], command['field']
-        arg1, arg2 = format_sfr_args(command['value'])
+        if not SFR_OVERRIDE_OPCODES_MAP.get(namespace) or not SFR_OVERRIDE_OPCODES_MAP[namespace].get(field):
+            return failure_response('Invalid SFR Field', 400)
         opcode = SFR_OVERRIDE_OPCODES_MAP[namespace][field]['hex']
+        arg1, arg2 = format_sfr_args(SFR_OVERRIDE_OPCODES_MAP[namespace][field], command['value'])
 
     elif selected_opcode == 'Fault':
         namespace, field = command['namespace'], command['field']
-        arg1, arg2 = format_fault_args(command['value'])
+        if not FAULT_OPCODE_MAP.get(namespace) or not FAULT_OPCODE_MAP[namespace].get(field):
+            return failure_response('Invalid Fault Field', 400)
         opcode = FAULT_OPCODE_MAP[namespace][field]['hex']
+        arg1, arg2 = format_fault_args(command['value'])
 
     elif selected_opcode == 'Fragment_Request':
-        commandData = command['value']
-        if commandData['type'] == 'Image':
+        cmd_data = command['value']
+        if cmd_data['type'] == 'Image':
             opcode = IMAGE_REQUEST_OPCODE
-            arg1 = format_single_arg(int(commandData['serialNum']), ARG_LENGTH)
-            arg2 = format_single_arg(int(commandData['fragmentNum']), ARG_LENGTH)
-        elif commandData['type'] == 'IMU':
+            arg1 = format_single_arg(int(cmd_data['serialNum']), ARG_LENGTH)
+            arg2 = format_single_arg(int(cmd_data['fragmentNum']), ARG_LENGTH)
+        elif cmd_data['type'] == 'IMU':
             opcode = IMU_REQUEST_OPCODE
-            arg1 = format_single_arg(int(commandData['fragmentNum']), ARG_LENGTH)
+            arg1 = format_single_arg(int(cmd_data['fragmentNum']), ARG_LENGTH)
             arg2 = format_single_arg(0, ARG_LENGTH)
         else:
             return failure_response(400, 'Invalid Fragment Type')
