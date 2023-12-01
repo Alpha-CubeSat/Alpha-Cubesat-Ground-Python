@@ -38,22 +38,27 @@ SFR_OVERRIDE_OPCODES_MAP = {
         'min_stable_gyro_z': {
             'hex': '1500',
             'type': SFR_T.FLOAT,
+            'resolution': 10
         },
         'max_stable_gyro_x': {
             'hex': '1501',
             'type': SFR_T.FLOAT,
+            'resolution': 10
         },
         'max_stable_gyro_y': {
             'hex': '1502',
             'type': SFR_T.FLOAT,
+            'resolution': 10
         },
         'min_unstable_gyro_x': {
             'hex': '1503',
             'type': SFR_T.FLOAT,
+            'resolution': 10
         },
         'min_unstable_gyro_y': {
             'hex': '1504',
             'type': SFR_T.FLOAT,
+            'resolution': 10
         },
     },
     'aliveSignal': {
@@ -426,10 +431,12 @@ SFR_OVERRIDE_OPCODES_MAP = {
         'acceptable_battery': {
             'hex': '2600',
             'type': SFR_T.FLOAT,
+            'resolution': 100
         },
         'min_battery': {
             'hex': '2601',
-            'type': SFR_T.FLOAT
+            'type': SFR_T.FLOAT,
+            'resolution': 100
         },
     },
     'button': {
