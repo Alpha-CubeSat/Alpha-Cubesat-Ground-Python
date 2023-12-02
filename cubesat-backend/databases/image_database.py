@@ -100,34 +100,6 @@ def try_save_image(imei: int, image_sn: int, total_fragments: int):
         shutil.rmtree(f'{cfg.image_root_dir}/{imei}/{image_sn}')
 
 
-def get_recent_images(imei: str, n: int) -> list:
-    """
-    Gets the paths of the n most recently taken images (whose fragments have been fully downlinked)
-    Images are sorted by serial # (so that they are chronological)
-    """
-    if not exists(f'{cfg.image_root_dir}/{imei}'):
-        return []
-
-    return sorted(os.listdir(f'{cfg.image_root_dir}/{imei}/img'),
-                  key=lambda x: os.path.basename(x))[:n]
-
-
-def get_image_data(imei: str, image_file_name: str) -> dict:
-    """
-    Given the file name of a fully downlinked image, returns a dict containing the image's
-    name, timestamp, and data (as a base64 string)
-    """
-    image_path = f'{cfg.image_root_dir}/{imei}/img/{image_file_name}'
-    with open(image_path, 'rb') as image:
-        img_hex = bytearray(image.read()).hex()
-    # add end flag for partially downlinked images (needed to display image on frontend)
-    if img_hex.count('ffd9') == 0: img_hex += 'ffd9'
-    return {
-        'name': os.path.basename(image_path),
-        'timestamp': os.path.getmtime(image_path),
-        'base64': base64.b64encode(bytearray.fromhex(img_hex))
-    }
-
 def replace_image_fragment(imei: str, image_file_name: str, fragment_number: int, fragment_data: str):
     """
     Given the file_name of an existing image file, replaces the fragment with the 0-indexed

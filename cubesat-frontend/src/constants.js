@@ -1,4 +1,4 @@
-// Command Opcodes
+// Command Opcodes and descriptions
 export const OpCodes = Object.freeze({
   Deploy: "Deploy",
   Arm: "Arm",
@@ -32,6 +32,18 @@ export const IMEI_MAP = {
   300534061570670: "OG FlatSat",
   300234064326340: "New FlatSat",
 };
+
+// Telemetry report types
+export const report_types = {
+  99: "Normal",
+  24: "IMU",
+  42: "Camera",
+  "-1": "Error",
+};
+
+// Base URL for viewing normal reports in Kibana
+export const kibanaNRBase = `${process.env.REACT_APP_KIBANA_URL}/app/discover#/doc/
+                                    ${process.env.REACT_APP_KIBANA_NR_DOC_ID}/cubesat_normal_report?id=`;
 
 export const isDeploymentOpcode = (opcode) =>
   opcode === OpCodes.Deploy ||
