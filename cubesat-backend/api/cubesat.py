@@ -1,5 +1,6 @@
-import datetime
+import base64
 import json
+import os
 import time
 from os.path import exists
 
@@ -13,7 +14,7 @@ from api.schemas import ImageNameSchema, ImageCountSchema, ImageDataSchema, \
     CommandResponseSchema, RockblockReportSchema, CommandUplinkSchema, DownlinkHistorySchema
 from control import control_protocol
 from control.control_constants import SFR_OVERRIDE_OPCODES_MAP, FAULT_OPCODE_MAP
-from databases import image_database, elastic
+from databases import elastic
 from telemetry import process_telemetry
 from telemetry.telemetry_constants import ROCKBLOCK_PK
 
@@ -60,9 +61,16 @@ def rockblock_telemetry(report):
 def get_recent_imgs(args, imei):
     """
     Get Recent Images
-    Returns a list of names of all the fully downlinked image files received by the ground station.
+    Returns a list of names of the last ```n``` (default 5) downlinked image files received by the ground station.
+    Images are sorted by serial # (so that they are chronological)
     """
-    return {'images': image_database.get_recent_images(imei, args['count'])}
+    if not exists(f'{config.image_root_dir}/{imei}'):
+        return []
+
+    return {
+        'images': sorted(os.listdir(f'{config.image_root_dir}/{imei}/img'),
+                         key=lambda x: os.path.basename(x))[:args['count']]
+    }
 
 
 @cubesat.get('/img/<imei>/<name>')
@@ -72,10 +80,19 @@ def get_recent_imgs(args, imei):
 def get_image(imei, name: 'Name of the image'):
     """
     Get Image By Name
-    Returns the image file with the given name if it exists.
+    Returns the image file (as a base64 string) with the given name and its metadata if it exists.
     """
     try:
-        return image_database.get_image_data(imei, name)
+        image_path = f'{config.image_root_dir}/{imei}/img/{name}'
+        with open(image_path, 'rb') as image:
+            img_hex = bytearray(image.read()).hex()
+        # add end flag for partially downlinked images (needed to display image properly on frontend)
+        if img_hex.count('ffd9') == 0: img_hex += 'ffd9'
+        return {
+            'name': os.path.basename(image_path),
+            'timestamp': os.path.getmtime(image_path),
+            'base64': base64.b64encode(bytearray.fromhex(img_hex))
+        }
     except FileNotFoundError:
         return '', 400
 
@@ -84,6 +101,7 @@ def get_image(imei, name: 'Name of the image'):
 @authenticate(token_auth)
 @body(CommandUplinkSchema)
 @response(CommandResponseSchema)
+@other_responses({400: 'Invalid Command(s)'})
 def uplink_command(uplink):
     """
     Uplink Command
@@ -178,6 +196,7 @@ def get_processed_commands(imei):
                     processed_cmds[accum] = 1 if cmd["namespace"] + "::" + cmd["field"] in new_cmds else 0
                 accum = accum + 1
     return processed_cmds                
+
 
 @cubesat.get('/downlink_history')
 @authenticate(token_auth)
