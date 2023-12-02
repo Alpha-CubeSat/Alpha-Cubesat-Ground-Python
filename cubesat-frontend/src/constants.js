@@ -42,8 +42,7 @@ export const report_types = {
 };
 
 // Base URL for viewing normal reports in Kibana
-export const kibanaNRBase = `${process.env.REACT_APP_KIBANA_URL}/app/discover#/doc/
-                                    ${process.env.REACT_APP_KIBANA_NR_DOC_ID}/cubesat_normal_report?id=`;
+export const kibanaNRBase = `${process.env.REACT_APP_KIBANA_URL}/app/discover#/doc/${process.env.REACT_APP_KIBANA_NR_DOC_ID}/cubesat_normal_report?id=`;
 
 export const isDeploymentOpcode = (opcode) =>
   opcode === OpCodes.Deploy ||
