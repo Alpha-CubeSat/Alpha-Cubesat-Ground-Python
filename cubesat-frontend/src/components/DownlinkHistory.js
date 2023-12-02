@@ -2,7 +2,7 @@ import { BsCheckCircleFill, BsXCircleFill } from "react-icons/bs";
 import { Spinner, Table } from "react-bootstrap";
 import { useEffect, useRef, useState } from "react";
 import { useApi } from "../contexts/ApiProvider";
-import { IMEI_MAP } from "../constants";
+import { IMEI_MAP, kibanaNRBase, report_types } from "../constants";
 import { FiExternalLink } from "react-icons/fi";
 
 // Downlink History Log
@@ -11,15 +11,6 @@ export default function DownlinkHistory() {
   const api = useApi();
   const [history, setHistory] = useState();
   const [autoRefetchLoading, setAutoRefetchLoading] = useState(false);
-
-  const kibanaNRBase = `${process.env.REACT_APP_KIBANA_URL}/app/discover#/doc/${process.env.REACT_APP_KIBANA_NR_DOC_ID}/cubesat_normal_report?id=`;
-
-  const report_types = {
-    99: "Normal",
-    24: "IMU",
-    42: "Camera",
-    "-1": "Error",
-  };
 
   // Fetch downlink history and update periodically (every 10 seconds)
   useInterval(async () => {
