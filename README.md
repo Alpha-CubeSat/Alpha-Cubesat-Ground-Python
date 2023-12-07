@@ -30,21 +30,21 @@ the running ground software, so long as it is started in development mode. This 
 and it is recommended to keep the ground software and environment running while developing as changes in code will be loaded 
 without the need to recompile/reboot anything.
 
-*Note: Alpha runs its ground software on Ubuntu Server, so if you are using something else, such as Windows, the locations of ElasticSearch and Kibana configuration files might be elsewhere.*
+*Note: Alpha runs its ground software on Ubuntu Server, so if you are using something else, such as Windows, the locations of Elasticsearch and Kibana configuration files might be elsewhere.*
 
 1. **Install ElasticSearch.**
 ElasticSearch is what the ground system uses to store telemetry data received from the satellite. 
 A guide for installation can be found in [Elastic's documentation](https://www.elastic.co/guide/en/elasticsearch/reference/current/install-elasticsearch.html). 
 Then, configure ElasticSearch as necessary (configuration at `/etc/elasticsearch/elasticsearch.yml`). 
-By default it will listen on `localhost:9200`.
+By default Elasticsearch will listen on `localhost:9200`.
 
 
 2. **Install Kibana.**
 Kibana is a visualization tool for creating graphics and timeseries out of data in ElasticSearch. 
 This will be useful for configuring alerts, graphs, and other aggregations of telemetry data.
-A guide for installation can be found in [Elastic's documentation](https://www.elastic.co/guide/en/kibana/current/install.html). 
+A guide for installation can be found in [Kibana's documentation](https://www.elastic.co/guide/en/kibana/current/install.html). 
 Kibana can be configured as needed in the configuration file (at `/etc/kibana/kibana.yml`). 
-By default Kibana listens on `localhost:5601`.  
+By default Kibana will listen on `localhost:5601`.  
 
 
 3. **Configure the Backend Server.**
@@ -64,11 +64,11 @@ An interactive API documentation will also be generated when the development ser
 5. **Configure the Frontend.**
 Navigate to `cubesat-frontend` and configure the frontned by creating an `.env` file in the folder. You will need to configure the following environmental variables:
     - `REACT_APP_BASE_API_URL`: The URL of the backend server that the frontend makes API requests to.
-    - `REACT_APP_KIBANA_URL`: The URL of the Kibana server (used form the base URL for viewing normal reports in Kibana).
-    - `REACT_APP_KIBANA_NR_DOC_ID`: The ID of the Kibana `cubesat_normal_report` document (used form the base URL for viewing normal reports in Kibana).
+    - `REACT_APP_KIBANA_URL`: The URL of the Kibana server (used to form the base URL for viewing normal reports in Kibana).
+    - `REACT_APP_KIBANA_NR_DOC_ID`: The ID of the Kibana `cubesat_normal_report` document (used to form the base URL for viewing normal reports in Kibana).
 
 7. **Run the Frontend UI.**
-Once configured, run the command `npm start` (make sure the back-end is still running).
+Once configured, run the command `npm start` (make sure the backend server is still running).
 This will start the fronend server which is assessable at `localhost:3000`.
 Again, frontend code is hotloaded, so leave the UI open as you develop, and changes to the code will be uploaded to the browser and 
 reflected in the UI without the need to refresh the page in the browser or manually rerun/rebuild any code.
