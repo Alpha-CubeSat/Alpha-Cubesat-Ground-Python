@@ -48,38 +48,30 @@ By default Kibana listens on `localhost:5601`.
 
 
 3. **Configure the Backend Server.**
-Navigate to `cubesat-backend` and configure the backend in `config.py`. 
-The `config.py` file provided has placeholder/default values for everything, so you can just change fields.
-
-[//]: # (Under `:telemetry`, you can specify the ElasticSearch indices for storing data received from RockBlock Web Services as well as processed satellite data. )
-[//]: # (Under `:database` configuration, you can specify the location of the ElasticSearch server, as well as authentication credentials.)
-[//]: # (If you are not using authentication in ElasticSearch &#40;you won't by default&#41;, you can remove the `:basic-auth` option entirely under `:conn-config`. )
-[//]: # (Under `:image` you can configure the root directory on the local filesystem where satellite image data will be stored &#40;and served from&#41;. )
-[//]: # (Finally, under `:control` you specify your RockBlock web services credentials as well as the id "imei" of the physical RockBlock unit you are using. This allows the ground system to authenticate with RockBlock and issue commands to the device.&#41;&#41;)
+Navigate to `cubesat-backend` and configure the backend by creating an `.env` file in the folder. You will need to configure the following environmental variables:
+    - `ROCKBLOCK_USER`, `ROCKBLOCK_PASS`: The username and password of the RockBlock Web Services account used for receiving telemetry and sending commands.
+    - `GS_ADMIN_PASS`: The password for the ground station's admin user.
+    - `ELASTIC_USER`, `ELASTIC_PASS`: The username and password of the Elasticsearch superuser account.
+    - `ELASTIC_CERTS`: The filepath to Elasticsearch's HTTPS certificates, usually located in `<elasticsearch base path>/config/certs/http_ca.crt`.
 
 4. **Run the Backend Server.**
-Run the command `flask run`. This will start the Alpha backend server that listens for requests at `localhost:5000`. 
-It will search for another port if 5000 is taken, and print the one it listens on to the console. 
+Run the command `flask run`. This will start the backend server that listens for requests at `localhost:5000`.
 The server will run in development mode, so it hotloads code: if you make a change,
 the new code will be injected (and start running) into the already running server when you save a file in your editor.
 An interactive API documentation will also be generated when the development server is booted, which can be found at `/docs`.  
 
 
 5. **Configure the Frontend.**
-Navigate to `cubesat-frontend`. There is not much configuration that is necessary, but the front end UI is served by its own server. 
-As this UI will attempt to make requests against the actual backend API, the frontend development server will not be able to handle them.
+Navigate to `cubesat-frontend` and configure the frontned by creating an `.env` file in the folder. You will need to configure the following environmental variables:
+    - `REACT_APP_BASE_API_URL`: The URL of the backend server that the frontend makes API requests to.
+    - `REACT_APP_KIBANA_URL`: The URL of the Kibana server (used form the base URL for viewing normal reports in Kibana).
+    - `REACT_APP_KIBANA_NR_DOC_ID`: The ID of the Kibana `cubesat_normal_report` document (used form the base URL for viewing normal reports in Kibana).
 
-[//]: # (Thus, this frontend server is configured in `shadow-cljs.edn` to reroute &#40;proxy&#41; any requests it cannot satisfy to the address of the actual backend )
-[//]: # (&#40;which should be running if you completed step 4&#41;. By default, this attempts to reroute to `localhost:3000`, as this is the default address for the Alpha backend. )
-[//]: # (But if you are using a different one, you will need to change `:proxy-url` to point to the right address.)
-
-6. **Run the Frontend UI.**
-Once configured, run the command `npm start` (make sure the back-end is still running). 
-This will boot the server that serves the UI and proxies requests to the real backend. 
-Navigate to the address configured (it will be printed in the terminal, and it is `localhost:3000` by default). 
+7. **Run the Frontend UI.**
+Once configured, run the command `npm start` (make sure the back-end is still running).
+This will start the fronend server which is assessable at `localhost:3000`.
 Again, frontend code is hotloaded, so leave the UI open as you develop, and changes to the code will be uploaded to the browser and 
-reflected in the UI without the need to refresh the page in the browser or manually rerun/rebuild any code. 
-The UI will require you to log in. Assuming you haven't changed the config or users file, the default username is `example-user` and the password is `example`.
+reflected in the UI without the need to refresh the page in the browser or manually rerun/rebuild any code.
 
 ## Setting up the Ground Station for Production
 There are some tasks and configuration, such as building the code for production, that are outlined here. These will help you set up the ground station in a production environment that serves and runs optimized code, and is configured to be secure.
