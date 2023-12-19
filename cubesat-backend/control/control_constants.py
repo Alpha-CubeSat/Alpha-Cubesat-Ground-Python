@@ -160,76 +160,72 @@ SFR_OVERRIDE_OPCODES_MAP = {
             'hex': '2001',
             'type': SFR_T.BOOL,
         },
-        'turn_on': {
+        'powered': {
             'hex': '2002',
             'type': SFR_T.BOOL,
         },
-        'turn_off': {
+        'report_ready': {
             'hex': '2003',
             'type': SFR_T.BOOL,
         },
-        'powered': {
+        'fragment_requested': {
             'hex': '2004',
             'type': SFR_T.BOOL,
         },
-        'report_ready': {
-            'hex': '2005',
-            'type': SFR_T.BOOL,
-        },
-        'fragment_requested': {
-            'hex': '2006',
-            'type': SFR_T.BOOL,
-        },
         'start_progress': {
+            'hex': '2005',
+            'type': SFR_T.INT,
+        },
+        'serial_requested': {
+            'hex': '2006',
+            'type': SFR_T.INT,
+        },
+        'power_setting': {
             'hex': '2007',
             'type': SFR_T.INT
         },
-        'serial_requested': {
-            'hex': '2008',
-            'type': SFR_T.INT
-        },
         'mode': {
-            'hex': '2009',
+            'hex': '2008',
             'min': 0,
             'max': 2,
             'type': SFR_T.INT
         },
         'failed_times': {
-            'hex': '2010',
+            'hex': '2009',
             'type': SFR_T.INT
         },
         'failed_limit': {
-            'hex': '2011',
+            'hex': '2010',
             'type': SFR_T.INT
         },
         'init_mode': {
-            'hex': '2012',
+            'hex': '2011',
             'min': 0,
             'max': 3,
             'type': SFR_T.INT
         },
         'init_start_time': {
-            'hex': '2013',
+            'hex': '2012',
             'type': SFR_T.INT
         },
         'init_timeout': {
-            'hex': '2014',
+            'hex': '2013',
             'type': SFR_T.INT
         },
         'images_written': {
-            'hex': '2015',
+            'hex': '2014',
             'type': SFR_T.INT
         },
         'fragments_written': {
-            'hex': '2016',
+            'hex': '2015',
             'type': SFR_T.INT
         },
         'set_res': {
-            'hex': '2017',
+            'hex': '2016',
             'type': SFR_T.INT
         },
         'fragment_number_requested': {
-            'hex': '2018',
+            'hex': '2017',
             'type': SFR_T.INT
         },
     },
@@ -304,64 +300,60 @@ SFR_OVERRIDE_OPCODES_MAP = {
             'hex': '2200',
             'type': SFR_T.BOOL,
         },
-        'turn_on': {
+        'powered': {
             'hex': '2201',
             'type': SFR_T.BOOL,
         },
-        'turn_off': {
+        'report_written': {
             'hex': '2202',
             'type': SFR_T.BOOL,
         },
-        'powered': {
+        'report_ready': {
             'hex': '2203',
             'type': SFR_T.BOOL,
         },
-        'report_written': {
+        'fragment_requested': {
             'hex': '2204',
             'type': SFR_T.BOOL,
         },
-        'report_ready': {
-            'hex': '2205',
-            'type': SFR_T.BOOL,
-        },
-        'fragment_requested': {
-            'hex': '2206',
-            'type': SFR_T.BOOL,
-        },
         'fragment_number_requested': {
-            'hex': '2207',
+            'hex': '2205',
+            'type': SFR_T.INT
+        },
+        'power_setting': {
+            'hex': '2206',
             'type': SFR_T.INT
         },
         'mode': {
-            'hex': '2208',
+            'hex': '2207',
             'min': 0,
             'max': 2,
             'type': SFR_T.INT
         },
         'init_mode': {
-            'hex': '2209',
+            'hex': '2208',
             'min': 0,
             'max': 3,
             'type': SFR_T.INT
         },
         'failed_times': {
-            'hex': '2210',
+            'hex': '2209',
             'type': SFR_T.INT
         },
         'failed_limit': {
-            'hex': '2211',
+            'hex': '2210',
             'type': SFR_T.INT
         },
         'imu_boot_collection_start_time': {
-            'hex': '2212',
+            'hex': '2211',
             'type': SFR_T.INT
         },
         'door_open__collection_start_time': {
-            'hex': '2213',
+            'hex': '2212',
             'type': SFR_T.INT
         },
         'max_fragments': {
-            'hex': '2214',
+            'hex': '2213',
             'type': SFR_T.INT
         },
     },
