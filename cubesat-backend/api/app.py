@@ -2,6 +2,7 @@ from apifairy import APIFairy
 from flask import Flask, redirect, url_for
 from flask_cors import CORS
 from flask_marshmallow import Marshmallow
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 from config import Config
 
@@ -12,6 +13,7 @@ cors = CORS()
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
+    app.wsgi_app = ProxyFix(app.wsgi_app)
 
     ma.init_app(app)
     apifairy.init_app(app)
