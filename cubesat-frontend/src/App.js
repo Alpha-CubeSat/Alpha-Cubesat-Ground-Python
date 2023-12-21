@@ -12,7 +12,7 @@ import PrivateRoute from "./components/PrivateRoute";
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/ui">
       <ToastContainer
         position="top-right"
         autoClose={5000}
