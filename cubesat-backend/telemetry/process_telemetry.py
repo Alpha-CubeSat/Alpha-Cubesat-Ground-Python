@@ -2,7 +2,7 @@ import traceback
 from datetime import datetime, timedelta
 
 from config import *
-from databases import elastic, image_database
+from databases import elastic, capture_database
 from telemetry.read_telemetry import read_cubesat_data, error_data
 from telemetry.telemetry_constants import *
 
@@ -105,19 +105,19 @@ def process_save_deploy_data(data: dict):
         last_dlink_fragment_num = data['fragment_number'] + 1
 
 
-def process_save_camera_data(data: dict):
+def process_save_ods_data(data: dict):
     """
-    Process image fragment data sent by cubesat. Image comes over several fragments as
-    rockblock only supports so much protocol. Image 'fragments' are then assembled into full images
-    when fully collected, and saved into the image database. Saves image fragment
+    Process capture fragment data sent by cubesat. Capture comes over several fragments as
+    rockblock only supports so much protocol. Capture 'fragments' are then assembled into full captures
+    when fully collected, and saved into the capture database. Saves capture fragment
     summary report (latest, missing, and highest received fragments) to elasticsearch \n
 
-    :param data: image fragment report
+    :param data: capture fragment report
     """
-    image_database.save_fragment(data['imei'], data['serial_number'], data['fragment_number'], data['fragment_data'])
-    image_database.try_save_image(data['imei'], data['serial_number'], data['max_fragments'])
-    elastic.index(image_db_index,
-                  {**report_metadata(data), **image_database.img_fragment_downlink_info})
+    capture_database.save_fragment(data['imei'], data['serial_number'], data['fragment_number'], data['fragment_data'])
+    capture_database.try_save_capture(data['imei'], data['serial_number'], data['max_fragments'])
+    elastic.index(capture_db_index,
+                  {**report_metadata(data), **capture_database.img_fragment_downlink_info})
 
 
 def handle_report(rockblock_report: dict):
@@ -154,8 +154,8 @@ def handle_report(rockblock_report: dict):
                 if response: rockblock_report['normal_report_id'] = response.body["_id"]
             elif operation == Opcodes.imu_report:
                 process_save_deploy_data(result)
-            elif operation == Opcodes.camera_report:
-                process_save_camera_data(result)
+            elif operation == Opcodes.ods_report:
+                process_save_ods_data(result)
         except Exception as e:
             print(traceback.format_exc())
             # update report to indicate error occurred during processing
