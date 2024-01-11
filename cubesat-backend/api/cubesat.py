@@ -10,7 +10,7 @@ from flask import Blueprint
 
 import config
 from api.auth import token_auth
-from api.schemas import ImageNameSchema, ImageCountSchema, ImageDataSchema, \
+from api.schemas import CaptureNameSchema, CaptureCountSchema, CaptureDataSchema, \
     CommandResponseSchema, RockblockReportSchema, CommandUplinkSchema, DownlinkHistorySchema
 from control import control_protocol
 from control.control_constants import SFR_OVERRIDE_OPCODES_MAP, FAULT_OPCODE_MAP
@@ -54,43 +54,43 @@ def rockblock_telemetry(report):
     return '', 200  # Successful downlink code
 
 
-@cubesat.get('/img/<imei>/recent')
+@cubesat.get('/capture/<imei>/recent')
 @authenticate(token_auth)
-@arguments(ImageCountSchema)
-@response(ImageNameSchema)
+@arguments(CaptureCountSchema)
+@response(CaptureNameSchema)
 def get_recent_imgs(args, imei):
     """
-    Get Recent Images
-    Returns a list of names of the last ```n``` (default 5) downlinked image files received by the ground station.
-    Images are sorted by serial # (so that they are chronological)
+    Get Recent Captures
+    Returns a list of names of the last ```n``` (default 5) downlinked capture files received by the ground station.
+    Captures are sorted by serial # (so that they are chronological)
     """
-    if not exists(f'{config.image_root_dir}/{imei}'):
+    if not exists(f'{config.capture_root_dir}/{imei}'):
         return []
 
     return {
-        'images': sorted(os.listdir(f'{config.image_root_dir}/{imei}/img'),
+        'captures': sorted(os.listdir(f'{config.capture_root_dir}/{imei}/img'),
                          key=lambda x: os.path.basename(x))[:args['count']]
     }
 
 
-@cubesat.get('/img/<imei>/<name>')
+@cubesat.get('/capture/<imei>/<name>')
 @authenticate(token_auth)
-@response(ImageDataSchema)
-@other_responses({400: 'Image does not exist'})
-def get_image(imei, name: 'Name of the image'):
+@response(CaptureDataSchema)
+@other_responses({400: 'Capture does not exist'})
+def get_capture(imei, name: 'Name of the capture'):
     """
-    Get Image By Name
-    Returns the image file (as a base64 string) with the given name and its metadata if it exists.
+    Get Capture By Name
+    Returns the capture file (as a base64 string) with the given name and its metadata if it exists.
     """
     try:
-        image_path = f'{config.image_root_dir}/{imei}/img/{name}'
-        with open(image_path, 'rb') as image:
-            img_hex = bytearray(image.read()).hex()
-        # add end flag for partially downlinked images (needed to display image properly on frontend)
+        capture_path = f'{config.capture_root_dir}/{imei}/img/{name}'
+        with open(capture_path, 'rb') as capture:
+            img_hex = bytearray(capture.read()).hex()
+        # add end flag for partially downlinked captures (needed to display capture properly on frontend)
         if img_hex.count('ffd9') == 0: img_hex += 'ffd9'
         return {
-            'name': os.path.basename(image_path),
-            'timestamp': os.path.getmtime(image_path),
+            'name': os.path.basename(capture_path),
+            'timestamp': os.path.getmtime(capture_path),
             'base64': base64.b64encode(bytearray.fromhex(img_hex))
         }
     except FileNotFoundError:

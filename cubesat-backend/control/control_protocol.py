@@ -129,8 +129,8 @@ def parse_command(command: dict) -> str:
 
     elif selected_opcode == 'Fragment_Request':
         cmd_data = command['value']
-        if cmd_data['type'] == 'Image':
-            opcode = IMAGE_REQUEST_OPCODE
+        if cmd_data['type'] == 'Capture':
+            opcode = CAPTURE_REQUEST_OPCODE
             arg1 = format_single_arg(int(cmd_data['serialNum']), ARG_LENGTH)
             arg2 = format_single_arg(int(cmd_data['fragmentNum']), ARG_LENGTH)
         elif cmd_data['type'] == 'IMU':

@@ -14,13 +14,13 @@ class RockblockReportSchema(ma.Schema):
     iridium_latitude = ma.Float(required=True)
     data = ma.Str(required=True)
 
-class ImageCountSchema(ma.Schema):
+class CaptureCountSchema(ma.Schema):
     count = ma.Int(load_default=5)
 
-class ImageNameSchema(ma.Schema):
-    images = ma.List(ma.Str())
+class CaptureNameSchema(ma.Schema):
+    captures = ma.List(ma.Str())
 
-class ImageDataSchema(ma.Schema):
+class CaptureDataSchema(ma.Schema):
     name = ma.Str(required=True)
     timestamp = ma.Str(required=True)
     base64 = ma.Str(required=True)
