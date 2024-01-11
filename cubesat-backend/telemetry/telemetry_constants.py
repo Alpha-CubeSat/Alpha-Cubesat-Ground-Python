@@ -10,11 +10,11 @@ class Opcodes(int, Enum):
 
     normal_report = 99
     imu_report = 24
-    camera_report = 42
+    ods_report = 42
     error = -1
 
 
-bool_fields = ["photoresistor_covered", "possible_uncovered", "camera_powered",
+bool_fields = ["photoresistor_covered", "possible_uncovered", "ods_powered",
                "deployed", "waiting_command",
                "temp_in_sun", "current_in_sun", "button_pressed"]
 
