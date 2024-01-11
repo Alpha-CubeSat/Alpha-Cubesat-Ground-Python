@@ -117,7 +117,7 @@ def process_save_ods_data(data: dict):
     capture_database.save_fragment(data['imei'], data['serial_number'], data['fragment_number'], data['fragment_data'])
     capture_database.try_save_capture(data['imei'], data['serial_number'], data['max_fragments'])
     elastic.index(capture_db_index,
-                  {**report_metadata(data), **capture_database.img_fragment_downlink_info})
+                  {**report_metadata(data), **capture_database.capture_fragment_downlink_info})
 
 
 def handle_report(rockblock_report: dict):
