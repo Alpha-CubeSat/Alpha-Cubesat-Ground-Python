@@ -4,7 +4,7 @@
 *.pyc
 *.env
 */venv
-*/cubesat_catpures
+*/cubesat_ods_captures
 users.db
 */command_logs
 clearelastic.py
