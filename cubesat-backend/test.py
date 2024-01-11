@@ -3,7 +3,7 @@ from telemetry.process_telemetry import handle_report
 # normal_report = "281ffc0502000000000100000100001c55810288888873737366662fa4a499999999999900000000314c5314c5314c5314612805000000000000000000000000000000000000"
 # normal_report2 = "911ffc0502000000000100000500001c558124f9f9f9b5b5b56d6c2aa5a5cccccccccccc0000000062d284a0c5314c5314c54444000000000000000000000000000000000000"
 # normal_report3 = "911ffc0502000000000100000500001c558124f9f9f9b5b5b56d6c2aa5a5cccccccccccc0000000062d284a0c5314c5314c55555000000000000000000000000000000000000"
-normal_report4 = "63ca1ffc050201000000000100000300001c558102888888797979676529a3a6cccccccccccc00000000314c5314c5314c5314c5444433330000000000000000000000000000"
+normal_report4 = "63ca1ffc050201000000000100000300001c558102888888797979676529a3a6cccccccccccc00000003314c5314c5314c5314c5444433330000000000000000000000000000"
 normal_reports = [normal_report4]
 
 imu1 = "18007d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d7d"
@@ -74,7 +74,7 @@ a54 = "2a0000000036b58efad209304e403cf238ae7ad51ad8d20879bf0f1e4370472460e2a83cc
 a55 = "2a00000000372bbb22ed7640660e38c8ec47a535d1d8901cf03190d5a6c36b5d069b628410493df6b60f7a8a48c2eec91919046ec60e6a94ee55aeb51f1bc6a842e73fef7ff5"
 a56 = "2a0000000038aa26947f7b3ebcf1fe79aa5177b8d5885a6c02776403d73fe7dea0964ce0924e3b66b684452763ffffffffd9bfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbfbf"
 
-image_fragments = [a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17,
+capture_fragments = [a0, a1, a2, a3, a4, a5, a6, a7, a8, a9, a10, a11, a12, a13, a14, a15, a16, a17,
                    a18, a19, a20, a21, a22, a23, a24, a25, a26, a27, a28, a29, a30, a31, a32, a33,
                    a34, a35, a36, a37, a38, a39, a40, a41, a42, a43, a44, a45, a46, a47, a48, a49,
                    a50, a51, a52, a53, a54, a55, a56]
@@ -87,13 +87,13 @@ metadata = {'transmit_time': '2019-10-16T11:12:00Z', 'imei': 300534061570670,
             }
 
 # normal report
-# for normal_report in normal_reports:
-#     handle_report({**metadata, 'data': normal_report})
+for normal_report in normal_reports:
+    handle_report({**metadata, 'data': normal_report})
 
 # imu reports
 # for fragment in imu_fragments:
 #     handle_report({**metadata, 'data': fragment})
 
-# image fragment reports
-for fragment in image_fragments:
-    handle_report({**metadata, 'data': fragment})
+# capture fragment reports
+# for fragment in capture_fragments:
+#     handle_report({**metadata, 'data': fragment})

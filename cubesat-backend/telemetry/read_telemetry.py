@@ -75,16 +75,16 @@ def read_imu_hex_fragment(data: str) -> dict:
 
 def read_img_hex_fragment(data: str) -> dict:
     """
-    Reads the hexadecimal string of an image fragment to determine if the
+    Reads the hexadecimal string of an capture fragment to determine if the
     fragment is the last fragment, which is indicated by the end-marker 'ffd9'.
     Returns the serial number in decimal form, the fragment number in
     decimal form, the max number of fragments in decimal form, and the hex string
-    of fragment data needed to be read (minus the opcode, image serial number and
+    of fragment data needed to be read (minus the opcode, capture serial number and
     fragment number).
 
-    If the image fragment is not last, then the max number of fragments is set
+    If the capture fragment is not last, then the max number of fragments is set
     arbitrarily to -1, and the entirety of the fragment portion in hex string
-    must be read. If the image fragment is the last, then the max number of
+    must be read. If the capture fragment is the last, then the max number of
     fragments is set to (last fragment number), and the hexadecimal string is
     read up to 'ffd9'.
 
@@ -96,9 +96,9 @@ def read_img_hex_fragment(data: str) -> dict:
             Fragment count starts at 0.
           - The fragment data starts at index 10 and goes to the end of the hex string
             or to the end of end-marker 'ffd9'.
-          - The entire hex string for an image fragment data is 69 bytes long (138 characters).
+          - The entire hex string for an capture fragment data is 69 bytes long (138 characters).
 
-    :param data: hex string containing image fragment data
+    :param data: hex string containing capture fragment data
     :return: a dictionary with the fragment's serial #, id #, data and the total # of fragments
     """
 
@@ -154,7 +154,7 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
         # print(result)
     elif opcode == Opcodes.imu_report:
         result = read_imu_hex_fragment(data)
-    elif opcode == Opcodes.camera_report:
+    elif opcode == Opcodes.ods_report:
         result = read_img_hex_fragment(data)
     result['telemetry_report_type'] = opcode
     return result

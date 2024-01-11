@@ -15,9 +15,9 @@ rockblock_db_index = 'rockblock_data'
 cubesat_db_index = 'cubesat_normal_report'
 cycle_db_index = 'imu_cycle_report'
 deploy_db_index = 'cubesat_deploy_report'
-image_db_index = 'image_fragment_info'
+capture_db_index = 'capture_fragment_info'
 
-image_root_dir = os.path.join(basedir, 'cubesat_images')
+capture_root_dir = os.path.join(basedir, 'cubesat_captures')
 cmd_log_root_dir = os.path.join(basedir, 'command_logs')
 users_db = os.path.join(basedir, 'users.db')
 

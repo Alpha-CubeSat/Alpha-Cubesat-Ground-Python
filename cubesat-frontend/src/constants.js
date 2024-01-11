@@ -15,7 +15,7 @@ export const opcodeDesc = {
   Fire: "Move the CubeSat into the In Sun phase.",
   SFR_Override: "Override the selected SFR field with the provided value.",
   Fault: "Force, suppress, or restore the selected fault.",
-  Fragment_Request: "Request an image or IMU fragment.",
+  Fragment_Request: "Request a capture or IMU fragment.",
   EEPROM_Reset: "Reset the EEPROM metadata with the provided values.",
 };
 
@@ -37,7 +37,7 @@ export const IMEI_MAP = {
 export const report_types = {
   99: "Normal",
   24: "IMU",
-  42: "Camera",
+  42: "ODS",
   "-1": "Error",
 };
 
@@ -55,14 +55,12 @@ export function stringifyCommand(command) {
     command.opcode === OpCodes.SFR_Override ||
     command.opcode === OpCodes.Fault
   ) {
-    return `${command.namespace}::${command.field} = ${
-      command.opcode === OpCodes.SFR_Override ? data.value : data
-    }`;
+    return `${command.namespace}::${command.field} = ${command.opcode === OpCodes.SFR_Override ? data.value : data
+      }`;
   } else if (command.opcode === OpCodes.Fragment_Request) {
-    return `${data.type}: Fragment ${
-      data.fragmentNum +
-      (data.type === "Image" ? ", Serial " + data.serialNum : "")
-    }`;
+    return `${data.type}: Fragment ${data.fragmentNum +
+      (data.type === "Capture" ? ", Serial " + data.serialNum : "")
+      }`;
   } else if (command.opcode === OpCodes.EEPROM_Reset) {
     return `Boot count: ${data.bootCount}, Light: ${data.lightSwitch}, 
     SFR addr: ${data.sfrAddress}, Data addr: ${data.dataAddress}, 
