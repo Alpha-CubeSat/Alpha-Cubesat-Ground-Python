@@ -15,7 +15,7 @@ export const opcodeDesc = {
   Fire: "Move the CubeSat into the In Sun phase.",
   SFR_Override: "Override the selected SFR field with the provided value.",
   Fault: "Force, suppress, or restore the selected fault.",
-  Fragment_Request: "Request a capture or IMU fragment.",
+  Fragment_Request: "Request an ODS capture fragment.",
   EEPROM_Reset: "Reset the EEPROM metadata with the provided values.",
 };
 

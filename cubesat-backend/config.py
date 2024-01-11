@@ -17,7 +17,7 @@ cycle_db_index = 'imu_cycle_report'
 deploy_db_index = 'cubesat_deploy_report'
 capture_db_index = 'capture_fragment_info'
 
-capture_root_dir = os.path.join(basedir, 'cubesat_captures')
+capture_root_dir = os.path.join(basedir, 'cubesat_ods_captures')
 cmd_log_root_dir = os.path.join(basedir, 'command_logs')
 users_db = os.path.join(basedir, 'users.db')
 
