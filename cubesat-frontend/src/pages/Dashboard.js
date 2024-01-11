@@ -1,13 +1,13 @@
 import { Col, Container, Row } from "react-bootstrap";
 import CommandBuilder from "../components/CommandBuilder";
-import ImageViewer from "../components/ImageViewer";
+import CaptureViewer from "../components/CaptureViewer";
 import CommandHistory from "../components/CommandHistory";
 import WidgetCard from "../components/WidgetCard";
 import CommandSelector from "../components/CommandSelector";
 import DownlinkHistory from "../components/DownlinkHistory";
 
 // Main CubeSat Control Dashboard
-// Contains widgets for command building, command creation, image viewing, and a command history log.
+// Contains widgets for command building, command creation, capture viewing, and a command history log.
 export default function Dashboard() {
   return (
     <Container fluid className="overflow-hidden">
@@ -25,7 +25,7 @@ export default function Dashboard() {
             />
           </Row>
           <Row className="h-50 pt-3 pb-2">
-            <WidgetCard title="CubeSat Images" children={<ImageViewer />} />
+            <WidgetCard title="CubeSat Captures" children={<CaptureViewer />} />
           </Row>
         </Col>
         <Col className="dash_height" sm="5">

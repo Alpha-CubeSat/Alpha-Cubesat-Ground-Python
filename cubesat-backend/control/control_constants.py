@@ -18,7 +18,7 @@ BURNWIRE_OPCODES = {
 }
 
 EEPROM_RESET_OPCODE = '7777'
-IMAGE_REQUEST_OPCODE = '8888'
+CAPTURE_REQUEST_OPCODE = '8888'
 
 SFR_OVERRIDE_OPCODES_MAP = {
     'stabilization': {
@@ -150,12 +150,12 @@ SFR_OVERRIDE_OPCODES_MAP = {
             'type': SFR_T.INT
         },
     },
-    'camera': {
-        'photo_taken_sd_failed': {
+    'ods': {
+        'capture_taken_sd_failed': {
             'hex': '2000',
             'type': SFR_T.BOOL,
         },
-        'take_photo': {
+        'take_capture': {
             'hex': '2001',
             'type': SFR_T.BOOL,
         },
@@ -211,7 +211,7 @@ SFR_OVERRIDE_OPCODES_MAP = {
             'hex': '2013',
             'type': SFR_T.INT
         },
-        'images_written': {
+        'captures_written': {
             'hex': '2014',
             'type': SFR_T.INT
         },
@@ -555,7 +555,7 @@ FAULT_OPCODE_MAP = {
 
 
 COMMAND_OPCODE_MAP = {
-    IMAGE_REQUEST_OPCODE: 'Image Request',
+    CAPTURE_REQUEST_OPCODE: 'Capture Request',
     EEPROM_RESET_OPCODE: 'EEPROM Reset'
 }
 for (k, v) in BURNWIRE_OPCODES.items():
