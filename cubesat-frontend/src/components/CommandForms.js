@@ -189,54 +189,54 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
               {(fieldData.type === SFR_Type.Time ||
                 fieldData.type === SFR_Type.Float ||
                 fieldData.type === SFR_Type.Int) && (
-                <>
-                  {/* Numerical SFR field input */}
-                  <InputField
-                    name="value"
-                    type="number"
-                    className="mt-1"
-                    placeholder="Value"
-                    error={inputError}
-                    onChange={handleFieldChange}
-                    disabled={!commandFields.setValue}
-                  />
-                  {/* Time unit selector */}
-                  {fieldData.type === SFR_Type.Time && (
-                    <div className="mt-2">
-                      <Form.Check
-                        name="time_unit"
-                        label="sec"
-                        type="radio"
-                        disabled={!commandFields.setValue}
-                        onChange={() => setTimeUnit("SEC")}
-                        inline
-                        defaultChecked
-                        className="me-2"
-                      />
-                      <Form.Check
-                        name="time_unit"
-                        label="min"
-                        id="unit_minutes"
-                        type="radio"
-                        disabled={!commandFields.setValue}
-                        onChange={() => setTimeUnit("MIN")}
-                        inline
-                        className="me-2"
-                      />
-                      <Form.Check
-                        name="time_unit"
-                        label="hr"
-                        id="unit_hours"
-                        type="radio"
-                        disabled={!commandFields.setValue}
-                        onChange={() => setTimeUnit("HOUR")}
-                        inline
-                        className="me-2"
-                      />
-                    </div>
-                  )}
-                </>
-              )}
+                  <>
+                    {/* Numerical SFR field input */}
+                    <InputField
+                      name="value"
+                      type="number"
+                      className="mt-1"
+                      placeholder="Value"
+                      error={inputError}
+                      onChange={handleFieldChange}
+                      disabled={!commandFields.setValue}
+                    />
+                    {/* Time unit selector */}
+                    {fieldData.type === SFR_Type.Time && (
+                      <div className="mt-2">
+                        <Form.Check
+                          name="time_unit"
+                          label="sec"
+                          type="radio"
+                          disabled={!commandFields.setValue}
+                          onChange={() => setTimeUnit("SEC")}
+                          inline
+                          defaultChecked
+                          className="me-2"
+                        />
+                        <Form.Check
+                          name="time_unit"
+                          label="min"
+                          id="unit_minutes"
+                          type="radio"
+                          disabled={!commandFields.setValue}
+                          onChange={() => setTimeUnit("MIN")}
+                          inline
+                          className="me-2"
+                        />
+                        <Form.Check
+                          name="time_unit"
+                          label="hr"
+                          id="unit_hours"
+                          type="radio"
+                          disabled={!commandFields.setValue}
+                          onChange={() => setTimeUnit("HOUR")}
+                          inline
+                          className="me-2"
+                        />
+                      </div>
+                    )}
+                  </>
+                )}
               {fieldData.type === SFR_Type.Bool && (
                 <div className="mt-2">
                   {/* Boolean SFR field input */}
@@ -415,9 +415,9 @@ export const Fault = forwardRef(({ Fault_Data, setTitle }, ref) => {
   );
 });
 
-export const FragmentRequest = forwardRef(({}, ref) => {
+export const FragmentRequest = forwardRef(({ }, ref) => {
   // Selected values
-  const [fragmentType, setFragmentType] = useState("Image");
+  const [fragmentType, setFragmentType] = useState("Capture");
   const [serialNum, setSerialNum] = useState("");
   const [fragmentNum, setFragmentNum] = useState("");
   const [inputError, setInputError] = useState();
@@ -426,14 +426,14 @@ export const FragmentRequest = forwardRef(({}, ref) => {
   // which checks if the command fields are valid and returns the command if so
   useImperativeHandle(ref, () => ({
     handleSubmit() {
-      if (fragmentNum === "" || (fragmentType === "Image" && serialNum === ""))
+      if (fragmentNum === "" || (fragmentType === "Capture" && serialNum === ""))
         return;
 
       return {
         value: {
           type: fragmentType,
           fragmentNum: fragmentNum,
-          ...(fragmentType === "Image" && { serialNum: serialNum }),
+          ...(fragmentType === "Capture" && { serialNum: serialNum }),
         },
       };
     },
@@ -453,8 +453,8 @@ export const FragmentRequest = forwardRef(({}, ref) => {
           <Form.Check
             name="fragType"
             type="radio"
-            label="Image"
-            onChange={() => setFragmentType("Image")}
+            label="Capture"
+            onChange={() => setFragmentType("Capture")}
             defaultChecked
           />
           <Form.Check
@@ -464,7 +464,7 @@ export const FragmentRequest = forwardRef(({}, ref) => {
             onChange={() => setFragmentType("IMU")}
           />
         </Col>
-        {fragmentType === "Image" && (
+        {fragmentType === "Capture" && (
           <Col>
             <span style={{ fontWeight: "bold" }}>Serial #</span>
             <InputField
@@ -493,7 +493,7 @@ export const FragmentRequest = forwardRef(({}, ref) => {
   );
 });
 
-export const EepromReset = forwardRef(({}, ref) => {
+export const EepromReset = forwardRef(({ }, ref) => {
   const [inputError, setInputError] = useState();
   const [eepromFields, setEepromFields] = useState({
     bootCount: "",
