@@ -18,7 +18,7 @@ export default function CaptureViewer() {
     setCaptureData();
     (async () => {
       // fetches last 5 captures by default
-      const response = await api.get(`/cubesat/img/${imei}/recent`);
+      const response = await api.get(`/cubesat/capture/${imei}/recent`);
       if (response.status === 200) {
         setCaptureList(response.data["captures"]);
       } else {
@@ -28,7 +28,7 @@ export default function CaptureViewer() {
   }, [api, imei]);
 
   const handleCaptureSelection = async (file) => {
-    const response = await api.get(`/cubesat/img/${imei}/${file}`);
+    const response = await api.get(`/cubesat/capture/${imei}/${file}`);
     if (response.status === 200) {
       setCaptureData(response.data);
     }

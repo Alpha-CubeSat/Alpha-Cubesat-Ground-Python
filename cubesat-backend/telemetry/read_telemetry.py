@@ -73,7 +73,7 @@ def read_imu_hex_fragment(data: str) -> dict:
     }
 
 
-def read_img_hex_fragment(data: str) -> dict:
+def read_capture_hex_fragment(data: str) -> dict:
     """
     Reads the hexadecimal string of an capture fragment to determine if the
     fragment is the last fragment, which is indicated by the end-marker 'ffd9'.
@@ -155,6 +155,6 @@ def read_cubesat_data(rockblock_report: dict) -> dict:
     elif opcode == Opcodes.imu_report:
         result = read_imu_hex_fragment(data)
     elif opcode == Opcodes.ods_report:
-        result = read_img_hex_fragment(data)
+        result = read_capture_hex_fragment(data)
     result['telemetry_report_type'] = opcode
     return result

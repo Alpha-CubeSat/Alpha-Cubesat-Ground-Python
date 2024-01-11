@@ -58,7 +58,7 @@ def rockblock_telemetry(report):
 @authenticate(token_auth)
 @arguments(CaptureCountSchema)
 @response(CaptureNameSchema)
-def get_recent_imgs(args, imei):
+def get_recent_captures(args, imei):
     """
     Get Recent Captures
     Returns a list of names of the last ```n``` (default 5) downlinked capture files received by the ground station.
@@ -68,7 +68,7 @@ def get_recent_imgs(args, imei):
         return []
 
     return {
-        'captures': sorted(os.listdir(f'{config.capture_root_dir}/{imei}/img'),
+        'captures': sorted(os.listdir(f'{config.capture_root_dir}/{imei}/capture'),
                          key=lambda x: os.path.basename(x))[:args['count']]
     }
 
@@ -83,15 +83,15 @@ def get_capture(imei, name: 'Name of the capture'):
     Returns the capture file (as a base64 string) with the given name and its metadata if it exists.
     """
     try:
-        capture_path = f'{config.capture_root_dir}/{imei}/img/{name}'
+        capture_path = f'{config.capture_root_dir}/{imei}/capture/{name}'
         with open(capture_path, 'rb') as capture:
-            img_hex = bytearray(capture.read()).hex()
+            capture_hex = bytearray(capture.read()).hex()
         # add end flag for partially downlinked captures (needed to display capture properly on frontend)
-        if img_hex.count('ffd9') == 0: img_hex += 'ffd9'
+        if capture_hex.count('ffd9') == 0: capture_hex += 'ffd9'
         return {
             'name': os.path.basename(capture_path),
             'timestamp': os.path.getmtime(capture_path),
-            'base64': base64.b64encode(bytearray.fromhex(img_hex))
+            'base64': base64.b64encode(bytearray.fromhex(capture_hex))
         }
     except FileNotFoundError:
         return '', 400
