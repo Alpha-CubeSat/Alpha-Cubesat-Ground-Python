@@ -1,11 +1,11 @@
-import { Col, Row, Spinner } from "react-bootstrap";
-import { useEffect, useState } from "react";
+import {Col, Row, Spinner} from "react-bootstrap";
+import {useEffect, useState} from "react";
 import ListGroup from "react-bootstrap/ListGroup";
 import Image from "react-bootstrap/Image";
-import { useApi } from "../contexts/ApiProvider";
-import { useDashboard } from "../contexts/DashboardProvider";
+import {useApi} from "../contexts/ApiProvider";
+import {useDashboard} from "../contexts/DashboardProvider";
 
-// IVieCaptureer
+// CaptureViewer
 // Allows user to view the latest captures from the CubeSat
 export default function CaptureViewer() {
   const { imei } = useDashboard();
