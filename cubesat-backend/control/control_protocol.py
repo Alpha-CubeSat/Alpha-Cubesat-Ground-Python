@@ -133,10 +133,6 @@ def parse_command(command: dict) -> str:
             opcode = CAPTURE_REQUEST_OPCODE
             arg1 = format_single_arg(int(cmd_data['serialNum']), ARG_LENGTH)
             arg2 = format_single_arg(int(cmd_data['fragmentNum']), ARG_LENGTH)
-        elif cmd_data['type'] == 'IMU':
-            opcode = IMU_REQUEST_OPCODE
-            arg1 = format_single_arg(int(cmd_data['fragmentNum']), ARG_LENGTH)
-            arg2 = format_single_arg(0, ARG_LENGTH)
         else:
             return failure_response(400, 'Invalid Fragment Type')
 

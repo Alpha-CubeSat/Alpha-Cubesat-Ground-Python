@@ -457,12 +457,6 @@ export const FragmentRequest = forwardRef(({ }, ref) => {
             onChange={() => setFragmentType("Capture")}
             defaultChecked
           />
-          <Form.Check
-            name="fragType"
-            type="radio"
-            label="IMU"
-            onChange={() => setFragmentType("IMU")}
-          />
         </Col>
         {fragmentType === "Capture" && (
           <Col>
