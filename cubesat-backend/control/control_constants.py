@@ -19,6 +19,7 @@ BURNWIRE_OPCODES = {
 
 EEPROM_RESET_OPCODE = '7777'
 CAPTURE_REQUEST_OPCODE = '8888'
+MISSION_MODE_OVERRIDE_OPCODE = '9999'
 
 SFR_OVERRIDE_OPCODES_MAP = {
     'stabilization': {
@@ -553,10 +554,34 @@ FAULT_OPCODE_MAP = {
     }
 }
 
-
+MISSION_MODE_MAP = {
+    "boot" : 0,
+    "alive_signal" : 1,
+    "detumble_spin" : 2,
+    "low_power_detumble_spin" : 3,
+    "normal" : 4,
+    "transmit" : 5,
+    "low_power" : 6,
+    "normal_deployment" : 7,
+    "transmit_deployment" : 8,
+    "low_power_deployment" : 9,
+    "normal_armed" : 10,
+    "transmit_armed" : 11,
+    "low_power_armed" : 12,
+    "normal_in_sun" : 13,
+    "transmit_in_sun" : 14,
+    "low_power_in_sun" : 15,
+    "voltage_failure_in_sun" : 16,
+    "boot_imu" : 17,
+    "boot_camera" : 18,
+    "mandatory_burns" : 19,
+    "regular_burns" : 20,
+    "photo" : 21
+} 
 COMMAND_OPCODE_MAP = {
     CAPTURE_REQUEST_OPCODE: 'Capture Request',
-    EEPROM_RESET_OPCODE: 'EEPROM Reset'
+    EEPROM_RESET_OPCODE: 'EEPROM Reset',
+    MISSION_MODE_OVERRIDE_OPCODE: 'Mission Mode Override'
 }
 for (k, v) in BURNWIRE_OPCODES.items():
     COMMAND_OPCODE_MAP[v] = k
