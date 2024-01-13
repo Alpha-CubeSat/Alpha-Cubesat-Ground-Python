@@ -36,7 +36,7 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
 
       // validate input: make sure field is not empty, ints and floats are valid, input within min and max values
       let error = "";
-      let int_check = new RegExp("^`-?\\d+$");
+      let int_check = new RegExp("^-?\\d+$");
       let float_check = new RegExp("^-?\\d+(\\.\\d+)?$");
       if (commandFields.setValue) {
         if (!commandFields.value) {
