@@ -13,7 +13,7 @@ cors = CORS()
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
-    app.wsgi_app = ProxyFix(app.wsgi_app)
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1)
 
     ma.init_app(app)
     apifairy.init_app(app)

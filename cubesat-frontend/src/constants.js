@@ -7,6 +7,7 @@ export const OpCodes = Object.freeze({
   Fault: "Fault",
   Fragment_Request: "Fragment_Request",
   EEPROM_Reset: "EEPROM_Reset",
+  Mission_Mode_Override: "Mission_Mode_Override"
 });
 
 export const opcodeDesc = {
@@ -17,6 +18,7 @@ export const opcodeDesc = {
   Fault: "Force, suppress, or restore the selected fault.",
   Fragment_Request: "Request an ODS capture fragment.",
   EEPROM_Reset: "Reset the EEPROM metadata with the provided values.",
+  Mission_Mode_Override: "Move the CubeSat into the selected Mission Mode"
 };
 
 // SFR field types

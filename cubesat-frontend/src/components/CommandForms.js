@@ -36,7 +36,7 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
 
       // validate input: make sure field is not empty, ints and floats are valid, input within min and max values
       let error = "";
-      let int_check = new RegExp("^-?\\d+$");
+      let int_check = new RegExp("^`-?\\d+$");
       let float_check = new RegExp("^-?\\d+(\\.\\d+)?$");
       if (commandFields.setValue) {
         if (!commandFields.value) {
@@ -420,7 +420,7 @@ export const FragmentRequest = forwardRef(({ }, ref) => {
   const [fragmentType, setFragmentType] = useState("Capture");
   const [serialNum, setSerialNum] = useState("");
   const [fragmentNum, setFragmentNum] = useState("");
-  const [inputError, setInputError] = useState();
+  // const [inputError, setInputError] = useState();
 
   // useImperativeHandle allows the CommandSelector component to call the handleSubmit() function,
   // which checks if the command fields are valid and returns the command if so
@@ -488,7 +488,7 @@ export const FragmentRequest = forwardRef(({ }, ref) => {
 });
 
 export const EepromReset = forwardRef(({ }, ref) => {
-  const [inputError, setInputError] = useState();
+  const [inputError] = useState();
   const [eepromFields, setEepromFields] = useState({
     bootCount: "",
     sfrAddress: "",
@@ -525,7 +525,7 @@ export const EepromReset = forwardRef(({ }, ref) => {
 
   return (
     <div>
-      <Row className="mb-2">
+      <Row className="mb-1">
         {/* 1st Row */}
         <Col>
           <InputField
@@ -607,4 +607,37 @@ export const EepromReset = forwardRef(({ }, ref) => {
       </Row>
     </div>
   );
+});
+
+export const MissionModeOverride = forwardRef(({ MM_Data }, ref) => {
+  const [missionMode, setMissionMode] = useState("");
+
+  useImperativeHandle(ref, () => ({
+    handleSubmit() {
+      return {
+        value: {
+          mode: missionMode[0]
+        }
+      };
+    },
+  }));
+
+  const handleMissionModeChange = (mode) => {
+    setMissionMode(mode);
+  }
+  return (
+    <div>
+      <Col className="col-md-7">
+        <span style={{ fontWeight: "bold" }}>Mission Mode</span>
+        <Typeahead
+          id="mm-dropdown"
+          labelKey="mission_mode"
+          options={Object.keys(MM_Data)}
+          placeholder="Mission Mode"
+          onChange={(selected) => handleMissionModeChange(selected)}
+          onInputChange={(selected) => handleMissionModeChange(selected)}
+          renderMenuItemChildren={(option) => <>{option}</>}
+        />
+      </Col>
+    </div>);
 });

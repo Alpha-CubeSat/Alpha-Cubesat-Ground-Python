@@ -13,7 +13,7 @@ from api.auth import token_auth
 from api.schemas import CaptureNameSchema, CaptureCountSchema, CaptureDataSchema, \
     CommandResponseSchema, RockblockReportSchema, CommandUplinkSchema, DownlinkHistorySchema
 from control import control_protocol
-from control.control_constants import SFR_OVERRIDE_OPCODES_MAP, FAULT_OPCODE_MAP
+from control.control_constants import SFR_OVERRIDE_OPCODES_MAP, FAULT_OPCODE_MAP, MISSION_MODE_MAP
 from databases import elastic
 from telemetry import process_telemetry
 from telemetry.telemetry_constants import ROCKBLOCK_PK
@@ -135,7 +135,8 @@ def get_command_meta():
     """
     return {
         "SFR_Override": SFR_OVERRIDE_OPCODES_MAP,
-        "Faults": FAULT_OPCODE_MAP
+        "Faults": FAULT_OPCODE_MAP,
+        "Mission_Mode_Override" : MISSION_MODE_MAP
     }
 
 
