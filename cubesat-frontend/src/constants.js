@@ -67,5 +67,7 @@ export function stringifyCommand(command) {
     return `Boot count: ${data.bootCount}, Light: ${data.lightSwitch}, 
     SFR addr: ${data.sfrAddress}, Data addr: ${data.dataAddress}, 
     SFR age: ${data.sfrWriteAge}, Data age: ${data.dataWriteAge}`;
+  } else if (command.opcode === OpCodes.Mission_Mode_Override) {
+    return `Mission mode: ${data.mode}`
   }
 }
