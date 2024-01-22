@@ -25,7 +25,7 @@ def format_sfr_args(field_data: dict, args: dict) -> (int, int):
     uppercase hexadecimal string without the '0x' header. Combines the hex 
     strings into arg1 and arg2 in the format expected by flight software.
     """
-    arg1, arg2, value = "", "", args["value"]
+    arg1, arg2, value = "", "", str(args["value"]).lower()
     if field_data['type'] == SFR_T.BOOL:
         if value not in ['true', 'false']:
             return failure_response('Boolean expected', 400)
@@ -139,6 +139,12 @@ def parse_command(command: dict) -> str:
     elif selected_opcode == 'EEPROM_Reset':
         arg1, arg2 = format_eeprom_args(command['value'])
         opcode = EEPROM_RESET_OPCODE
+
+    elif selected_opcode == 'Mission_Mode_Override':
+        opcode = MISSION_MODE_OVERRIDE_OPCODE
+        print(command)
+        arg1 = format_single_arg(MISSION_MODE_MAP[command['value']['mode']], ARG_LENGTH)
+        arg2 = format_single_arg(0, ARG_LENGTH)
 
     else:
         return failure_response(400, 'Invalid Command')
