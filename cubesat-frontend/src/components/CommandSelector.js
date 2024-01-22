@@ -7,6 +7,7 @@ import {
   EepromReset,
   Fault,
   FragmentRequest,
+  MissionModeOverride,
   SfrOverride,
 } from "./CommandForms";
 import { isDeploymentOpcode, opcodeDesc, OpCodes } from "../constants";
@@ -85,6 +86,12 @@ export default function CommandSelector() {
       );
     } else if (opcode === OpCodes.Fragment_Request) {
       setCurrentForm(<FragmentRequest ref={formRef} />);
+    } else if (opcode === OpCodes.Mission_Mode_Override) {
+      setCurrentForm(
+        <MissionModeOverride
+          MM_Data={allCommandMetadata["Mission_Mode_Override"]}
+          ref={formRef}
+        />)
     }
 
     setTitle(opcode);
