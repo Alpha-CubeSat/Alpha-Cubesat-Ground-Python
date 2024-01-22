@@ -7,7 +7,7 @@ export const OpCodes = Object.freeze({
   Fault: "Fault",
   Fragment_Request: "Fragment_Request",
   EEPROM_Reset: "EEPROM_Reset",
-  Mission_Mode_Override: "Mission_Mode_Override"
+  Mission_Mode_Override: "Mission_Mode_Override",
 });
 
 export const opcodeDesc = {
@@ -18,7 +18,7 @@ export const opcodeDesc = {
   Fault: "Force, suppress, or restore the selected fault.",
   Fragment_Request: "Request an ODS capture fragment.",
   EEPROM_Reset: "Reset the EEPROM metadata with the provided values.",
-  Mission_Mode_Override: "Move the CubeSat into the selected Mission Mode"
+  Mission_Mode_Override: "Move the CubeSat into the selected Mission Mode",
 };
 
 // SFR field types
@@ -57,17 +57,16 @@ export function stringifyCommand(command) {
     command.opcode === OpCodes.SFR_Override ||
     command.opcode === OpCodes.Fault
   ) {
-    return `${command.namespace}::${command.field} = ${command.opcode === OpCodes.SFR_Override ? data.value : data
-      }`;
+    return `${command.namespace}::${command.field} = ${
+      command.opcode === OpCodes.SFR_Override ? data.value : data
+    }`;
   } else if (command.opcode === OpCodes.Fragment_Request) {
-    return `${data.type}: Fragment ${data.fragmentNum +
-      (data.type === "Capture" ? ", Serial " + data.serialNum : "")
-      }`;
+    return `Serial ${data.serialNum}, Fragment ${data.fragmentNum}`;
   } else if (command.opcode === OpCodes.EEPROM_Reset) {
     return `Boot count: ${data.bootCount}, Light: ${data.lightSwitch}, 
     SFR addr: ${data.sfrAddress}, Data addr: ${data.dataAddress}, 
     SFR age: ${data.sfrWriteAge}, Data age: ${data.dataWriteAge}`;
   } else if (command.opcode === OpCodes.Mission_Mode_Override) {
-    return `Mission mode: ${data.mode}`
+    return `Mission mode: ${data.mode}`;
   }
 }
