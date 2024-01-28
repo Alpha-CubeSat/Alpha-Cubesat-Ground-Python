@@ -63,6 +63,7 @@ def process_save_deploy_data(data: dict):
 
         # Maps imu cycle values from the range used for transmission (0 - 255) to their actual range (-5 - 5)
         report_data = {
+            'transmit_time': data['transmit_time'],
             'cycle_count': int(cycle_count),
             'x_gyro': map_range(float(x_gyro), -5, 5),
             'y_gyro': map_range(float(y_gyro), -5, 5),
