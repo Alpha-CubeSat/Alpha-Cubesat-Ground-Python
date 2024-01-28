@@ -140,7 +140,7 @@ def parse_command(command: dict) -> str:
         arg1, arg2 = format_eeprom_args(command['value'])
         opcode = EEPROM_RESET_OPCODE
 
-    elif selected_opcode == 'Mission_Mode_Override':
+    elif selected_opcode == 'Mission_Override':
         opcode = MISSION_MODE_OVERRIDE_OPCODE
         print(command)
         arg1 = format_single_arg(MISSION_MODE_MAP[command['value']['mode']], ARG_LENGTH)
@@ -160,6 +160,10 @@ def handle_command(imei: str, commands: list) -> str:
     provided in the config file
     """
     print("Processing commands!")
+
+    if len(commands) > 6:
+        return failure_response(400, 'Cannot send more then 6 commands at once.')
+
     # add FEFE start flag
     uplink = format_flag(254) + format_flag(254)
     for command in commands:

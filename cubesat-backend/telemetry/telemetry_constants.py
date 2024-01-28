@@ -68,8 +68,11 @@ normal_report_structure = [
     ('command_log', BinaryTypes.uint16_list)
 ]
 
+uint8_max = pow(2, 8) - 1
+uint16_max = pow(2, 16) - 1
+uint32_max = pow(2, 32) - 1
+
 # IMU report constants
-MS_PER_CYCLE = 100
 CYCLES_PER_FRAGMENT = 22
 
 # Public key provided for JWT verification by rockblock web services documentation

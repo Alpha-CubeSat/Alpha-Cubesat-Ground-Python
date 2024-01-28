@@ -1,18 +1,14 @@
 import traceback
-from datetime import datetime, timedelta
 
 from config import *
 from databases import elastic, capture_database
-from telemetry.read_telemetry import read_cubesat_data, error_data
+from telemetry.read_telemetry import read_cubesat_data, error_data, map_range
 from telemetry.telemetry_constants import *
 
 # list of all imu fragment numbers received
 fragment_list = []
 # keeps track of various stats regarding the received imu fragments
 imu_display_info = {'latest_fragment': 0, 'missing_fragments': [], 'highest_fragment': 0}
-# for simulating the timestamp of each imu cycle
-first_fragment_time : datetime = None
-last_dlink_fragment_num : int = None
 
 
 def report_metadata(rockblock_report: dict) -> dict:
@@ -43,12 +39,17 @@ def generate_missing_fragments(frag_list: list):
             imu_display_info['missing_fragments'].append(x)
 
 
-def separate_cycles(fragment_number: int, fragment_data: str):
+def process_save_deploy_data(data: dict):
     """
-    Decodes imu cycles to retrieve the x, y, and z gyro values for each and saves them to elasticsearch \n
-    :param fragment_number: id number of fragment
-    :param fragment_data: hex string containing the packet's imu cycle data
+    Generates missing imu fragments, processes imu cycles, and saves imu fragment
+    summary report (latest, missing, and highest received fragments) to elasticsearch \n
+    :param data: dictionary with imu fragment data
     """
+    fragment_number, fragment_data = data['fragment_number'], data['fragment_data']
+    fragment_list.append(fragment_number)
+    imu_display_info['latest_fragment'] = fragment_number
+    generate_missing_fragments(fragment_list)
+
     # 462 bytes of imu data sent over 7 packets, end flag (fe92) is present for the last packet
     # each report has 66 bytes of imu data (all 22 cycles are complete) => 154 total cycles
     # 154 cycles * 3 bytes each = 462 bytes
@@ -56,53 +57,24 @@ def separate_cycles(fragment_number: int, fragment_data: str):
         x_gyro = int(fragment_data[x:x + 2], 16)
         y_gyro = int(fragment_data[x + 2:x + 4], 16)
         z_gyro = int(fragment_data[x + 4:x + 6], 16)
+
         # every full fragment has 22 cycles, new cycle occurs every six digits in the hex string
         cycle_count = fragment_number * CYCLES_PER_FRAGMENT + x / 6
 
         # Maps imu cycle values from the range used for transmission (0 - 255) to their actual range (-5 - 5)
-        # timestamp: 154 total cycles * 250ms per cycle = 38,500 ms => 38.5 seconds
         report_data = {
-            'timestamp': first_fragment_time + timedelta(milliseconds=cycle_count * MS_PER_CYCLE),
+            'transmit_time': data['transmit_time'],
             'cycle_count': int(cycle_count),
-            'x_gyro': float(x_gyro) / 25 - 5,
-            'y_gyro': float(y_gyro) / 25 - 5,
-            'z_gyro': float(z_gyro) / 25 - 5,
+            'x_gyro': map_range(float(x_gyro), -5, 5),
+            'y_gyro': map_range(float(y_gyro), -5, 5),
+            'z_gyro': map_range(float(z_gyro), -5, 5),
         }
         print('report', report_data)
 
         # Saves a cycle report to elasticsearch
         elastic.index(cycle_db_index, report_data)
 
-
-def process_save_deploy_data(data: dict):
-    """
-    Generates missing imu fragments, processes imu cycles, and saves imu fragment
-    summary report (latest, missing, and highest received fragments) to elasticsearch \n
-    :param data: dictionary with imu fragment data
-    """
-    fragment_list.append(data['fragment_number'])
-    imu_display_info['latest_fragment'] = data['fragment_number']
-    generate_missing_fragments(fragment_list)
-
-    # if this is the first IMU fragment, store the time received as the basis
-    # for calculating future IMU datapoint timestamps
-    global first_fragment_time, last_dlink_fragment_num
-    if last_dlink_fragment_num is None:
-        last_dlink_fragment_num = data['fragment_number']
-
-    relative_fragment_num = data['fragment_number'] - last_dlink_fragment_num
-    if first_fragment_time is None:
-        first_fragment_time = datetime.strptime(data['transmit_time'], "%Y-%m-%dT%H:%M:%SZ")
-        # offset first fragment time if first fragment is not received first
-        if relative_fragment_num != 0:
-            first_fragment_time -= timedelta(milliseconds=relative_fragment_num * CYCLES_PER_FRAGMENT * MS_PER_CYCLE)
-
-    separate_cycles(relative_fragment_num, data['fragment_data'])
     elastic.index(deploy_db_index, {**report_metadata(data), **imu_display_info})
-
-    if data['end_flag_present']:
-        first_fragment_time = None
-        last_dlink_fragment_num = data['fragment_number'] + 1
 
 
 def process_save_ods_data(data: dict):

@@ -42,9 +42,7 @@ def rockblock_telemetry(report):
         return '', 401
 
     # Fixes the date format of the transmit_time field in the rockblock report.
-    # Rockblock uses YY-MM-DD HH:mm:ss as the date format instead of the YYYY-MM-DDThh:mm:ssZ
-    # standard format. Conversion is done by appending "20" to the start of the date string,
-    # which means this fix may not work after the year 2100.
+    # Rockblock uses YY-MM-DD HH:mm:ss instead of the standard YYYY-MM-DDThh:mm:ssZ.
     report['transmit_time'] = f"20{report['transmit_time'].replace(' ', 'T')}Z"
 
     # Decode/process rockblock report and save it in elasticsearch
