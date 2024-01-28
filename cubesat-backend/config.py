@@ -14,7 +14,7 @@ class Config:
 rockblock_db_index = 'rockblock_data'
 cubesat_db_index = 'cubesat_normal_report'
 cycle_db_index = 'imu_cycle_report'
-deploy_db_index = 'cubesat_deploy_report'
+deploy_db_index = 'imu_fragment_info'
 capture_db_index = 'capture_fragment_info'
 
 capture_root_dir = os.path.join(basedir, 'cubesat_ods_captures')
