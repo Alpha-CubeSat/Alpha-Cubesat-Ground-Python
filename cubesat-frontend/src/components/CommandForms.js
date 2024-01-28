@@ -598,6 +598,8 @@ export const MissionModeOverride = forwardRef(({ MM_Data }, ref) => {
 
   useImperativeHandle(ref, () => ({
     handleSubmit() {
+      if (missionMode === "") return;
+
       return {
         value: {
           mode: missionMode[0],
