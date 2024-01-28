@@ -94,20 +94,16 @@ SFR_OVERRIDE_OPCODES_MAP = {
             'hex': '1801',
             'type': SFR_T.BOOL,
         },
-        'boot_time': {
+        'boot_time_mins': {
             'hex': '1802',
             'type': SFR_T.INT
         },
-        'mission_mode_hist_length': {
+        'cycle_no': {
             'hex': '1803',
             'type': SFR_T.INT
         },
-        'cycle_no': {
+        'cycle_start': {
             'hex': '1804',
-            'type': SFR_T.INT
-        },
-        'cycle_dur': {
-            'hex': '1805',
             'type': SFR_T.INT
         },
     },
@@ -289,10 +285,6 @@ SFR_OVERRIDE_OPCODES_MAP = {
             'min': 0,
             'max': 5400000,
             'type': SFR_T.TIME,
-        },
-        'start_time_check_signal': {
-            'hex': '2112',
-            'type': SFR_T.INT
         },
     },
     'imu': {
@@ -572,11 +564,11 @@ MISSION_MODE_MAP = {
     "transmit_in_sun" : 14,
     "low_power_in_sun" : 15,
     "voltage_failure_in_sun" : 16,
-    "boot_imu" : 17,
-    "boot_camera" : 18,
+    "boot_sensors" : 17,
+    "capture_imu" : 18,
     "mandatory_burns" : 19,
     "regular_burns" : 20,
-    "photo" : 21
+    "deployment_verification" : 21
 } 
 COMMAND_OPCODE_MAP = {
     CAPTURE_REQUEST_OPCODE: 'Capture Request',
