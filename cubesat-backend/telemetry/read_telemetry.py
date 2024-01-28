@@ -1,10 +1,6 @@
 from telemetry.binary_parser import BinaryParser
 from telemetry.telemetry_constants import *
 
-uint8_max = pow(2, 8) - 1
-uint16_max = pow(2, 16) - 1
-uint32_max = pow(2, 32) - 1
-
 
 def map_range(x, out_min, out_max, in_min=0, in_max=255):
     """

@@ -290,58 +290,46 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
     },
     'imu': {
-        'sample_gyro': {
+        'powered': {
             'hex': '2200',
             'type': SFR_T.BOOL,
         },
-        'powered': {
+        'report_written': {
             'hex': '2201',
             'type': SFR_T.BOOL,
         },
-        'report_written': {
+        'report_ready': {
             'hex': '2202',
             'type': SFR_T.BOOL,
         },
-        'report_ready': {
-            'hex': '2203',
-            'type': SFR_T.BOOL,
-        },
         'power_setting': {
-            'hex': '2206',
+            'hex': '2203',
             'min': 0,
             'max': 2,
             'type': SFR_T.INT
         },
         'mode': {
-            'hex': '2207',
+            'hex': '2204',
             'min': 0,
             'max': 2,
             'type': SFR_T.INT
         },
         'init_mode': {
-            'hex': '2208',
+            'hex': '2205',
             'min': 0,
             'max': 3,
             'type': SFR_T.INT
         },
         'failed_times': {
-            'hex': '2209',
+            'hex': '2206',
             'type': SFR_T.INT
         },
         'failed_limit': {
-            'hex': '2210',
-            'type': SFR_T.INT
-        },
-        'imu_boot_collection_start_time': {
-            'hex': '2211',
-            'type': SFR_T.INT
-        },
-        'door_open__collection_start_time': {
-            'hex': '2212',
+            'hex': '2207',
             'type': SFR_T.INT
         },
         'max_fragments': {
-            'hex': '2213',
+            'hex': '2208',
             'type': SFR_T.INT
         },
     },
@@ -562,11 +550,11 @@ MISSION_MODE_MAP = {
     "transmit_in_sun" : 14,
     "low_power_in_sun" : 15,
     "voltage_failure_in_sun" : 16,
-    "boot_imu" : 17,
-    "boot_camera" : 18,
+    "boot_sensors" : 17,
+    "capture_imu" : 18,
     "mandatory_burns" : 19,
     "regular_burns" : 20,
-    "photo" : 21
+    "deployment_verification" : 21
 } 
 COMMAND_OPCODE_MAP = {
     CAPTURE_REQUEST_OPCODE: 'Capture Request',
