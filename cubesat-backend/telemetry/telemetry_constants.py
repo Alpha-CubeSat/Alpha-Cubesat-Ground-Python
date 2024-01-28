@@ -68,6 +68,10 @@ normal_report_structure = [
     ('command_log', BinaryTypes.uint16_list)
 ]
 
+uint8_max = pow(2, 8) - 1
+uint16_max = pow(2, 16) - 1
+uint32_max = pow(2, 32) - 1
+
 # IMU report constants
 CYCLES_PER_FRAGMENT = 22
 
