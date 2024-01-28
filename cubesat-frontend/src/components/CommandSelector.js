@@ -11,6 +11,7 @@ import {
   SfrOverride,
 } from "./CommandForms";
 import { isDeploymentOpcode, opcodeDesc, OpCodes } from "../constants";
+import { toast } from "react-toastify";
 
 // Command Selector
 // Has dropdown menus for user to build a command to be sent to the CubeSat
@@ -46,7 +47,7 @@ export default function CommandSelector() {
     api
       .get("/cubesat/command_data")
       .then((response) =>
-        setAllCommandMetadata(response.status === 200 ? response.data : {})
+        setAllCommandMetadata(response.status === 200 ? response.data : {}),
       );
   }, [api]);
 
@@ -70,7 +71,7 @@ export default function CommandSelector() {
           SFR_Data={allCommandMetadata["SFR_Override"]}
           setTitle={setTitle}
           ref={formRef}
-        />
+        />,
       );
     } else if (opcode === OpCodes.EEPROM_Reset) {
       setCurrentForm(<EepromReset ref={formRef} />);
@@ -82,16 +83,17 @@ export default function CommandSelector() {
           Fault_Data={allCommandMetadata["Faults"]}
           setTitle={setTitle}
           ref={formRef}
-        />
+        />,
       );
     } else if (opcode === OpCodes.Fragment_Request) {
       setCurrentForm(<FragmentRequest ref={formRef} />);
-    } else if (opcode === OpCodes.Mission_Mode_Override) {
+    } else if (opcode === OpCodes.Mission_Override) {
       setCurrentForm(
         <MissionModeOverride
           MM_Data={allCommandMetadata["Mission_Mode_Override"]}
           ref={formRef}
-        />)
+        />,
+      );
     }
 
     setTitle(opcode);
@@ -100,11 +102,19 @@ export default function CommandSelector() {
 
   // Validates input field before adding command to the command builder
   const handleSubmit = () => {
+    if (commandStack.length === 6) {
+      toast.error("Cannot send more than 6 commands at once.");
+      return;
+    }
+
     let data;
     if (!isDeploymentOpcode(selectedOpCode)) {
       // call child onSubmit to validate input, if it is valid the command will be returned
       data = formRef.current.handleSubmit();
-      if (data === undefined) return;
+      if (data === undefined) {
+        toast.error("Invalid Command");
+        return;
+      }
     }
 
     // add to command builder

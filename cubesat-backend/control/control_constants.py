@@ -178,6 +178,8 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
         'power_setting': {
             'hex': '2007',
+            'min': 0,
+            'max': 2,
             'type': SFR_T.INT
         },
         'mode': {
@@ -288,64 +290,46 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
     },
     'imu': {
-        'sample_gyro': {
+        'powered': {
             'hex': '2200',
             'type': SFR_T.BOOL,
         },
-        'powered': {
+        'report_written': {
             'hex': '2201',
             'type': SFR_T.BOOL,
         },
-        'report_written': {
+        'report_ready': {
             'hex': '2202',
             'type': SFR_T.BOOL,
         },
-        'report_ready': {
-            'hex': '2203',
-            'type': SFR_T.BOOL,
-        },
-        'fragment_requested': {
-            'hex': '2204',
-            'type': SFR_T.BOOL,
-        },
-        'fragment_number_requested': {
-            'hex': '2205',
-            'type': SFR_T.INT
-        },
         'power_setting': {
-            'hex': '2206',
+            'hex': '2203',
+            'min': 0,
+            'max': 2,
             'type': SFR_T.INT
         },
         'mode': {
-            'hex': '2207',
+            'hex': '2204',
             'min': 0,
             'max': 2,
             'type': SFR_T.INT
         },
         'init_mode': {
-            'hex': '2208',
+            'hex': '2205',
             'min': 0,
             'max': 3,
             'type': SFR_T.INT
         },
         'failed_times': {
-            'hex': '2209',
+            'hex': '2206',
             'type': SFR_T.INT
         },
         'failed_limit': {
-            'hex': '2210',
-            'type': SFR_T.INT
-        },
-        'imu_boot_collection_start_time': {
-            'hex': '2211',
-            'type': SFR_T.INT
-        },
-        'door_open__collection_start_time': {
-            'hex': '2212',
+            'hex': '2207',
             'type': SFR_T.INT
         },
         'max_fragments': {
-            'hex': '2213',
+            'hex': '2208',
             'type': SFR_T.INT
         },
     },
@@ -374,7 +358,9 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
         'simple_mag': {
             'hex': '2502',
-            'type': SFR_T.BOOL,
+            'min': 0,
+            'max': 2,
+            'type': SFR_T.INT,
         },
         'simple_current': {
             'hex': '2503',
@@ -389,25 +375,25 @@ SFR_OVERRIDE_OPCODES_MAP = {
         'Id_index': {
             'hex': '2505',
             'min': 0,
-            'max': 1,
+            'max': 30,
             'type': SFR_T.INT
         },
         'Kd_index': {
             'hex': '2506',
             'min': 0,
-            'max': 1,
+            'max': 30,
             'type': SFR_T.INT
         },
         'Kp_index': {
             'hex': '2507',
             'min': 0,
-            'max': 1,
+            'max': 30,
             'type': SFR_T.INT
         },
         'c_index': {
             'hex': '2508',
             'min': 0,
-            'max': 1,
+            'max': 30,
             'type': SFR_T.INT
         },
     },
@@ -457,12 +443,12 @@ SFR_OVERRIDE_OPCODES_MAP = {
         'dynamic_data_addr': {
             'hex': '2806',
             'min': 10,
-            'max': 89,
+            'max': 459,
             'type': SFR_T.INT
         },
         'sfr_data_addr': {
             'hex': '2807',
-            'min': 90,
+            'min': 460,
             'max': 4085,
             'type': SFR_T.INT
         },
