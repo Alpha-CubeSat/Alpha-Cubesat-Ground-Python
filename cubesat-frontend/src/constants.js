@@ -32,7 +32,7 @@ export const SFR_Type = Object.freeze({
 // Rockblock IMEIs
 export const IMEI_MAP = {
   300534061570670: "OG FlatSat",
-  300234064326340: "New FlatSat",
+  300534063197760: "New FlatSat",
 };
 
 // Telemetry report types
@@ -57,9 +57,8 @@ export function stringifyCommand(command) {
     command.opcode === OpCodes.SFR_Override ||
     command.opcode === OpCodes.Fault
   ) {
-    return `${command.namespace}::${command.field} = ${
-      command.opcode === OpCodes.SFR_Override ? data.value : data
-    }`;
+    return `${command.namespace}::${command.field} = ${command.opcode === OpCodes.SFR_Override ? data.value : data
+      }`;
   } else if (command.opcode === OpCodes.Fragment_Request) {
     return `Serial ${data.serialNum}, Fragment ${data.fragmentNum}`;
   } else if (command.opcode === OpCodes.EEPROM_Reset) {
