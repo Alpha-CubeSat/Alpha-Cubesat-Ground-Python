@@ -31,16 +31,14 @@ def format_sfr_args(field_data: dict, args: dict) -> (int, int):
             return failure_response('Boolean expected', 400)
         value = bool(value)
     else:
-        if field_data['type'] in [SFR_T.INT, SFR_T.TIME]:
-            value = int(value)
-        else: # field_data['type'] == SFR_T.FLOAT
-            value = int(float(value) * field_data['resolution'])
-
+        value = float(value)
         if ((field_data.get('min') is not None and value < field_data['min']) or
                 (field_data.get('max') is not None and value > field_data['max'])):
             return failure_response('Min/Max Bounds Violated', 400)
+        if field_data['type'] == SFR_T.FLOAT:
+            value = value * field_data['resolution']
 
-    arg1 += format_single_arg(value, ARG_LENGTH)
+    arg1 += format_single_arg(int(value), ARG_LENGTH)
     arg2_parts = [
         (int(args["setValue"]), 2),
         (int(args["setRestore"]), 2),
@@ -189,6 +187,7 @@ def send_uplink(imei: str, data: str) -> str:
         "data": data,
     }
 
-    response = requests.post(ROCKBLOCK_ENDPOINT, data=request)
-    print(response.text + "\n")
-    return response.text
+    # response = requests.post(ROCKBLOCK_ENDPOINT, data=request)
+    # print(response.text + "\n")
+    # return response.text
+    return ""

@@ -364,7 +364,10 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
         'simple_current': {
             'hex': '2503',
-            'type': SFR_T.BOOL,
+            'min': 0,
+            'max': 0.5,
+            'type': SFR_T.FLOAT,
+            'resolution': 100
         },
         'on_time': {
             'hex': '2504',
