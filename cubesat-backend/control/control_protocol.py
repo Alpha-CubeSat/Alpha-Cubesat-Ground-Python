@@ -187,7 +187,6 @@ def send_uplink(imei: str, data: str) -> str:
         "data": data,
     }
 
-    # response = requests.post(ROCKBLOCK_ENDPOINT, data=request)
-    # print(response.text + "\n")
-    # return response.text
-    return ""
+    response = requests.post(ROCKBLOCK_ENDPOINT, data=request)
+    print(response.text + "\n")
+    return response.text
