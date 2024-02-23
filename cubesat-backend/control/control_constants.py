@@ -236,54 +236,58 @@ SFR_OVERRIDE_OPCODES_MAP = {
             'hex': '2101',
             'type': SFR_T.BOOL,
         },
-        'flush_status': {
+        'sleep_mode': {
             'hex': '2102',
             'type': SFR_T.BOOL,
         },
-        'sleep_mode': {
-            'hex': '2103',
-            'type': SFR_T.BOOL,
-        },
         'max_commands_count': {
+            'hex': '2103',
+            'type': SFR_T.INT
+        },
+        'queue_limit': {
             'hex': '2104',
             'type': SFR_T.INT
         },
-        'downlink_report_type': {
+        'max_signal_check': {
             'hex': '2105',
+            'type': SFR_T.INT
+        },
+        'downlink_report_type': {
+            'hex': '2106',
             'min': 0,
             'max': 2,
             'type': SFR_T.INT
         },
         'mode': {
-            'hex': '2106',
+            'hex': '2107',
             'min': 0,
             'max': 22,
             'type': SFR_T.INT
         },
         'last_downlink': {
-            'hex': '2107',
+            'hex': '2108',
             'type': SFR_T.INT
         },
         'downlink_period': {
-            'hex': '2108',
-            'min': 1,
-            'max': 86400000*2,
-            'type': SFR_T.TIME,
-        },
-        'lp_downlink_period': {
             'hex': '2109',
             'min': 1,
             'max': 86400000*2,
             'type': SFR_T.TIME,
         },
-        'transmit_downlink_period': {
+        'lp_downlink_period': {
             'hex': '2110',
             'min': 1,
             'max': 86400000*2,
             'type': SFR_T.TIME,
         },
-        'on_time': {
+        'transmit_downlink_period': {
             'hex': '2111',
+            'min': 1,
+            'max': 86400000*2,
+            'type': SFR_T.TIME,
+        },
+        'on_time': {
+            'hex': '2112',
             'min': 0,
             'max': 5400000,
             'type': SFR_T.TIME,
