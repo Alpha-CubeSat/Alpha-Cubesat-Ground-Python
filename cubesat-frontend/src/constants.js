@@ -33,6 +33,7 @@ export const SFR_Type = Object.freeze({
 export const IMEI_MAP = {
   300534061570670: "OG FlatSat",
   300534063197760: "New FlatSat",
+  300234064801490: "Flight Unit"
 };
 
 // Telemetry report types
