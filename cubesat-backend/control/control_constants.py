@@ -366,39 +366,44 @@ SFR_OVERRIDE_OPCODES_MAP = {
             'max': 2,
             'type': SFR_T.INT,
         },
-        'simple_current': {
+        'target_spin_rate': {
             'hex': '2503',
+            'type': SFR_T.FLOAT,
+            'resolution': 10
+        },
+        'simple_current': {
+            'hex': '2504',
             'min': 0,
             'max': 0.5,
             'type': SFR_T.FLOAT,
             'resolution': 100
         },
         'on_time': {
-            'hex': '2504',
+            'hex': '2505',
             'min': 0,
             'max': 5400000,
             'type': SFR_T.TIME,
         },
         'Id_index': {
-            'hex': '2505',
-            'min': 0,
-            'max': 30,
-            'type': SFR_T.INT
-        },
-        'Kd_index': {
             'hex': '2506',
             'min': 0,
             'max': 30,
             'type': SFR_T.INT
         },
-        'Kp_index': {
+        'Kd_index': {
             'hex': '2507',
             'min': 0,
             'max': 30,
             'type': SFR_T.INT
         },
-        'c_index': {
+        'Kp_index': {
             'hex': '2508',
+            'min': 0,
+            'max': 30,
+            'type': SFR_T.INT
+        },
+        'c_index': {
+            'hex': '2509',
             'min': 0,
             'max': 30,
             'type': SFR_T.INT
