@@ -83,20 +83,23 @@ def update_command_log(imei, new_cmd_log):
     Compares the unprocessed commands and newly processed commands and modifies 
     the command logs to reflect newly processed commands. 
     """
-    # cmd lists ordered from latest to earliest
-    unprocessed = get_unprocessed_cmds(imei)
-    new_cmds = get_new_processed_cmds(imei, new_cmd_log)
-    i, j = len(unprocessed) - 1, len(new_cmds) - 1
+    try:
+        # cmd lists ordered from latest to earliest
+        unprocessed = get_unprocessed_cmds(imei)
+        new_cmds = get_new_processed_cmds(imei, new_cmd_log)
+        i, j = len(unprocessed) - 1, len(new_cmds) - 1
 
-    new_processed = []
-    while j >= 0 and i >= 0:
-        if new_cmds[j] == unprocessed[i]:
-            new_processed.append("processed")
-            i, j = i-1, j-1
-        else:
-            new_processed.append("missing")
-            i = i - 1
-    write_command_log(imei, new_processed)
+        new_processed = []
+        while j >= 0 and i >= 0:
+            if new_cmds[j] == unprocessed[i]:
+                new_processed.append("processed")
+                i, j = i-1, j-1
+            else:
+                new_processed.append("missing")
+                i = i - 1
+        write_command_log(imei, new_processed)
+    except:
+        print("error updating processed commands")
 
         
 
