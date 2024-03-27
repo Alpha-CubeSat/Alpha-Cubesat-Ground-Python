@@ -11,6 +11,15 @@ class SFR_T(str, Enum):
     INT = 'INT',
     TIME = 'TIME',
 
+DEPLOY = "Deploy"
+ARM = "Arm"
+FIRE = "Fire"
+SFR_OVERRIDE = "SFR_Override"
+FAULT = "Fault"
+FRAGMENT_REQUEST = 'Fragment_Request'
+EEPROM_RESET = 'EEPROM_RESET'
+MISSION_OVERRIDE = 'Mission_Override'
+
 BURNWIRE_OPCODES = {
     'Deploy': '3333',
     'Arm': '4444',
@@ -569,9 +578,9 @@ MISSION_MODE_MAP = {
     "deployment_verification" : 21
 } 
 COMMAND_OPCODE_MAP = {
-    CAPTURE_REQUEST_OPCODE: 'Capture Request',
-    EEPROM_RESET_OPCODE: 'EEPROM Reset',
-    MISSION_MODE_OVERRIDE_OPCODE: 'Mission Mode Override'
+    CAPTURE_REQUEST_OPCODE: 'Fragment_Request',
+    EEPROM_RESET_OPCODE: 'EEPROM_Reset',
+    MISSION_MODE_OVERRIDE_OPCODE: 'Mission_Mode_Override'
 }
 for (k, v) in BURNWIRE_OPCODES.items():
     COMMAND_OPCODE_MAP[v] = k
