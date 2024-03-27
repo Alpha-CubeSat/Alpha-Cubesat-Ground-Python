@@ -156,47 +156,7 @@ def get_command_history(imei):
 
     history.reverse()
     return history
-
-
-@cubesat.get('/processed_commands/<imei>')
-@authenticate(token_auth)
-def get_processed_commands(imei):
-    """
-    Get Processed Commands
-    Get previously sent commands to the CubeSat via the Rockblock portal
-    that have been confirmed in the command log of the normal report. Only 
-    retrieves command logs in normal reports that have timestamps after the
-    timestamp of the first command sent. 
-    """
-    processed_cmds = []
-    accum = 0
-    with open(f"{config.cmd_log_root_dir}/{imei}.txt") as file:
-        for line in file:
-            entry = json.loads(line.strip())
-            epoch = int(entry.get('timestamp')) // 1000
-            new_log = elastic.get_es_data(config.cubesat_db_index, ['command_log'], query=elastic.query_format(imei, epoch + 3600, epoch))
-            old_log = elastic.get_es_data(config.cubesat_db_index, ['command_log'], query=elastic.query_format(imei, epoch, 0))
-            res = []
-            if (new_log and old_log):
-                old_cmds, new_cmds = old_log[-1]["command_log"], new_log[-1]["command_log"]
-                count_dict = {item: count2 for item, count2 in zip(old_cmds, [old_cmds.count(item) for item in old_cmds])}
-                for item in new_cmds:
-                    if item in count_dict and count_dict[item] > 0:
-                        count_dict[item] -= 1
-                    else:
-                        res.append(item)
-            elif (new_log):
-                res = new_log[-1]["command_log"]
-            for cmd in entry.get("commands"):
-                processed_cmds.append(0)
-                if cmd["opcode"] in ["Deploy", "Arm", "Fire"]:
-                    processed_cmds[accum] = 1 if cmd["opcode"] in res else 0
-                elif cmd["opcode"] in ["SFR_Override", "Fault"]:
-                    processed_cmds[accum] = 1 if cmd["namespace"] + "::" + cmd["field"] in new_cmds else 0
-                accum = accum + 1
-    return processed_cmds                
-
-
+    
 @cubesat.get('/downlink_history')
 @authenticate(token_auth)
 @response(DownlinkHistorySchema(many=True))

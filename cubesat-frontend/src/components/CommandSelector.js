@@ -122,6 +122,7 @@ export default function CommandSelector() {
       id: count,
       opcode: selectedOpCode,
       ...(!isDeploymentOpcode(selectedOpCode) && data),
+      processed: "unknown"
     };
     setCommandStack([...commandStack, new_command]);
     setCount(count + 1);

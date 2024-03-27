@@ -1,4 +1,4 @@
-import { BsCheckCircleFill, BsXCircleFill } from "react-icons/bs";
+import { BsCheckCircleFill, BsQuestionCircleFill, BsXCircleFill } from "react-icons/bs";
 import React, { useRef, useState } from "react";
 import Overlay from "react-bootstrap/Overlay";
 import { isDeploymentOpcode, stringifyCommand } from "../constants";
@@ -73,13 +73,12 @@ export default function LogRow({ entry }) {
         {/* command processed indicator */}
         {entry.commands.map((command, i) => (
           <p key={i}>
-            {command.processed === "true" ? (
-              <BsCheckCircleFill color="green" />
-            ) : (
-              <BsXCircleFill color="red" />
-            )}
+            {command.processed === "processed" && <BsCheckCircleFill color="green" />}
+            {command.processed === "missing" && <BsXCircleFill color="red" />}
+            {command.processed === "unknown" && <BsQuestionCircleFill color="orange" />}
           </p>
         ))}
+
       </td>
       {/* timestamp and rockblock message */}
       <td>{new Date(parseFloat(entry.timestamp)).toLocaleString()}</td>
