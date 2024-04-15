@@ -27,6 +27,7 @@ class CaptureDataSchema(ma.Schema):
 
 class CommandSchema(ma.Schema):
     opcode = ma.Str(required=True)
+    processed = ma.Str(required=True)
     namespace = ma.Str()
     field = ma.Str()
     value = ma.Raw()

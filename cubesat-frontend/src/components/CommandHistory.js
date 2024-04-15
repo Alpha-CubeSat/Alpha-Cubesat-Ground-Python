@@ -1,6 +1,6 @@
 import { Spinner, Table } from "react-bootstrap";
 import { useDashboard } from "../contexts/DashboardProvider";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 import LogRow from "./LogRow";
 import { useApi } from "../contexts/ApiProvider";
 
@@ -13,36 +13,18 @@ export default function CommandHistory() {
 
   const api = useApi();
 
-  const checkProcessed = useCallback(async () => {
-    console.log("fetching processed opcodes");
-    await api.get("/cubesat/processed_commands/" + imei).then((response) => {
-      const dataList = response["data"];
-      const newCommandLog = JSON.parse(JSON.stringify(commandLog));
-      let accum = 0;
-      for (let i = newCommandLog.length - 1; i >= 0; i--) {
-        for (let command of newCommandLog[i].commands) {
-          if (dataList[accum] === 1) {
-            command["processed"] = "true";
-          }
-          accum++;
-        }
-      }
-      setCommandLog(newCommandLog);
-    });
-  }, [api, commandLog, setCommandLog, imei]);
-
-  // Checks whether a command has appeared in the command log of the downlinked normal report
   useEffect(() => {
-    // Poll every 5000 milliseconds (5 seconds)
     const interval = setInterval(() => {
-      // checkProcessed();
+      api.get("/cubesat/command_history/" + imei)
+        .then((response) =>
+          setCommandLog(response.status === 200 ? response.data : [])
+        );
     }, 5000);
-
-    // Cleanup: clear the interval when the component is unmounted or the effect re - runs
     return () => {
       clearInterval(interval);
     };
-  }, [checkProcessed]);
+  }, [api, imei, setCommandLog]);
+
 
   return (
     <>

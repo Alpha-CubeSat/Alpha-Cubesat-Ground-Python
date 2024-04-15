@@ -106,26 +106,26 @@ def parse_command(command: dict) -> str:
     specified in the Alpha documentation
     """
     selected_opcode = command['opcode']
-    if selected_opcode in ['Deploy', 'Arm', 'Fire']:
+    if selected_opcode in BURNWIRE_OPCODES:
         opcode = BURNWIRE_OPCODES[selected_opcode]
         arg1 = format_single_arg(0, ARG_LENGTH)
         arg2 = format_single_arg(0, ARG_LENGTH)
 
-    elif selected_opcode == 'SFR_Override':
+    elif selected_opcode == SFR_OVERRIDE:
         namespace, field = command['namespace'], command['field']
         if not SFR_OVERRIDE_OPCODES_MAP.get(namespace) or not SFR_OVERRIDE_OPCODES_MAP[namespace].get(field):
             return failure_response('Invalid SFR Field', 400)
         opcode = SFR_OVERRIDE_OPCODES_MAP[namespace][field]['hex']
         arg1, arg2 = format_sfr_args(SFR_OVERRIDE_OPCODES_MAP[namespace][field], command['value'])
 
-    elif selected_opcode == 'Fault':
+    elif selected_opcode == FAULT:
         namespace, field = command['namespace'], command['field']
         if not FAULT_OPCODE_MAP.get(namespace) or not FAULT_OPCODE_MAP[namespace].get(field):
             return failure_response('Invalid Fault Field', 400)
         opcode = FAULT_OPCODE_MAP[namespace][field]['hex']
         arg1, arg2 = format_fault_args(command['value'])
 
-    elif selected_opcode == 'Fragment_Request':
+    elif selected_opcode == FRAGMENT_REQUEST:
         cmd_data = command['value']
         if cmd_data['type'] == 'Capture':
             opcode = CAPTURE_REQUEST_OPCODE
@@ -134,11 +134,11 @@ def parse_command(command: dict) -> str:
         else:
             return failure_response(400, 'Invalid Fragment Type')
 
-    elif selected_opcode == 'EEPROM_Reset':
+    elif selected_opcode == EEPROM_RESET:
         arg1, arg2 = format_eeprom_args(command['value'])
         opcode = EEPROM_RESET_OPCODE
 
-    elif selected_opcode == 'Mission_Override':
+    elif selected_opcode == MISSION_OVERRIDE:
         opcode = MISSION_MODE_OVERRIDE_OPCODE
         print(command)
         arg1 = format_single_arg(MISSION_MODE_MAP[command['value']['mode']], ARG_LENGTH)
