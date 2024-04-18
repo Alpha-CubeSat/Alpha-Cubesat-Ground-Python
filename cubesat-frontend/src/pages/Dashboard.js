@@ -18,7 +18,7 @@ export default function Dashboard() {
           </Row>
         </Col>
         <Col sm="5">
-          <Row className="h-50 pt-2">
+          <Row className="row-height-mobile row-height-non-mobile">
             <WidgetCard
               title="Command Selector"
               children={<CommandSelector />}

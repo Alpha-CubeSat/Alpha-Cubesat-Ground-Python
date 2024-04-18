@@ -37,3 +37,20 @@
 .accordion-button {
     padding: 0.8rem 1rem
 }
+
+.mh-250 {
+    min-height: 250px;
+}
+
+@media (max-width: 576px) {
+    .row-height-mobile {
+        height: 50vh;
+    }
+}
+
+@media (min-width: 577px) {
+    .row-height-non-mobile {
+        height: 46.8vh;
+        padding-top: 0.5rem;
+    }
+}

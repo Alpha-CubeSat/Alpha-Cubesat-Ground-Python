@@ -144,53 +144,58 @@ export default function CommandSelector() {
   };
 
   return (
-    <Container>
-      {/* Command Title and Description */}
-      <Row>
-        <h4>
-          {title !== "No Command Selected" ? title : "No Command Selected"}
-        </h4>
-        <p>{desc}</p>
-        <hr />
-      </Row>
+    <Row className="h-100">
+      <Col>
+        {/* Command Title and Description */}
+        <Row>
+          <h4>
+            {title !== "No Command Selected" ? title : "No Command Selected"}
+          </h4>
+          <p>{desc}</p>
+          <hr />
+        </Row>
 
-      {/* Opcode dropdown selection */}
-      <Row className="d-flex flex-wrap">
-        <Col className="col-md-4">
-          <span style={{ fontWeight: "bold" }}>Opcode</span>
-          <Dropdown className="position-absolute">
-            <Dropdown.Toggle variant="success" id="dropdown-basic">
-              {selectedOpCode}
-            </Dropdown.Toggle>
-            <Dropdown.Menu>
-              {Object.keys(OpCodes).map((option, index) => (
-                <Dropdown.Item
-                  key={index}
-                  disabled={disabledOpcodes.includes(option)}
-                  onClick={handleOpCodeSelect(option)}
-                >
-                  {option}
-                </Dropdown.Item>
-              ))}
-            </Dropdown.Menu>
-          </Dropdown>
-        </Col>
-        <Col>
-          {/* Command form for selected opcode */}
-          <div>{currentForm}</div>
-          {/* Submit disabled if no opcode selected */}
-          <Button
-            style={{ position: "absolute", left: "30px", bottom: "30px" }}
-            variant="primary"
-            // call onSubmit of currently selected form
-            onClick={handleSubmit}
-            disabled={selectedOpCode === "None"}
-            className="mt-2"
-          >
-            + Command
-          </Button>
-        </Col>
-      </Row>
-    </Container>
+        {/* Opcode dropdown selection */}
+        <Row className="d-flex flex-row mh-250 justify-content-center">
+          <Col xs={3} md={4} className="d-flex flex-column justify-content-between">
+            <Row>
+              <span style={{ fontWeight: "bold" }}>Opcode</span>
+              <Dropdown>
+                <Dropdown.Toggle variant="success" id="dropdown-basic">
+                  {selectedOpCode}
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                  {Object.keys(OpCodes).map((option, index) => (
+                    <Dropdown.Item
+                      key={index}
+                      disabled={disabledOpcodes.includes(option)}
+                      onClick={handleOpCodeSelect(option)}
+                    >
+                      {option}
+                    </Dropdown.Item>
+                  ))}
+                </Dropdown.Menu>
+              </Dropdown>
+            </Row>
+            <Col md={4}>
+              <Button
+                variant="primary"
+                // call onSubmit of currently selected form
+                onClick={handleSubmit}
+                disabled={selectedOpCode === "None"}
+                className="mb-2"
+              >
+                +Command
+              </Button>
+            </Col>
+          </Col>
+          <Col>
+            {/* Command form for selected opcode */}
+            <div>{currentForm}</div>
+            {/* Submit disabled if no opcode selected */}
+          </Col>
+        </Row>
+      </Col >
+    </Row >
   );
 }
