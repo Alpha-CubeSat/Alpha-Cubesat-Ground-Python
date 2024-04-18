@@ -156,7 +156,7 @@ export default function CommandSelector() {
         </Row>
 
         {/* Opcode dropdown selection */}
-        <Row className="d-flex flex-row mh-250 justify-content-center">
+        <Row className="d-flex flex-row mh-250">
           <Col xs={3} md={4} className="d-flex flex-column justify-content-between">
             <Row>
               <span style={{ fontWeight: "bold" }}>Opcode</span>
@@ -177,13 +177,12 @@ export default function CommandSelector() {
                 </Dropdown.Menu>
               </Dropdown>
             </Row>
-            <Col md={4}>
+            <Col xs={3} md={4}>
               <Button
                 variant="primary"
-                // call onSubmit of currently selected form
                 onClick={handleSubmit}
                 disabled={selectedOpCode === "None"}
-                className="mb-2"
+                className="command-button mb-2"
               >
                 +Command
               </Button>
