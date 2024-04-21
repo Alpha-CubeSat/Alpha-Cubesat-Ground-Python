@@ -34,7 +34,7 @@ export const IMEI_MAP = {
   300534061570670: "OG FlatSat",
   300534063197760: "New FlatSat",
   300534062397580: "EDU",
-  300234064801490: "Flight Unit",
+  300534060424390: "Flight Unit",
 };
 
 // Telemetry report types

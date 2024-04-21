@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Dropdown from "react-bootstrap/Dropdown";
-import { Button, Col, Container, Row } from "react-bootstrap";
+import { Button, Col, Row } from "react-bootstrap";
 import { useDashboard } from "../contexts/DashboardProvider";
 import { useApi } from "../contexts/ApiProvider";
 import {
@@ -122,7 +122,7 @@ export default function CommandSelector() {
       id: count,
       opcode: selectedOpCode,
       ...(!isDeploymentOpcode(selectedOpCode) && data),
-      processed: "unknown"
+      processed: "unknown",
     };
     setCommandStack([...commandStack, new_command]);
     setCount(count + 1);
@@ -157,7 +157,11 @@ export default function CommandSelector() {
 
         {/* Opcode dropdown selection */}
         <Row className="d-flex flex-row mh-250">
-          <Col xs={3} md={4} className="d-flex flex-column justify-content-between">
+          <Col
+            xs={3}
+            md={4}
+            className="d-flex flex-column justify-content-between"
+          >
             <Row>
               <span style={{ fontWeight: "bold" }}>Opcode</span>
               <Dropdown>
@@ -184,7 +188,7 @@ export default function CommandSelector() {
                 disabled={selectedOpCode === "None"}
                 className="command-button mb-2"
               >
-                +Command
+                + Command
               </Button>
             </Col>
           </Col>
@@ -194,7 +198,7 @@ export default function CommandSelector() {
             {/* Submit disabled if no opcode selected */}
           </Col>
         </Row>
-      </Col >
-    </Row >
+      </Col>
+    </Row>
   );
 }
