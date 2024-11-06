@@ -9,8 +9,7 @@ import config
 # Makes a connection to an Elasticsearch database based on configured host, port, and options
 def get_connection() -> Elasticsearch:
     cfg = config.elastic_config
-    return Elasticsearch('https://localhost:9200',
-                         basic_auth=(cfg['username'], cfg['password']), ca_certs=cfg['certs'])
+    return Elasticsearch(cfg['url'], basic_auth=(cfg['username'], cfg['password']), ca_certs=cfg['certs'])
 
 # Appends the current year, month, and day to the supplied index name 
 # to break up an index into a daily index pattern.

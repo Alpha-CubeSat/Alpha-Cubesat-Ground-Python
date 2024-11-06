@@ -25,24 +25,22 @@ def format_sfr_args(field_data: dict, args: dict) -> (int, int):
     uppercase hexadecimal string without the '0x' header. Combines the hex 
     strings into arg1 and arg2 in the format expected by flight software.
     """
-    arg1, arg2, value = "", "", str(args["value"]).lower()
+    value = float(args["value"])
     if field_data['type'] == SFR_T.BOOL:
-        if value not in ['true', 'false']:
+        if value not in [True, False]:
             return failure_response('Boolean expected', 400)
-        value = bool(value)
     else:
-        value = float(value)
         if ((field_data.get('min') is not None and value < field_data['min']) or
                 (field_data.get('max') is not None and value > field_data['max'])):
             return failure_response('Min/Max Bounds Violated', 400)
         if field_data['type'] == SFR_T.FLOAT:
             value = value * field_data['resolution']
 
-    arg1 += format_single_arg(int(value), ARG_LENGTH)
+    arg1 = format_single_arg(int(value), ARG_LENGTH)
     arg2_parts = [
         (int(args["setValue"]), 2),
         (int(args["setRestore"]), 2),
-        (int(args["restoreValue"] == "true"), 4),
+        (int(args["restoreValue"]), 4),
     ]
     arg2 = ''.join(format_single_arg(part, length) for part, length in arg2_parts)
     return arg1, arg2
@@ -140,7 +138,6 @@ def parse_command(command: dict) -> str:
 
     elif selected_opcode == MISSION_OVERRIDE:
         opcode = MISSION_MODE_OVERRIDE_OPCODE
-        print(command)
         arg1 = format_single_arg(MISSION_MODE_MAP[command['value']['mode']], ARG_LENGTH)
         arg2 = format_single_arg(0, ARG_LENGTH)
 
