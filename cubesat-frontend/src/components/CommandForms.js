@@ -39,7 +39,7 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
       let int_check = new RegExp("^-?\\d+$");
       let float_check = new RegExp("^-?\\d+(\\.\\d+)?$");
       if (commandFields.setValue) {
-        if (!commandFields.value) {
+        if (commandFields.value === "") {
           error = "Field cannot be empty.";
         } else if (
           (fieldData.type === SFR_Type.Int ||
@@ -119,6 +119,12 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
     let { name, value } = event.target;
     if (name === "setValue") value = !commandFields.setValue;
     else if (name === "setRestore") value = !commandFields.setRestore;
+    else if (
+      name === "restoreValue" ||
+      (name === "value" && fieldData.type === SFR_Type.Bool)
+    )
+      // convert boolean string to actual boolean
+      value = value === "true";
 
     setCommandFields((prevFields) => ({
       ...prevFields,

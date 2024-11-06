@@ -27,6 +27,7 @@ rockblock_config = {
     'password': os.environ.get('ROCKBLOCK_PASS')
 }
 elastic_config = {
+    'url': os.environ.get('ELASTIC_URL', 'https://localhost:9200'),
     'username': os.environ.get('ELASTIC_USER'),
     'password': os.environ.get('ELASTIC_PASS'),
     'certs': os.environ.get('ELASTIC_CERTS')
