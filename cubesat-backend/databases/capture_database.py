@@ -1,6 +1,5 @@
-import base64
 import os
-import shutil
+from datetime import datetime
 from os.path import exists
 
 import config as cfg
@@ -12,7 +11,7 @@ capture_fragment_downlink_info = {'capture_serial': 0, 'latest_fragment': 0, 'mi
 
 def save_fragment(imei: int, capture_sn: int, fragment_number: int, fragment_data: str):
     """
-    Saves an capture fragment. Creates one if it doesn't exist using the following policy:
+    Saves a capture fragment. Creates one if it doesn't exist using the following policy:
         - new file is created under the directory with the serial number of the capture
         - the name of the file will be the fragment number with the .csfrag extension
     Example:
@@ -62,11 +61,10 @@ def get_saved_fragments(imei: int, capture_sn: int) -> list:
 
 def try_save_capture(imei: int, capture_sn: int, total_fragments: int):
     """
-    Tries to assemble an capture out of fragments. If the total # of fragments currently received
-    equals the total # of fragments, the completed capture is saved to the directory 'capture' as a
-    jpeg file with the serial number as a name.
+    Assembles a capture out of fragments. The assembled capture is saved to the directory
+    'capture' as a jpeg file with the serial number as a name.
 
-    Example: If capture 23 is complete when this function is called, the completed capture will
+    Example: If this function is called with serial number 23, the assembled capture will
     be saved as '23.jpg' under 'capture', and assembled out of the fragment files in the directory '23'
     :param capture_sn: serial number of the capture to be assembled
     :param total_fragments: the total # of fragments needed to assemble the capture
@@ -96,9 +94,14 @@ def try_save_capture(imei: int, capture_sn: int, total_fragments: int):
                 print(f'fragment {i} missing')
                 capture_file.write(bytearray.fromhex('f' * 128))
 
-    # if last received fragment has end flag, the capture is complete so we can delete its fragments folder
+    # if last received fragment has end flag, the capture is complete so we
+    # rename the image and its fragments folder they will not be overwritten in the future
     if total_fragments != -1:
-        shutil.rmtree(f'{cfg.capture_root_dir}/{imei}/{capture_sn}')
+        print(f'image {capture_sn} is complete')
+        fragments_path = f'{cfg.capture_root_dir}/{imei}/{capture_sn}'
+        image_path = f'{cfg.capture_root_dir}/{imei}/capture/{capture_sn}'
+        os.rename(fragments_path, fragments_path + datetime.now().strftime("_%Y%m%d_%H%M%S"))
+        os.rename(image_path + '.jpg', image_path + datetime.now().strftime("_%Y%m%d_%H%M%S") + '.jpg')
 
 
 def replace_capture_fragment(imei: str, capture_file_name: str, fragment_number: int, fragment_data: str):
