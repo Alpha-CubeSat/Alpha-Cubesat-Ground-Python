@@ -3,6 +3,7 @@ from datetime import datetime
 from os.path import exists
 
 import config as cfg
+from telemetry.telemetry_constants import FRAGMENTS_PER_IMAGE
 
 # keeps track of various stats regarding the received capture fragments
 capture_fragment_downlink_info = {'capture_serial': 0, 'latest_fragment': 0, 'missing_fragments': [],
@@ -33,7 +34,7 @@ def save_fragment(imei: int, capture_sn: int, fragment_number: int, fragment_dat
     capture_fragment_downlink_info['missing_fragments'] = []
 
 
-def generate_missing_fragments(frag_list: list):
+def generate_missing_fragments(capture_sn: int, frag_list: list):
     """
     Finds the missing fragments and the highest fragment received for an capture.
     Counts through all already-received fragments every time because fragments could be received in random order.
@@ -42,7 +43,7 @@ def generate_missing_fragments(frag_list: list):
     max_frag = max(frag_list)
     capture_fragment_downlink_info['missing_fragments'] = []
     capture_fragment_downlink_info['highest_fragment'] = max_frag
-    for x in range(max_frag):
+    for x in range(capture_sn * FRAGMENTS_PER_IMAGE, max_frag):
         if frag_list.count(x) == 0:
             capture_fragment_downlink_info['missing_fragments'].append(x)
 
@@ -78,7 +79,7 @@ def try_save_capture(imei: int, capture_sn: int, total_fragments: int):
 
     # Update fragment status dictionary
     fragment_list = list(fragment_map.keys())
-    generate_missing_fragments(fragment_list)
+    generate_missing_fragments(capture_sn, fragment_list)
     capture_fragment_downlink_info['fragment_count'] = \
         f'{len(fragment_list)-1}/{total_fragments if total_fragments != -1 else "?"}'
 
@@ -87,7 +88,7 @@ def try_save_capture(imei: int, capture_sn: int, total_fragments: int):
         os.makedirs(f'{cfg.capture_root_dir}/{imei}/capture')
 
     with open(f'{cfg.capture_root_dir}/{imei}/capture/{capture_sn}.jpg', 'wb') as capture_file:
-        for i in range(fragment_list[-1] + 1):
+        for i in range(capture_sn * FRAGMENTS_PER_IMAGE, fragment_list[-1] + 1):
             if i in fragment_list:
                 capture_file.write(open(fragment_map[i], 'rb').read())
             else:  # generate a blank 64 byte fragment if a fragment is missing
