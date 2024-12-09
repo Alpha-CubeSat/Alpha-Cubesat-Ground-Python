@@ -17,7 +17,7 @@ export default function Dashboard() {
             <WidgetCard title="Command Builder" children={<CommandBuilder />} />
           </Row>
         </Col>
-        <Col sm="5">
+        <Col className="dash_height" sm="5">
           <Row className="row-height-mobile row-height-non-mobile">
             <WidgetCard
               title="Command Selector"
