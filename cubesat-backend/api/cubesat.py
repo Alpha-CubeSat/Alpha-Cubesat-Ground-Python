@@ -63,7 +63,7 @@ def get_recent_captures(args, imei):
     Captures are sorted by serial # (so that they are chronological)
     """
     if not exists(f'{config.capture_root_dir}/{imei}'):
-        return []
+        return {'captures': []}
 
     return {
         'captures': sorted(os.listdir(f'{config.capture_root_dir}/{imei}/capture'),
