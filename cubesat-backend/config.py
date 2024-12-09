@@ -21,7 +21,7 @@ capture_root_dir = os.path.join(basedir, 'cubesat_ods_captures')
 cmd_log_root_dir = os.path.join(basedir, 'command_logs')
 users_db = os.path.join(basedir, 'users.db')
 
-gs_admin_password = os.environ.get('GS_ADMIN_PASS', 'admin')
+gs_admin_password = os.environ.get('GS_ADMIN_PASS')
 rockblock_config = {
     'username': os.environ.get('ROCKBLOCK_USER'),
     'password': os.environ.get('ROCKBLOCK_PASS')

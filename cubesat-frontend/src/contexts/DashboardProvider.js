@@ -15,7 +15,7 @@ export default function DashboardProvider({ children }) {
   const [imei, setImei] = useState(
     localStorage.getItem("IMEI")
       ? localStorage.getItem("IMEI")
-      : Object.keys(IMEI_MAP)[0]
+      : Object.keys(IMEI_MAP)[0],
   );
 
   // current list of commands to send
@@ -33,7 +33,7 @@ export default function DashboardProvider({ children }) {
     api
       .get("/cubesat/command_history/" + imei)
       .then((response) =>
-        setCommandLog(response.status === 200 ? response.data : [])
+        setCommandLog(response.status === 200 ? response.data : []),
       );
   }, [api, imei]);
 
@@ -43,11 +43,11 @@ export default function DashboardProvider({ children }) {
   const [reqNotifShow, setReqNotifShow] = useState(false);
 
   // show notification permission request modal if permission has not been previously granted
-  // useEffect(() => {
-  //   if ("Notification" in window && Notification.permission !== "granted") {
-  //     setReqNotifShow(true);
-  //   }
-  // }, []);
+  useEffect(() => {
+    if ("Notification" in window && Notification.permission !== "granted") {
+      setReqNotifShow(true);
+    }
+  }, []);
 
   const reqNotificationPermission = () => {
     Notification.requestPermission().then((res) => {
