@@ -1,0 +1,15 @@
+[Unit]
+Description=Ground Station Flask Backend Service
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=gunicorn -b localhost:8000 -w 4 cubesat_backend:app --reload
+WorkingDirectory=/home/alpha-gs/Alpha-Cubesat-Ground-Python/cubesat-backend
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=%n

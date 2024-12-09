@@ -1,0 +1,59 @@
+/* General reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background: url('background.png') no-repeat center center fixed;
+    background-size: cover;
+    font-family: Arial, sans-serif;
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.centered-container {
+    text-align: center;
+    background: rgba(255, 255, 255, 0.75); /* Light semi-transparent background */
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    font-size: 1.75em;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+.icon-row {
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+}
+
+.icon-item {
+    text-align: center;
+}
+
+.icon-item a {
+    text-decoration: none; /* Removes underline */
+    color: inherit; /* Inherit text color */
+}
+
+.icon-item img {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 10px;
+    transition: transform 0.2s; /* Smooth zoom effect on hover */
+}
+
+.icon-item img:hover {
+    transform: scale(1.1); /* Slight zoom on hover */
+}
+
+.icon-item p {
+}
