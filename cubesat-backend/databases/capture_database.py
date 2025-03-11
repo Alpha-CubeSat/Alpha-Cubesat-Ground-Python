@@ -104,7 +104,7 @@ def try_save_capture(imei: int, capture_sn: int, total_fragments: int):
         os.rename(fragments_path, fragments_path + datetime.now().strftime("_%Y%m%d_%H%M%S"))
         os.rename(image_path + '.jpg', image_path + datetime.now().strftime("_%Y%m%d_%H%M%S") + '.jpg')
 
-
+''' not used, also fragments are 80 bytes now
 def replace_capture_fragment(imei: str, capture_file_name: str, fragment_number: int, fragment_data: str):
     """
     Given the file_name of an existing capture file, replaces the fragment with the 0-indexed
@@ -128,3 +128,4 @@ def replace_capture_fragment(imei: str, capture_file_name: str, fragment_number:
     with open(f'{cfg.capture_root_dir}/{imei}/capture/{capture_file_name}.jpg', 'wb') as capture_file:
         capture_file.write(bytearray.fromhex(new_capture))
     print(f'replaced fragment {str(fragment_number)}')
+'''
