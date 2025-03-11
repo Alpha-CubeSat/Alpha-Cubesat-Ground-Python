@@ -32,5 +32,3 @@ elastic_config = {
     'password': os.environ.get('ELASTIC_PASS'),
     'certs': os.environ.get('ELASTIC_CERTS')
 }
-
-rockblock_imei = os.environ.get('ROCKBLOCK_IMEI')
