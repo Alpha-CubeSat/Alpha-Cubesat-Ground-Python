@@ -2,7 +2,7 @@ from enum import Enum
 
 from binary_reader import BinaryReader
 
-from control.control_constants import COMMAND_OPCODE_MAP
+from control.control_constants import COMMAND_OPCODE_MAP, MISSION_MODE_NUM_TO_NAME
 
 
 class BinaryTypes(Enum):
@@ -75,7 +75,8 @@ class BinaryParser:
         history_bytes = self.reader.read_bytes(10)
         bits = format(int.from_bytes(history_bytes, byteorder="big"), '080b')
         for i in range(0, len(bits), 5):
-            decoded[name].append(int(bits[i:i+5], 2))
+            mission_mode_id = int(bits[i:i+5], 2)
+            decoded[name].append(MISSION_MODE_NUM_TO_NAME.get(mission_mode_id, mission_mode_id))
 
     def read_uint16_list(self, name, decoded):
         """Reads and returns unsigned 16-bit integers until the end flag. 

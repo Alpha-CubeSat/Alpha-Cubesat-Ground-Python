@@ -28,7 +28,7 @@ fault_fields = [['mag_x_value_fault', 'mag_x_average_fault'],
                 ['gyro_z_value_fault', 'gyro_z_average_fault'],
                 ['temp_c_value_fault', 'temp_c_average_fault'],
                 ['voltage_value_fault', 'voltage_average_fault'],
-                ['light_val_fault', 'hardware_faults'],
+                ['light_val_fault', 'button_fault'],
                 ['solar_current_average_fault', eeprom_bools]]
 
 normal_report_structure = [
@@ -68,9 +68,13 @@ normal_report_structure = [
     ('command_log', BinaryTypes.uint16_list)
 ]
 
-uint8_max = pow(2, 8) - 1
-uint16_max = pow(2, 16) - 1
-uint32_max = pow(2, 32) - 1
+UINT8_MAX = pow(2, 8) - 1
+UINT16_MAX = pow(2, 16) - 1
+UINT32_MAX = pow(2, 32) - 1
+
+MS_TO_MINUTE = 60000
+MS_TO_HOUR = 3600000
+MS_TO_DAY = 86400000
 
 # IMU report constants
 CYCLES_PER_FRAGMENT = 22

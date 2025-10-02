@@ -1,3 +1,4 @@
+from control.control_constants import MISSION_MODE_MAP
 from telemetry.binary_parser import BinaryParser
 from telemetry.telemetry_constants import *
 
@@ -17,38 +18,60 @@ def compute_normal_report_values(data: dict) -> dict:
     :return: fully processed normal report
     """
     fixed_data = {
-        'boot_time_mins': map_range(float(data['boot_time_mins']), 0, uint8_max),
-        'burn_time': map_range(float(data['burn_time']), 0, 5000),
-        'armed_time': map_range(float(data['armed_time']), 0, 43200000),
-        'lp_downlink_period': map_range(float(data['lp_downlink_period']), 1000, 172800000),
-        'transmit_downlink_period': map_range(float(data['transmit_downlink_period']), 1000, 172800000),
-        'acs_mode' : map_range(float(data['acs_mode']), 0, uint8_max),
-        'Id_index': map_range(float(data['Id_index']), 0, 0),
-        'Kd_index': map_range(float(data['Kd_index']), 0, 0),
-        'Kp_index': map_range(float(data['Kp_index']), 0, 0),
-        'c_index': map_range(float(data['c_index']), 0, 0),
-        'boot_counter': map_range(float(data['boot_counter']), 0, uint8_max),
-        'dynamic_data_addr': map_range(float(data['dynamic_data_addr']), 10, 459),
-        'sfr_data_addr': map_range(float(data['sfr_data_addr']), 460, 4085),
-        'time_alive': map_range(float(data['time_alive']), 0, uint32_max),
-        'dynamic_data_age': map_range(float(data['dynamic_data_age']), 0, uint32_max),
-        'sfr_data_age': map_range(float(data['sfr_data_age']), 0, uint32_max),
-        'acs_on_time': map_range(float(data['acs_on_time']), 0, 5400000),
-        'rockblock_on_time': map_range(float(data['rockblock_on_time']), 0, 5400000),
-        'light_val_average_standby': map_range(float(data['light_val_average_standby']), 0, 1023),
-        'mag_x_average': map_range(float(data['mag_x_average']), -150, 150),
-        'mag_y_average': map_range(float(data['mag_y_average']), -150, 150),
-        'mag_z_average': map_range(float(data['mag_z_average']), -150, 150),
-        'gyro_x_average': map_range(float(data['gyro_x_average']), -5, 5),
-        'gyro_y_average': map_range(float(data['gyro_y_average']), -5, 5),
-        'gyro_z_average': map_range(float(data['gyro_z_average']), -5, 5),
-        'temp_c_value': map_range(float(data['temp_c_value']), -100, 200),
-        'temp_c_average': map_range(float(data['temp_c_average']), -100, 200),
-        'solar_current_average': map_range(float(data['solar_current_average']), -75, 500),
-        'voltage_value': map_range(float(data['voltage_value']), 0, 6),
-        'voltage_average': map_range(float(data['voltage_average']), 0, 6),
+        'boot_time_mins':            int(map_range(float(data['boot_time_mins']), 0, UINT8_MAX)),
+        'burn_time':                 int(map_range(float(data['burn_time']), 0, 5000)),
+        'armed_time':                int(map_range(float(data['armed_time']), 0, 43200000)),
+        'lp_downlink_period':        int(map_range(float(data['lp_downlink_period']), 1000, 172800000)),
+        'transmit_downlink_period':  int(map_range(float(data['transmit_downlink_period']), 1000, 172800000)),
+        'acs_mode' :                 int(map_range(float(data['acs_mode']), 0, UINT8_MAX)),
+        'Id_index':                  int(map_range(float(data['Id_index']), 0, 30)),
+        'Kd_index':                  int(map_range(float(data['Kd_index']), 0, 30)),
+        'Kp_index':                  int(map_range(float(data['Kp_index']), 0, 30)),
+        'c_index':                   int(map_range(float(data['c_index']), 0, 30)),
+        'boot_counter':              int(map_range(float(data['boot_counter']), 0, UINT8_MAX)),
+        'dynamic_data_addr':         int(map_range(float(data['dynamic_data_addr']), 10, 459)),
+        'sfr_data_addr':             int(map_range(float(data['sfr_data_addr']), 460, 4085)),
+        'time_alive':                int(map_range(float(data['time_alive']), 0, UINT32_MAX)),
+        'dynamic_data_age':          int(map_range(float(data['dynamic_data_age']), 0, UINT32_MAX)),
+        'sfr_data_age':              int(map_range(float(data['sfr_data_age']), 0, UINT32_MAX)),
+        'acs_on_time':               int(map_range(float(data['acs_on_time']), 0, 5400000)),
+        'rockblock_on_time':         int(map_range(float(data['rockblock_on_time']), 0, 5400000)),
+        'light_val_average_standby':     map_range(float(data['light_val_average_standby']), 0, 1023),
+        'mag_x_average':                 map_range(float(data['mag_x_average']), -150, 150),
+        'mag_y_average':                 map_range(float(data['mag_y_average']), -150, 150),
+        'mag_z_average':                 map_range(float(data['mag_z_average']), -150, 150),
+        'gyro_x_average':                map_range(float(data['gyro_x_average']), -10, 10),
+        'gyro_y_average':                map_range(float(data['gyro_y_average']), -10, 10),
+        'gyro_z_average':                map_range(float(data['gyro_z_average']), -10, 10),
+        'temp_c_value':                  map_range(float(data['temp_c_value']), -100, 200),
+        'temp_c_average':                map_range(float(data['temp_c_average']), -100, 200),
+        'solar_current_average':         map_range(float(data['solar_current_average']), -75, 500),
+        'voltage_value':                 map_range(float(data['voltage_value']), 0, 6),
+        'voltage_average':               map_range(float(data['voltage_average']), 0, 6),
     }
     data.update(fixed_data)
+
+    # Add human-readable data fields
+    data['armed_time_hr'] = data['armed_time'] / MS_TO_HOUR
+    data['lp_downlink_period_min'] = data['lp_downlink_period'] / MS_TO_MINUTE
+    data['transmit_downlink_period_min'] = data['transmit_downlink_period'] / MS_TO_MINUTE
+    data['time_alive_day'] = data['time_alive'] / MS_TO_DAY
+    data['acs_on_time_min'] = data['acs_on_time'] / MS_TO_MINUTE
+    data['rockblock_on_time_min'] = data['rockblock_on_time'] / MS_TO_MINUTE
+
+    # Make faults human-readable
+    for key, value in data.items():
+        if '_fault' in key:
+            #         Bit 0       Bit 1         Bit 2     Bit 3
+            labels = ["Signaled", "Suppressed", "Forced", "Base"]
+            result = [labels[i] for i in range(4) if value & (1 << i)]
+            data[key + '_decoded'] = ", ".join(result) if result else "None"
+
+    # Status fields
+    data['current_mission_mode'] = data['mission_mode_log'][0]
+    data['current_mission_mode_id'] = MISSION_MODE_MAP(data['mission_mode_log'][0])
+    data['last_command_processed'] = data['command_log'][0]
+
     return data
 
 

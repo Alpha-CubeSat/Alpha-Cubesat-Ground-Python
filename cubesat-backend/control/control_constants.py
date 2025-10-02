@@ -148,7 +148,7 @@ SFR_OVERRIDE_OPCODES_MAP = {
         'armed_time': {
             'hex': '1906',
             'min': 0,
-            'max': 12*360000,
+            'max': 43200000,
             'type': SFR_T.TIME,
         },
         'delay_time': {
@@ -278,7 +278,7 @@ SFR_OVERRIDE_OPCODES_MAP = {
         'mode': {
             'hex': '2107',
             'min': 0,
-            'max': 22,
+            'max': 24,
             'type': SFR_T.INT
         },
         'last_downlink': {
@@ -287,20 +287,20 @@ SFR_OVERRIDE_OPCODES_MAP = {
         },
         'downlink_period': {
             'hex': '2109',
-            'min': 1,
-            'max': 86400000*2,
+            'min': 0,
+            'max': 172800000,
             'type': SFR_T.TIME,
         },
         'lp_downlink_period': {
             'hex': '2110',
-            'min': 1,
-            'max': 86400000*2,
+            'min': 1000,
+            'max': 172800000,
             'type': SFR_T.TIME,
         },
         'transmit_downlink_period': {
             'hex': '2111',
-            'min': 1,
-            'max': 86400000*2,
+            'min': 1000,
+            'max': 172800000,
             'type': SFR_T.TIME,
         },
         'on_time': {
@@ -378,7 +378,7 @@ SFR_OVERRIDE_OPCODES_MAP = {
         'mode': {
             'hex': '2501',
             'min': 0,
-            'max': 2,
+            'max': 1,
             'type': SFR_T.INT
         },
         'simple_mag': {
@@ -592,7 +592,9 @@ MISSION_MODE_MAP = {
     "mandatory_burns" : 19,
     "regular_burns" : 20,
     "deployment_verification" : 21
-} 
+}
+MISSION_MODE_NUM_TO_NAME = {value: key for key, value in MISSION_MODE_MAP.items()}
+
 COMMAND_OPCODE_MAP = {
     CAPTURE_REQUEST_OPCODE: 'Fragment_Request',
     EEPROM_RESET_OPCODE: 'EEPROM_Reset',
