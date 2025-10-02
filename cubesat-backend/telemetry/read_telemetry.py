@@ -60,16 +60,18 @@ def compute_normal_report_values(data: dict) -> dict:
     data['rockblock_on_time_min'] = data['rockblock_on_time'] / MS_TO_MINUTE
 
     # Make faults human-readable
+    human_readable_faults = {}
     for key, value in data.items():
         if '_fault' in key:
             #         Bit 0       Bit 1         Bit 2     Bit 3
             labels = ["Signaled", "Suppressed", "Forced", "Base"]
             result = [labels[i] for i in range(4) if value & (1 << i)]
-            data[key + '_decoded'] = ", ".join(result) if result else "None"
+            human_readable_faults[key + '_decoded'] = ", ".join(result) if result else "None"
+    data.update(human_readable_faults)
 
     # Status fields
     data['current_mission_mode'] = data['mission_mode_log'][0]
-    data['current_mission_mode_id'] = MISSION_MODE_MAP(data['mission_mode_log'][0])
+    data['current_mission_mode_id'] = MISSION_MODE_MAP.get(data['mission_mode_log'][0])
     data['last_command_processed'] = data['command_log'][0]
 
     return data
