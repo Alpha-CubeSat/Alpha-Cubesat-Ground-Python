@@ -25,6 +25,8 @@ def create_app():
     app.register_blueprint(user, url_prefix='/api/user')
     from api.cubesat import cubesat
     app.register_blueprint(cubesat, url_prefix='/api/cubesat')
+    from api.chipsat import chipsat
+    app.register_blueprint(chipsat, url_prefix='/api/chipsat')
     from api.errors import errors
     app.register_blueprint(errors)
 

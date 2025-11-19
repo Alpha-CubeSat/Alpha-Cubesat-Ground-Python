@@ -14,6 +14,10 @@ class RockblockReportSchema(ma.Schema):
     iridium_latitude = ma.Float(required=True)
     data = ma.Str(required=True)
 
+class ChipSatReportSchema(ma.Schema):
+    class Meta:
+        unknown = INCLUDE
+
 class CaptureCountSchema(ma.Schema):
     count = ma.Int(load_default=5)
 
