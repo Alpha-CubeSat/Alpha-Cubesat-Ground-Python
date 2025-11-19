@@ -30,7 +30,7 @@ def rockblock_telemetry(report):
     Used to receive downlinked data reports sent by the CubeSat from the RockBlock portal.
     Must have a valid JWT token.
     """
-    print('report received')
+    print('report received:')
     print(report)
 
     # Verifies the JWT token sent in a rockblock report

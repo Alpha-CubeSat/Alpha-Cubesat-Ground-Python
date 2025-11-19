@@ -59,9 +59,16 @@ export function stringifyCommand(command) {
     command.opcode === OpCodes.SFR_Override ||
     command.opcode === OpCodes.Fault
   ) {
-    return `${command.namespace}::${command.field} = ${
-      command.opcode === OpCodes.SFR_Override ? data.value : data
-    }`;
+    let cmdText = `${command.namespace}::${command.field}`;
+    if (data.setValue) {
+      cmdText += ` = ${data.value}`;
+    }
+    if (data.setRestore) {
+      cmdText += `, restore: ${data.restoreValue}`;
+    }
+    return cmdText;
+  } else if (command.opcode === OpCodes.Fault) {
+    return `${command.namespace}::${command.field} = ${data}`;
   } else if (command.opcode === OpCodes.Fragment_Request) {
     return `Serial ${data.serialNum}, Fragment ${data.fragmentNum}`;
   } else if (command.opcode === OpCodes.EEPROM_Reset) {

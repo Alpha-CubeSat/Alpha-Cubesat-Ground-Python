@@ -8,7 +8,7 @@ from telemetry.telemetry_constants import *
 # list of all imu fragment numbers received
 fragment_list = []
 # keeps track of various stats regarding the received imu fragments
-imu_display_info = {'latest_fragment': 0, 'missing_fragments': [], 'highest_fragment': 0}
+imu_display_info = {'latest_fragment': 0, 'missing_fragments': [], 'highest_fragment': 0, 'fragment_count': f'0/{TOTAL_IMU_REPORTS}'}
 
 
 def report_metadata(rockblock_report: dict) -> dict:
@@ -34,6 +34,7 @@ def generate_missing_fragments(frag_list: list):
     max_frag = max(frag_list)
     imu_display_info['missing_fragments'] = []
     imu_display_info['highest_fragment'] = max_frag
+    imu_display_info['fragment_count'] = f'{len(frag_list)}/{TOTAL_IMU_REPORTS}'
     for x in range(max_frag):
         if frag_list.count(x) == 0:
             imu_display_info['missing_fragments'].append(x)
@@ -50,9 +51,9 @@ def process_save_deploy_data(data: dict):
     imu_display_info['latest_fragment'] = fragment_number
     generate_missing_fragments(fragment_list)
 
-    # 462 bytes of imu data sent over 7 packets, end flag (fe92) is present for the last packet
-    # each report has 66 bytes of imu data (all 22 cycles are complete) => 154 total cycles
-    # 154 cycles * 3 bytes each = 462 bytes
+    # 1188 bytes of imu data sent over 18 packets, end flag (fe92) is present for the last packet
+    # each report has 66 bytes of imu data (all 22 cycles are complete) => 396 total cycles
+    # 396 cycles * 3 bytes each = 1188 bytes
     for x in range(0, len(fragment_data), 6):
         x_gyro = int(fragment_data[x:x + 2], 16)
         y_gyro = int(fragment_data[x + 2:x + 4], 16)
@@ -61,19 +62,19 @@ def process_save_deploy_data(data: dict):
         # every full fragment has 22 cycles, new cycle occurs every six digits in the hex string
         cycle_count = fragment_number * CYCLES_PER_FRAGMENT + x / 6
 
-        # Maps imu cycle values from the range used for transmission (0 - 255) to their actual range (-5 - 5)
+        # Maps imu cycle values from the range used for transmission (0 - 255) to their actual range (-10 - 10)
         report_data = {
-            'transmit_time': data['transmit_time'],
+            **report_metadata(data),
             'cycle_count': int(cycle_count),
-            'x_gyro': map_range(float(x_gyro), -5, 5),
-            'y_gyro': map_range(float(y_gyro), -5, 5),
-            'z_gyro': map_range(float(z_gyro), -5, 5),
+            'x_gyro': map_range(float(x_gyro), -10, 10),
+            'y_gyro': map_range(float(y_gyro), -10, 10),
+            'z_gyro': map_range(float(z_gyro), -10, 10),
         }
-        print('report', report_data)
 
         # Saves a cycle report to elasticsearch
         elastic.index(cycle_db_index, report_data)
 
+    # Save IMU report downlink progress to elasticsearch
     elastic.index(deploy_db_index, {**report_metadata(data), **imu_display_info})
 
 
@@ -87,7 +88,9 @@ def process_save_ods_data(data: dict):
     :param data: capture fragment report
     """
     capture_database.save_fragment(data['imei'], data['serial_number'], data['fragment_number'], data['fragment_data'])
-    capture_database.try_save_capture(data['imei'], data['serial_number'], data['max_fragments'])
+    capture_database.try_save_capture(data['imei'], data['serial_number'], data['end_marker_present'])
+
+    # Save camera report downlink progress to elasticsearch
     elastic.index(capture_db_index,
                   {**report_metadata(data), **capture_database.capture_fragment_downlink_info})
 

@@ -156,8 +156,8 @@ def handle_command(imei: str, commands: list) -> str:
     """
     print("Processing commands!")
 
-    if len(commands) > 6:
-        return failure_response(400, 'Cannot send more then 6 commands at once.')
+    if len(commands) > MAX_COMMANDS:
+        return failure_response(400, 'Cannot send more then 5 commands at once.')
 
     # add FEFE start flag
     uplink = format_flag(254) + format_flag(254)

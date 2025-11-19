@@ -1,16 +1,19 @@
-# Constants related to Cubesat commanding
 from enum import Enum
 
 ROCKBLOCK_ENDPOINT = 'https://core.rock7.com/rockblock/MT'
 ARG_LENGTH = 8
 FLAG_LENGTH = 2
+MAX_COMMANDS = 5
 
 class SFR_T(str, Enum):
+    """Represents the type of each SFR value (which controls how the GS interprets them in commands)"""
+
     BOOL = 'BOOL',
     FLOAT = 'FLOAT',
     INT = 'INT',
     TIME = 'TIME',
 
+# Human-readable command names
 DEPLOY = "Deploy"
 ARM = "Arm"
 FIRE = "Fire"
@@ -20,6 +23,7 @@ FRAGMENT_REQUEST = 'Fragment_Request'
 EEPROM_RESET = 'EEPROM_RESET'
 MISSION_OVERRIDE = 'Mission_Override'
 
+# Command opcodes
 BURNWIRE_OPCODES = {
     'Deploy': '3333',
     'Arm': '4444',
@@ -30,6 +34,7 @@ EEPROM_RESET_OPCODE = '7777'
 CAPTURE_REQUEST_OPCODE = '8888'
 MISSION_MODE_OVERRIDE_OPCODE = '9999'
 
+# Command mappings (human-readable --> hex)
 SFR_OVERRIDE_OPCODES_MAP = {
     'stabilization': {
         'max_time': {
@@ -595,6 +600,7 @@ MISSION_MODE_MAP = {
 }
 MISSION_MODE_NUM_TO_NAME = {value: key for key, value in MISSION_MODE_MAP.items()}
 
+# Reverse command mappings (hex --> human-readable)
 COMMAND_OPCODE_MAP = {
     CAPTURE_REQUEST_OPCODE: 'Fragment_Request',
     EEPROM_RESET_OPCODE: 'EEPROM_Reset',

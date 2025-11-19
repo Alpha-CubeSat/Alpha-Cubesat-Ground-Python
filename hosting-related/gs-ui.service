@@ -8,6 +8,3 @@ WantedBy=multi-user.target
 Type=simple
 ExecStart=npm start
 WorkingDirectory=/home/alpha-gs/Alpha-Cubesat-Ground-Python/cubesat-frontend
-StandardOutput=syslog
-StandardError=syslog
-SyslogIdentifier=%n

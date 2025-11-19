@@ -3,11 +3,11 @@ from datetime import datetime
 from os.path import exists
 
 import config as cfg
-from telemetry.telemetry_constants import FRAGMENTS_PER_IMAGE
+from telemetry.telemetry_constants import FRAGMENTS_PER_IMAGE, BYTES_PER_FRAGMENT
 
 # keeps track of various stats regarding the received capture fragments
 capture_fragment_downlink_info = {'capture_serial': 0, 'latest_fragment': 0, 'missing_fragments': [],
-                              'fragment_count': '?/?', 'highest_fragment': 0}
+                                  'fragment_count': f'0/{FRAGMENTS_PER_IMAGE}', 'highest_fragment': 0}
 
 
 def save_fragment(imei: int, capture_sn: int, fragment_number: int, fragment_data: str):
@@ -60,7 +60,7 @@ def get_saved_fragments(imei: int, capture_sn: int) -> list:
     return fragment_files
 
 
-def try_save_capture(imei: int, capture_sn: int, total_fragments: int):
+def try_save_capture(imei: int, capture_sn: int, end_marker_present: bool):
     """
     Assembles a capture out of fragments. The assembled capture is saved to the directory
     'capture' as a jpeg file with the serial number as a name.
@@ -68,7 +68,7 @@ def try_save_capture(imei: int, capture_sn: int, total_fragments: int):
     Example: If this function is called with serial number 23, the assembled capture will
     be saved as '23.jpg' under 'capture', and assembled out of the fragment files in the directory '23'
     :param capture_sn: serial number of the capture to be assembled
-    :param total_fragments: the total # of fragments needed to assemble the capture
+    :param end_marker_present: if the capture has the end marker in it
     """
     # Get all currently received fragments
     fragment_map = {}  # maps fragment file path to fragment #
@@ -80,8 +80,7 @@ def try_save_capture(imei: int, capture_sn: int, total_fragments: int):
     # Update fragment status dictionary
     fragment_list = list(fragment_map.keys())
     generate_missing_fragments(capture_sn, fragment_list)
-    capture_fragment_downlink_info['fragment_count'] = \
-        f'{len(fragment_list)-1}/{total_fragments if total_fragments != -1 else "?"}'
+    capture_fragment_downlink_info['fragment_count'] = f'{len(fragment_list)}/{FRAGMENTS_PER_IMAGE}'
 
     # Build final capture with currently received fragments (filling in missing ones with blanks)
     if not exists(f'{cfg.capture_root_dir}/{imei}/capture'):
@@ -91,13 +90,13 @@ def try_save_capture(imei: int, capture_sn: int, total_fragments: int):
         for i in range(capture_sn * FRAGMENTS_PER_IMAGE, fragment_list[-1] + 1):
             if i in fragment_list:
                 capture_file.write(open(fragment_map[i], 'rb').read())
-            else:  # generate a blank 64 byte fragment if a fragment is missing
-                print(f'fragment {i} missing')
-                capture_file.write(bytearray.fromhex('f' * 128))
+            else:  # generate a blank 80 byte fragment if a fragment is missing
+                print(f'fragment {i} missing for sn {capture_sn}')
+                capture_file.write(bytearray.fromhex('f' * (BYTES_PER_FRAGMENT * 2)))
 
-    # if last received fragment has end flag, the capture is complete so we
+    # if last received fragment has the end marker, the capture is complete so we
     # rename the image and its fragments folder they will not be overwritten in the future
-    if total_fragments != -1:
+    if end_marker_present:
         print(f'image {capture_sn} is complete')
         fragments_path = f'{cfg.capture_root_dir}/{imei}/{capture_sn}'
         image_path = f'{cfg.capture_root_dir}/{imei}/capture/{capture_sn}'

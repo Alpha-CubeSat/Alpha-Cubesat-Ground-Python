@@ -89,25 +89,20 @@ def read_imu_hex_fragment(data: str) -> dict:
     end_flag_present = data.count('fe92') != 0
     return {
         'fragment_number': int(data[0:2], 16),
-        'fragment_data': data[2:] if not end_flag_present else data[2:data.index('fe92')],
-        'end_flag_present': end_flag_present
+        'fragment_data': data[2:] if not end_flag_present else data[2:data.index('fe92')]
     }
 
 
 def read_capture_hex_fragment(data: str) -> dict:
     """
-    Reads the hexadecimal string of an capture fragment to determine if the
+    Reads the hexadecimal string of a capture fragment to determine if the
     fragment is the last fragment, which is indicated by the end-marker 'ffd9'.
     Returns the serial number in decimal form, the fragment number in
-    decimal form, the max number of fragments in decimal form, and the hex string
-    of fragment data needed to be read (minus the opcode, capture serial number and
-    fragment number).
+    decimal form, and the hex string of fragment data needed to be read
+    (minus the opcode, capture serial number and fragment number).
 
-    If the capture fragment is not last, then the max number of fragments is set
-    arbitrarily to -1, and the entirety of the fragment portion in hex string
-    must be read. If the capture fragment is the last, then the max number of
-    fragments is set to (last fragment number), and the hexadecimal string is
-    read up to 'ffd9'.
+    If the capture fragment is not last, the entirety of the fragment portion in hex string
+    must be read. If the capture fragment is the last, the hexadecimal string is read up to 'ffd9'.
 
     Notes:
           - The hex string is the data report minus the op code at the beginning
@@ -117,21 +112,20 @@ def read_capture_hex_fragment(data: str) -> dict:
             Fragment count starts at 0.
           - The fragment data starts at index 10 and goes to the end of the hex string
             or to the end of end-marker 'ffd9'.
-          - The entire hex string for an capture fragment data is 69 bytes long (138 characters).
+          - The entire hex string for capture fragment data is 80 bytes long.
 
     :param data: hex string containing capture fragment data
-    :return: a dictionary with the fragment's serial #, id #, data and the total # of fragments
+    :return: a dictionary with the fragment's serial #, id #, data, and if the fragment has the end marker
     """
 
     fragment_number = int(data[8:10], 16)
     end_marker_present = data.count('ffd9') != 0
-    max_fragments = fragment_number if end_marker_present else -1
     fragment_data = data[10:] if not end_marker_present else data[10:data.index('ffd9')+4]
     return {
         'serial_number': int(data[0:2], 16),
         'fragment_number': fragment_number,
-        'max_fragments': max_fragments,
-        'fragment_data': fragment_data
+        'fragment_data': fragment_data,
+        'end_marker_present': end_marker_present
     }
 
 

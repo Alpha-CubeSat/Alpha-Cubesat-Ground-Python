@@ -13,6 +13,7 @@ class Opcodes(int, Enum):
     ods_report = 42
     error = -1
 
+# Normal report structure
 
 bool_fields = ["photoresistor_covered", "possible_uncovered", "ods_powered",
                "deployed", "waiting_command",
@@ -68,6 +69,8 @@ normal_report_structure = [
     ('command_log', BinaryTypes.uint16_list)
 ]
 
+# Normal report mapping constants
+
 UINT8_MAX = pow(2, 8) - 1
 UINT16_MAX = pow(2, 16) - 1
 UINT32_MAX = pow(2, 32) - 1
@@ -78,7 +81,10 @@ MS_TO_DAY = 86400000
 
 # IMU report constants
 CYCLES_PER_FRAGMENT = 22
+TOTAL_IMU_REPORTS = 18
 
+# Camera report constants
+BYTES_PER_FRAGMENT = 80
 FRAGMENTS_PER_IMAGE = 46
 
 # Public key provided for JWT verification by rockblock web services documentation

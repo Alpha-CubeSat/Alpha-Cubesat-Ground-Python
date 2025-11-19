@@ -102,8 +102,8 @@ export default function CommandSelector() {
 
   // Validates input field before adding command to the command builder
   const handleSubmit = () => {
-    if (commandStack.length === 6) {
-      toast.error("Cannot send more than 6 commands at once.");
+    if (commandStack.length === 5) {
+      toast.error("Cannot send more than 5 commands at once.");
       return;
     }
 
