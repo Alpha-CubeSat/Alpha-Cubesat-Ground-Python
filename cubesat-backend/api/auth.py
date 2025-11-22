@@ -10,11 +10,18 @@ from werkzeug.security import check_password_hash
 from api.errors import error_response
 from api.schemas import TokenResponseSchema
 from api.users_db import get_db
+from config import chipsat_webhook_username, chipsat_webhook_password
 
 auth = Blueprint('auth', __name__)
 
 basic_auth = HTTPBasicAuth()
 token_auth = HTTPTokenAuth()
+
+chipsat_basic_auth = HTTPBasicAuth()
+@chipsat_basic_auth.verify_password
+def chipsat_verify_password(username, password):
+    if username == chipsat_webhook_username and password == chipsat_webhook_password:
+        return True
 
 @basic_auth.verify_password
 def verify_password(username, password):

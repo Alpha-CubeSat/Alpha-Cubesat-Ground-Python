@@ -33,3 +33,6 @@ elastic_config = {
     'password': os.environ.get('ELASTIC_PASS'),
     'certs': os.environ.get('ELASTIC_CERTS')
 }
+
+chipsat_webhook_username = os.environ.get('CHIPSAT_WEBHOOK_USER')
+chipsat_webhook_password = os.environ.get('CHIPSAT_WEBHOOK_PASS')

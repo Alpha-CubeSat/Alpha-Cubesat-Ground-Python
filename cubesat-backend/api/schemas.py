@@ -18,6 +18,8 @@ class ChipSatReportSchema(ma.Schema):
     class Meta:
         unknown = INCLUDE
 
+    msg=ma.Str()
+
 class CaptureCountSchema(ma.Schema):
     count = ma.Int(load_default=5)
 
