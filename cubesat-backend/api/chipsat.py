@@ -28,7 +28,6 @@ def chipsat_telemetry(packet):
     gyro_bias = chipsat_gyro_bias_map[payload['chipsatId']]
     data = {
         "timestamp": datetime.fromtimestamp(packet['time']/1000, timezone.utc).isoformat(),
-        "tinygsPacketId": packet['id'],
         "data": base64.b64decode(packet['raw']).hex(),
         "chipsatId": payload['chipsatId'],
         "location": {
