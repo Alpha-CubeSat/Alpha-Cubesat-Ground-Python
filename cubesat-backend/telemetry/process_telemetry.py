@@ -1,5 +1,6 @@
 import traceback
 
+from api.webhook import send_webhook_message
 from config import *
 from databases import elastic, capture_database, command_log
 from telemetry.read_telemetry import read_cubesat_data, error_data, map_range
@@ -140,4 +141,19 @@ def handle_report(rockblock_report: dict):
         rockblock_report.update(error_data('Rockblock report has not "data" attribute\n'))
 
     # store rockblock report along with opcode and error message (if error occurred)
-    elastic.index(rockblock_db_index, rockblock_report)
+    response = elastic.index(rockblock_db_index, rockblock_report)
+
+    # Send message to Slack if report is from flight unit
+    if rockblock_report['imei'] == 300534060424390:
+        try:
+            if rockblock_report['telemetry_report_type'] == Opcodes.normal_report:
+                report_link = f"{kibana_base}/discover#/doc/7ec3ba94-572b-47cb-b1f1-ff41830a4eed/cubesat_normal_report?id={rockblock_report.get('normal_report_id', '')}"
+            else:
+                report_link = f"{kibana_base}/discover#/doc/be8ff1eb-1f57-4782-8807-611d9332ef2d/rockblock_data?id={response.body.get('_id', '')}"
+            send_webhook_message(
+                f"New *CubeSat {str(rockblock_report['telemetry_report_type'])} Report* Received!" +
+                f"\n<{kibana_base}/dashboards#/view/a53a753f-8750-4625-b428-fbfdc350ee1f|View Mission Ops Dashboard>"
+                f"\n<{report_link}|View Report>"
+            )
+        except:
+            print("error sending webhook")

@@ -36,3 +36,6 @@ elastic_config = {
 
 chipsat_webhook_username = os.environ.get('CHIPSAT_WEBHOOK_USER')
 chipsat_webhook_password = os.environ.get('CHIPSAT_WEBHOOK_PASS')
+
+slack_webhook_url = os.environ.get('SLACK_WEBHOOK')
+kibana_base = os.environ.get('KIBANA_BASE')

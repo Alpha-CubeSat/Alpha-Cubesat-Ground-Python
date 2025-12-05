@@ -7,6 +7,7 @@ from flask import Blueprint
 import config
 from api.auth import chipsat_basic_auth
 from api.schemas import ChipSatReportSchema
+from api.webhook import send_webhook_message
 from databases import elastic
 from telemetry.telemetry_constants import chipsat_gyro_bias_map
 
@@ -56,5 +57,12 @@ def chipsat_telemetry(packet):
     }
     elastic.index(config.chipsat_db_index, data)
     print('packet processed')
+
+    # Send message to Slack
+    send_webhook_message(
+        f"New ChipSat Packet Received from *ChipSat ID {payload['chipsatId']}*!" +
+        f"\n<{config.kibana_base}/dashboards#/view/c59273d0-97bc-11ef-a516-67436be04c90|View ChipSat Dashboard>"
+        "\n<https://tinygs.com/satellite/CornellLightSail|View TinyGS Page>"
+    )
 
     return '', 200  # Successful downlink code

@@ -13,6 +13,16 @@ class Opcodes(int, Enum):
     ods_report = 42
     error = -1
 
+    def __str__(self):
+        if self == Opcodes.normal_report:
+            return 'Normal'
+        elif self == Opcodes.imu_report:
+            return 'IMU'
+        elif self == Opcodes.ods_report:
+            return 'Camera'
+        else:
+            return 'Error'
+
 # Normal report structure
 
 bool_fields = ["photoresistor_covered", "possible_uncovered", "ods_powered",
