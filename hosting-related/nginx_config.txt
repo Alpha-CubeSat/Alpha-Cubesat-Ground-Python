@@ -4,12 +4,12 @@ server {
     # Route for Backend (port 8000)
     location /api/ {
         proxy_pass http://localhost:8000/;
-	proxy_set_header X-Real-IP $remote_addr;
+	    proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header Host $host;
-	proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+	    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
-	proxy_set_header X-Forwarded-Prefix /api/;
-	include proxy_params;
+	    proxy_set_header X-Forwarded-Prefix /api/;
+	    include proxy_params;
     }
 
     # Route for Elasticsearch (port 9200)
@@ -19,7 +19,7 @@ server {
 
     # Route for Kibana (port 5601)
     location /kibana {
-        proxy_pass http://localhost:5601;
+        proxy_pass https://localhost:5601;
     }
     
     location /ui {
