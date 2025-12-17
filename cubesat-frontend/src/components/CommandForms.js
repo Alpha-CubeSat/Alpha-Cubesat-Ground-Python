@@ -34,6 +34,21 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
     handleSubmit() {
       if (selectedNamespace === "None" || selectedField === "None") return;
 
+      // convert seconds, minutes, and hours to milliseconds
+      if (
+        commandFields.setValue &&
+        commandFields.value !== "" &&
+        fieldData.type === SFR_Type.Time
+      ) {
+        if (timeUnit === "SEC") {
+          commandFields.value *= 1000;
+        } else if (timeUnit === "MIN") {
+          commandFields.value *= 60 * 1000;
+        } else if (timeUnit === "HOUR") {
+          commandFields.value *= 3600 * 1000;
+        }
+      }
+
       // validate input: make sure field is not empty, ints and floats are valid, input within min and max values
       let error = "";
       let int_check = new RegExp("^-?\\d+$");
@@ -66,17 +81,6 @@ export const SfrOverride = forwardRef(({ SFR_Data, setTitle }, ref) => {
       }
       setInputError(error);
       if (error.length > 0) return;
-
-      // convert seconds, minutes, and hours to milliseconds
-      if (fieldData.type === SFR_Type.Time) {
-        if (timeUnit === "SEC") {
-          commandFields.value *= 1000;
-        } else if (timeUnit === "MIN") {
-          commandFields.value *= 60 * 1000;
-        } else if (timeUnit === "HOUR") {
-          commandFields.value *= 3600 * 1000;
-        }
-      }
 
       // send to CommandSelector component
       return {
